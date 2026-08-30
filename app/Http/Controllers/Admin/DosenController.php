@@ -1,0 +1,180 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Dosen;
+use App\Models\ProgramStudi;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class DosenController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request): Response
+    {
+        $query = Dosen::with('programStudi');
+
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search): void {
+                $q->where('nidn', 'like', "%{$search}%")
+                    ->orWhere('nuptk', 'like', "%{$search}%")
+                    ->orWhere('nama', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('program_studi_id') && $request->program_studi_id !== '') {
+            $query->where('program_studi_id', $request->program_studi_id);
+        }
+
+        $dosens = $query->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $programStudis = ProgramStudi::orderBy('nama_prodi')->get();
+
+        return Inertia::render('admin/dosen/index', [
+            'dosens' => $dosens,
+            'programStudis' => $programStudis,
+            'filters' => $request->only(['search', 'status', 'program_studi_id']),
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(): Response
+    {
+        $programStudis = ProgramStudi::orderBy('nama_prodi')->get();
+
+        return Inertia::render('admin/dosen/create', [
+            'programStudis' => $programStudis,
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nidn' => ['required', 'string', 'max:255', 'unique:dosen,nidn'],
+            'nuptk' => ['required', 'string', 'max:255', 'unique:dosen,nuptk'],
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:dosen,email'],
+            'program_studi_id' => ['required', 'integer', 'exists:program_studi,id'],
+            'no_telepon' => ['required', 'string', 'max:255'],
+            'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
+            'pangkat_golongan' => ['required', 'string', 'max:255'],
+            'pendidikan_terakhir' => ['required', 'string', 'max:255'],
+            'alamat' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],
+        ]);
+
+        DB::transaction(function () use ($validated): void {
+            $user = User::create([
+                'name' => $validated['nama'],
+                'email' => $validated['email'],
+                'password' => bcrypt('password'),
+                'role' => 'dosen',
+                'nidn' => $validated['nidn'],
+            ]);
+
+            $validated['user_id'] = $user->id;
+
+            Dosen::create($validated);
+        });
+
+        return redirect()->route('admin.dosen.index')
+            ->with('success', 'Dosen berhasil ditambahkan');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Dosen $dosen): Response
+    {
+        $dosen->load('programStudi', 'user');
+
+        return Inertia::render('admin/dosen/show', [
+            'dosen' => $dosen,
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Dosen $dosen): Response
+    {
+        $dosen->load('programStudi');
+        $programStudis = ProgramStudi::orderBy('nama_prodi')->get();
+
+        return Inertia::render('admin/dosen/edit', [
+            'dosen' => $dosen,
+            'programStudis' => $programStudis,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Dosen $dosen): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nidn' => ['required', 'string', 'max:255', 'unique:dosen,nidn,'.$dosen->id],
+            'nuptk' => ['required', 'string', 'max:255', 'unique:dosen,nuptk,'.$dosen->id],
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:dosen,email,'.$dosen->id],
+            'program_studi_id' => ['required', 'integer', 'exists:program_studi,id'],
+            'no_telepon' => ['required', 'string', 'max:255'],
+            'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
+            'pangkat_golongan' => ['required', 'string', 'max:255'],
+            'pendidikan_terakhir' => ['required', 'string', 'max:255'],
+            'alamat' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],
+        ]);
+
+        DB::transaction(function () use ($dosen, $validated): void {
+            $dosen->update($validated);
+
+            if ($dosen->user) {
+                $dosen->user->update([
+                    'name' => $validated['nama'],
+                    'email' => $validated['email'],
+                    'nidn' => $validated['nidn'],
+                ]);
+            }
+        });
+
+        return redirect()->route('admin.dosen.index')
+            ->with('success', 'Dosen berhasil diperbarui');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Dosen $dosen): RedirectResponse
+    {
+        DB::transaction(function () use ($dosen): void {
+            if ($dosen->user) {
+                $dosen->user->delete();
+            }
+            $dosen->delete();
+        });
+
+        return redirect()->route('admin.dosen.index')
+            ->with('success', 'Dosen berhasil dihapus');
+    }
+}

@@ -1,0 +1,210 @@
+{
+  "page_name": "SIAKAD Login Page",
+  "institution": "STIT Daarurrahmah Sepadan",
+  "description": "Halaman login split-screen dengan panel kiri bertema institusi (hijau tua + emas, logo, tagline) dan panel kanan berisi form login di atas kartu putih. Panel kanan bisa full white background atau light background dengan dekorasi titik-titik halus.",
+  "layout": {
+    "type": "split-screen",
+    "columns": 2,
+    "left_panel": {
+      "width_percentage": 55,
+      "background": {
+        "type": "solid_with_wave_overlay",
+        "base_color": "#0F5132",
+        "description": "Hijau tua sebagai warna dasar, dengan lengkungan/wave besar berwarna sedikit lebih terang membelah ke arah kanan, dan garis outline emas tipis mengikuti lengkungan tersebut."
+      },
+      "wave_shape": {
+        "style": "large diagonal curve sweeping from top-right down to bottom-right",
+        "fill_color": "#14653D",
+        "outline_color": "#D4AF37",
+        "outline_width_px": 3
+      },
+      "watermark": {
+        "type": "building_silhouette",
+        "opacity": 0.08,
+        "color": "#FFFFFF",
+        "position": "bottom, behind text",
+        "description": "Siluet gedung/bangunan bergaya kampus/masjid sebagai watermark dekoratif di bagian bawah panel"
+      },
+      "dot_pattern_decoration": {
+        "position": "bottom-right corner",
+        "color": "#D4AF37",
+        "opacity": 0.4,
+        "style": "grid of small dots"
+      },
+      "content": {
+        "alignment": "left",
+        "vertical_position": "center-left, slightly upper-middle",
+        "padding_left_px": 64,
+        "elements": [
+          {
+            "type": "logo",
+            "shape": "8-pointed star badge (rub el hizb style)",
+            "colors": ["#0F5132", "#D4AF37", "#FFFFFF"],
+            "contains": ["mosque dome icon", "open book icon", "arabic text banner at bottom of badge"],
+            "size_px": 130
+          },
+          {
+            "type": "text",
+            "role": "greeting",
+            "content": "Selamat Datang di",
+            "font_weight": "regular",
+            "font_size_px": 22,
+            "color": "#FFFFFF"
+          },
+          {
+            "type": "text",
+            "role": "main_title",
+            "content": "SIAKAD",
+            "font_weight": "bold",
+            "font_size_px": 56,
+            "color": "#FFFFFF",
+            "letter_spacing": "normal"
+          },
+          {
+            "type": "text",
+            "role": "subtitle",
+            "content": "STIT Daarurrahmah Sepadan",
+            "font_weight": "semibold",
+            "font_size_px": 24,
+            "color": "#D4AF37"
+          },
+          {
+            "type": "text",
+            "role": "tagline",
+            "content": "Sistem Informasi Akademik Terintegrasi",
+            "font_weight": "regular",
+            "font_size_px": 15,
+            "color": "#E5E5E5"
+          }
+        ],
+        "footer_list": {
+          "position": "bottom-left",
+          "items": [
+            { "icon": "book/open-book", "label": "Berilmu" },
+            { "icon": "chat-bubble/speech", "label": "Berbahasa" },
+            { "icon": "bar-chart/growth", "label": "Berdaya" }
+          ],
+          "icon_color": "#D4AF37",
+          "text_color": "#FFFFFF",
+          "font_size_px": 15,
+          "spacing_between_items_px": 16
+        }
+      }
+    },
+    "right_panel": {
+      "width_percentage": 45,
+      "background": {
+        "type": "light",
+        "color": "#FAFAF8",
+        "decoration": "subtle dot grid pattern, very light gray, bottom-right area, low opacity"
+      },
+      "content": {
+        "alignment": "center",
+        "card": {
+          "background_color": "#FFFFFF",
+          "border_radius_px": 16,
+          "shadow": "soft, medium blur, low opacity (0 8px 24px rgba(0,0,0,0.08))",
+          "padding_px": 40,
+          "max_width_px": 400,
+          "elements": [
+            {
+              "type": "icon_badge",
+              "shape": "circle",
+              "background_color": "#E8F3ED",
+              "icon": "user/person outline",
+              "icon_color": "#0F5132",
+              "size_px": 48
+            },
+            {
+              "type": "text",
+              "role": "form_title",
+              "content": "Login ke SIAKAD",
+              "font_weight": "bold",
+              "font_size_px": 20,
+              "color": "#0F5132"
+            },
+            {
+              "type": "text",
+              "role": "form_subtitle",
+              "content": "Masuk untuk mengakses sistem",
+              "font_weight": "regular",
+              "font_size_px": 13,
+              "color": "#6B7280"
+            },
+            {
+              "type": "input_field",
+              "label": "Username / NIM / NIDN",
+              "placeholder": "Masukkan username atau NIM/NIDN",
+              "icon": "user outline (left)",
+              "border_color": "#D1D5DB",
+              "border_radius_px": 8,
+              "background_color": "#FFFFFF",
+              "height_px": 44
+            },
+            {
+              "type": "input_field",
+              "label": "Password",
+              "placeholder": "Masukkan password",
+              "icon_left": "lock outline",
+              "icon_right": "eye-off (toggle visibility)",
+              "border_color": "#D1D5DB",
+              "border_radius_px": 8,
+              "background_color": "#FFFFFF",
+              "height_px": 44,
+              "type_attribute": "password"
+            },
+            {
+              "type": "link",
+              "content": "Lupa Password?",
+              "alignment": "right",
+              "color": "#0F5132",
+              "font_size_px": 13,
+              "font_weight": "medium"
+            },
+            {
+              "type": "button",
+              "role": "submit",
+              "content": "Login ke SIAKAD",
+              "icon_left": "lock/padlock",
+              "background_color": "#0F5132",
+              "hover_background_color": "#0C3F27",
+              "text_color": "#FFFFFF",
+              "border_radius_px": 8,
+              "height_px": 46,
+              "width": "100%",
+              "font_weight": "semibold"
+            }
+          ],
+          "vertical_spacing_between_elements_px": 16
+        }
+      }
+    }
+  },
+  "color_palette": {
+    "primary_dark_green": "#0F5132",
+    "secondary_green": "#14653D",
+    "accent_gold": "#D4AF37",
+    "background_light": "#FAFAF8",
+    "card_white": "#FFFFFF",
+    "text_dark": "#1F2937",
+    "text_muted": "#6B7280",
+    "input_border": "#D1D5DB",
+    "input_placeholder": "#9CA3AF"
+  },
+  "typography": {
+    "font_family_suggestion": "Poppins, Inter, or similar clean sans-serif",
+    "heading_weight": "700 (bold)",
+    "subheading_weight": "600 (semibold)",
+    "body_weight": "400 (regular)"
+  },
+  "responsive_behavior": {
+    "mobile": "left panel collapses to a top banner (logo + title only, reduced height) or hides entirely; right panel form takes full width and full height of viewport",
+    "tablet": "left panel width reduced to ~40%, font sizes scaled down ~15%"
+  },
+  "interaction_notes": {
+    "password_toggle": "clicking eye icon toggles password visibility between masked and plain text",
+    "input_focus_state": "border color changes to primary_dark_green with subtle box-shadow ring on focus",
+    "button_hover_state": "background darkens slightly, cursor pointer",
+    "form_validation": "show inline error text below field in red (#DC2626) if username/password empty on submit"
+  }
+}

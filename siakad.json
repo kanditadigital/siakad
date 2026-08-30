@@ -1,0 +1,359 @@
+{
+  "judul_dokumen": "Modul Proposal SIAKAD",
+  "nama_sistem": "SIAKAD - Sistem Informasi Akademik Terintegrasi",
+  "institusi": {
+    "nama": "STIT Daarurrahmah Sepadan",
+    "alamat": "Sepadan, Kec. Rundeng, Kota Subulussalam, Aceh",
+    "website": "stit-daras.ac.id",
+    "tahun_dokumen": 2026,
+    "nilai_institusi": ["Berilmu", "Berbahasa", "Berdaya"]
+  },
+  "kategori_pengguna": [
+    {
+      "peran": "Admin",
+      "deskripsi": "Mengelola data master, akademik, keuangan, dan laporan."
+    },
+    {
+      "peran": "Dosen",
+      "deskripsi": "Mengelola perkuliahan, presensi, nilai, dan informasi kelas."
+    },
+    {
+      "peran": "Mahasiswa",
+      "deskripsi": "Mengakses informasi akademik, KRS, nilai, tagihan, dan layanan."
+    },
+    {
+      "peran": "Pimpinan",
+      "deskripsi": "Monitoring dan evaluasi kinerja akademik dan keuangan kampus."
+    }
+  ],
+  "bab": [
+    {
+      "nomor": "BAB I",
+      "judul": "PENDAHULUAN",
+      "bagian": [
+        {
+          "kode": "A",
+          "judul": "Latar Belakang",
+          "ringkasan": "Perguruan tinggi membutuhkan sistem terintegrasi untuk mengelola data mahasiswa, dosen, perkuliahan, presensi, nilai, KHS, transkrip, jadwal, dan tagihan dalam satu platform yang sederhana dan mudah digunakan."
+        },
+        {
+          "kode": "B",
+          "judul": "Maksud Penyusunan Modul",
+          "poin": [
+            "Menjelaskan konsep dan struktur SIAKAD",
+            "Menjelaskan kebutuhan fitur berdasarkan jenis pengguna",
+            "Menentukan struktur menu dan navigasi sistem",
+            "Menjelaskan fungsi setiap halaman dan fitur",
+            "Menjelaskan data yang ditampilkan dan dikelola",
+            "Menjelaskan hak akses masing-masing pengguna",
+            "Memberikan gambaran desain antarmuka",
+            "Menjelaskan alur proses akademik dan administrasi",
+            "Menjadi dasar komunikasi dengan pihak pengembang",
+            "Menjadi acuan pengujian dan penerimaan sistem"
+          ]
+        },
+        {
+          "kode": "C",
+          "judul": "Tujuan Pengembangan SIAKAD",
+          "poin": [
+            "Membangun sistem informasi akademik terintegrasi",
+            "Mempermudah mahasiswa memperoleh informasi dan layanan akademik",
+            "Mempermudah dosen melaksanakan dan mengelola perkuliahan",
+            "Membantu dosen PA memantau mahasiswa asuh",
+            "Membantu dosen pembimbing mengelola bimbingan tugas akhir",
+            "Memudahkan BAAK mengelola data dan administrasi akademik",
+            "Membantu program studi memonitor kegiatan akademik",
+            "Memudahkan bagian keuangan mengelola tagihan dan pembayaran",
+            "Menyediakan informasi cepat dan akurat bagi pimpinan",
+            "Mengurangi proses administrasi manual",
+            "Meningkatkan ketepatan, keamanan, dan konsistensi data",
+            "Menyediakan sistem yang dapat dikembangkan di masa depan"
+          ]
+        },
+        {
+          "kode": "D",
+          "judul": "Sasaran Pengembangan",
+          "target": [
+            "Mahasiswa",
+            "Dosen",
+            "Dosen PA",
+            "Dosen Pembimbing Tugas Akhir",
+            "Program Studi/Kaprodi",
+            "BAAK/Admin Akademik",
+            "Bagian Keuangan",
+            "Pimpinan"
+          ]
+        },
+        {
+          "kode": "E",
+          "judul": "Prinsip Pengembangan",
+          "prinsip": [
+            {"nama": "Sederhana", "deskripsi": "Struktur menu tidak kompleks, akses sesuai peran"},
+            {"nama": "Mudah Digunakan", "deskripsi": "Antarmuka dapat dipahami berbagai tingkat kemampuan teknologi"},
+            {"nama": "Terintegrasi", "deskripsi": "Data dapat digunakan lintas modul tanpa input ulang"},
+            {"nama": "Akurat", "deskripsi": "Konsistensi data akademik terjaga"},
+            {"nama": "Aman", "deskripsi": "Hak akses berbasis peran, data pribadi terlindungi"},
+            {"nama": "Responsif", "deskripsi": "Dapat digunakan di komputer, laptop, tablet, dan seluler"},
+            {"nama": "Fleksibel", "deskripsi": "Dapat dikembangkan sesuai kebutuhan baru"},
+            {"nama": "Terukur dan Terdokumentasi", "deskripsi": "Proses penting dapat ditelusuri melalui riwayat aktivitas"}
+          ]
+        },
+        {
+          "kode": "F",
+          "judul": "Kedudukan Modul dalam Proses Pengembangan",
+          "alur_pengembangan": [
+            "Analisis Kebutuhan",
+            "Perancangan Sistem",
+            "Desain UI/UX",
+            "Pengembangan",
+            "Pengujian",
+            "Implementasi",
+            "Pemeliharaan"
+          ]
+        },
+        {
+          "kode": "G",
+          "judul": "Ruang Lingkup Modul",
+          "cakupan": [
+            {
+              "modul": "Halaman Home dan Login"
+            },
+            {
+              "modul": "Dashboard Mahasiswa",
+              "sub_modul": ["Profil Mahasiswa", "KHS", "Transkrip Nilai", "Jadwal Perkuliahan", "Tagihan UKT"]
+            },
+            {
+              "modul": "Dashboard Dosen",
+              "sub_modul": [
+                "Profil Dosen",
+                "Perkuliahan (Presensi, Materi Perkuliahan, Input Nilai)",
+                "Mahasiswa Asuh (PA)",
+                "Bimbingan Tugas Akhir"
+              ]
+            },
+            {
+              "modul": "Dashboard Kaprodi",
+              "sub_modul": ["Dashboard BAAK/Admin", "Modul Keuangan"]
+            },
+            {
+              "modul": "Dashboard Pimpinan",
+              "sub_modul": ["Manajemen pengguna dan hak akses", "Laporan"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nomor": "BAB II",
+      "judul": "GAMBARAN UMUM",
+      "bagian": [
+        {
+          "kode": "A",
+          "judul": "Home (Laman Utama)",
+          "deskripsi": "Halaman awal menampilkan identitas kampus, logo, nama SIAKAD, dan form login.",
+          "metode_login": {
+            "dosen": "NIDN atau Email",
+            "mahasiswa": "NIM"
+          },
+          "tema_warna": ["hijau", "kuning"]
+        },
+        {
+          "kode": "B",
+          "judul": "Dashboard Dosen",
+          "fitur_utama": ["Profil Dosen", "Perkuliahan", "Anggota Mahasiswa Asuh (PA)", "Bimbingan Tugas Akhir"],
+          "sub_halaman": [
+            {
+              "nama": "Profil",
+              "deskripsi": "Menampilkan identitas dan data profesional dosen: foto, nama, status, NIDN, program studi, fakultas, kontak.",
+              "tab": ["Biodata", "Riwayat Pendidikan", "Pengalaman", "Jabatan", "Mata Kuliah Diampu"]
+            },
+            {
+              "nama": "Perkuliahan",
+              "deskripsi": "Melihat dan mengelola mata kuliah berdasarkan Tahun Akademik dan Semester.",
+              "sub_fitur": ["Jadwal Mengajar", "Daftar Mahasiswa", "Presensi", "Materi Perkuliahan", "RPS", "Input Nilai"],
+              "status_rps": ["Belum Upload", "Sudah Upload", "Perlu Revisi", "Disetujui"]
+            },
+            {
+              "nama": "Daftar Mahasiswa",
+              "deskripsi": "Melihat mahasiswa terdaftar pada mata kuliah/kelas yang diampu, dengan pencarian dan export Excel."
+            },
+            {
+              "nama": "Presensi",
+              "deskripsi": "Mengelola kehadiran mahasiswa per pertemuan.",
+              "status_kehadiran": ["Hadir", "Izin", "Sakit", "Alpha"],
+              "fitur": ["Input Presensi", "Rekap Kehadiran", "Export Excel", "Simpan Presensi"]
+            },
+            {
+              "nama": "Materi Perkuliahan",
+              "deskripsi": "Mengelola materi pembelajaran untuk pertemuan 1-16, dapat unggah PDF, PowerPoint, Word, video, tautan."
+            },
+            {
+              "nama": "Input Nilai",
+              "deskripsi": "Menginput dan mengelola nilai mahasiswa dengan komponen dan bobot penilaian (total harus 100%).",
+              "komponen_nilai": ["Tugas", "UTS", "UAS", "Partisipasi", "Kehadiran"],
+              "fitur": ["Import Nilai dari Excel", "Export Nilai ke Excel", "Simpan Nilai"]
+            },
+            {
+              "nama": "Mahasiswa Asuh (PA)",
+              "deskripsi": "Dosen PA memantau mahasiswa bimbingan akademik. Setiap dosen PA memiliki 5 mahasiswa asuh.",
+              "fitur": ["Bimbingan & Catatan", "Riwayat Bimbingan", "Rekapitulasi", "Export Excel"]
+            },
+            {
+              "nama": "Bimbingan Tugas Akhir",
+              "deskripsi": "Mengelola mahasiswa bimbingan tugas akhir/skripsi.",
+              "status_bimbingan": ["Aktif", "Revisi", "Lainnya"],
+              "kolom": ["NIM", "Nama Mahasiswa", "Judul Tugas Akhir", "Pembimbing I", "Pembimbing II", "Status Bimbingan"]
+            }
+          ]
+        },
+        {
+          "kode": "C",
+          "judul": "Dashboard Mahasiswa",
+          "fitur_utama": ["Profil", "KRS", "KHS", "Transkrip Nilai", "Jadwal Perkuliahan", "Tagihan UKT"],
+          "sub_halaman": [
+            {
+              "nama": "Profil Mahasiswa",
+              "deskripsi": "Informasi pribadi dan akademik: data pribadi, data akademik, data orang tua, kontak darurat, dokumen.",
+              "fitur": ["Cetak Profil"]
+            },
+            {
+              "nama": "KRS (Kartu Rencana Studi)",
+              "deskripsi": "Memilih dan mengajukan mata kuliah semester berjalan, dengan batas SKS minimal/maksimal.",
+              "alur": "Pilih mata kuliah -> Keranjang KRS -> Ajukan KRS -> Disetujui Dosen PA/BAAK",
+              "fitur": ["Cetak KRS (PDF)"]
+            },
+            {
+              "nama": "KHS (Kartu Hasil Studi)",
+              "deskripsi": "Melihat hasil studi per periode akademik (per semester).",
+              "data_ditampilkan": ["Kode MK", "Nama MK", "SKS", "Nilai Huruf", "Nilai Angka", "Bobot", "Mutu", "IPS", "IPK", "Predikat"],
+              "fitur": ["Unduh KHS (PDF)"]
+            },
+            {
+              "nama": "Transkrip Nilai",
+              "deskripsi": "Melihat seluruh riwayat mata kuliah dan nilai selama masa studi.",
+              "fitur": ["Unduh Transkrip (PDF)", "Filter Semua Semester"]
+            },
+            {
+              "nama": "Tagihan UKT",
+              "deskripsi": "Melihat tagihan dan riwayat pembayaran.",
+              "biaya": {
+                "pendaftaran": "Rp1.500.000 (sekali)",
+                "ukt_per_semester": "Rp2.000.000",
+                "berlaku_mulai": "Tahun Akademik 2025/2026"
+              },
+              "fitur": ["Bayar Sekarang", "Lihat Cara Pembayaran", "Unduh Invoice (PDF)"]
+            }
+          ]
+        },
+        {
+          "kode": "D",
+          "judul": "Dashboard Admin/BAAK",
+          "deskripsi": "Pusat pengelolaan data dan layanan akademik SIAKAD.",
+          "sub_halaman": [
+            {
+              "nama": "Data Akademik",
+              "deskripsi": "Mengelola Tahun Akademik, Semester, Periode KRS, Periode Input Nilai, Aturan Akademik, Pengumuman Akademik.",
+              "periode_akademik": ["2025/2026 (berjalan)", "2026/2027 (dimulai September 2026)"]
+            },
+            {
+              "nama": "Data Mahasiswa",
+              "deskripsi": "Mengelola seluruh data mahasiswa.",
+              "status_mahasiswa": ["Aktif", "Cuti", "Nonaktif", "Lulus/Yudisium"]
+            },
+            {
+              "nama": "Data Dosen & Tendik",
+              "deskripsi": "Mengelola data dosen dan tenaga kependidikan sebagai master data SDM.",
+              "tab": ["Dosen", "Tendik"]
+            },
+            {
+              "nama": "Data Mata Kuliah",
+              "deskripsi": "Mengelola seluruh mata kuliah: kode, nama, program studi, jenis (wajib/pilihan), semester, SKS, status aktif."
+            },
+            {
+              "nama": "KRS & Penjadwalan",
+              "deskripsi": "Mengelola pengajuan/persetujuan KRS mahasiswa dan penyusunan jadwal perkuliahan.",
+              "bagian": ["KRS Mahasiswa", "Penjadwalan Kelas", "Jadwal Perkuliahan"]
+            },
+            {
+              "nama": "Data Nilai",
+              "deskripsi": "Mengelola proses nilai mahasiswa dari input, verifikasi, hingga penetapan nilai akhir.",
+              "fitur": ["Input Nilai", "Nilai Mahasiswa", "Rekapitulasi Nilai", "Riwayat Nilai", "Import/Export Excel"]
+            },
+            {
+              "nama": "Yudisium",
+              "deskripsi": "Mengelola proses penetapan kelulusan mahasiswa.",
+              "persyaratan": [
+                "Seluruh mata kuliah telah diselesaikan",
+                "IPK minimal sesuai ketentuan",
+                "Tidak memiliki nilai bermasalah",
+                "Administrasi telah diselesaikan",
+                "Persyaratan tugas akhir/skripsi terpenuhi"
+              ],
+              "output": ["Berita Acara Yudisium", "SK Yudisium"]
+            },
+            {
+              "nama": "Tagihan UKT",
+              "deskripsi": "Mengelola seluruh tagihan pendidikan mahasiswa.",
+              "biaya": {
+                "pendaftaran": "Rp1.500.000 (sekali)",
+                "ukt_per_semester": "Rp2.000.000"
+              },
+              "status_pembayaran": ["Lunas", "Sebagian", "Belum Membayar", "Terlambat"]
+            },
+            {
+              "nama": "Pembayaran",
+              "deskripsi": "Mengelola dan memantau transaksi pembayaran mahasiswa.",
+              "status_pembayaran": ["Lunas", "Sebagian", "Menunggu Konfirmasi", "Gagal/Ditolak", "Belum Bayar"],
+              "fitur": ["Input Pembayaran", "Upload Bukti Transfer", "Konfirmasi Pembayaran", "Cetak Kuitansi"]
+            },
+            {
+              "nama": "Laporan",
+              "deskripsi": "Menghasilkan dan mengunduh berbagai laporan.",
+              "kategori_laporan": ["Laporan Akademik", "Laporan Mahasiswa", "Laporan Keuangan", "Laporan Sumber Daya"]
+            },
+            {
+              "nama": "Pengaturan Sistem",
+              "deskripsi": "Konfigurasi umum sistem secara terpusat.",
+              "fitur": [
+                "Identitas Kampus",
+                "Logo dan Informasi Sistem",
+                "Tahun Akademik dan Semester Aktif",
+                "Pengaturan KRS",
+                "Pengaturan Nilai",
+                "Pengaturan UKT dan Pembayaran",
+                "Pengaturan Notifikasi",
+                "Hak Akses dan Keamanan",
+                "Backup & Restore",
+                "Log Aktivitas"
+              ]
+            }
+          ]
+        },
+        {
+          "kode": "E",
+          "judul": "Dashboard Pimpinan",
+          "deskripsi": "Bersifat monitoring/pengecekan saja, bukan untuk mengelola data secara langsung.",
+          "fitur_utama": [
+            {
+              "nama": "Monitoring Akademik",
+              "deskripsi": "Ringkasan mahasiswa aktif, kelas/perkuliahan, KRS, presensi, perkembangan akademik."
+            },
+            {
+              "nama": "Monitoring Keuangan",
+              "deskripsi": "Ringkasan tagihan UKT, pembayaran, jumlah tunggakan, persentase pembayaran."
+            },
+            {
+              "nama": "Laporan Ringkas",
+              "deskripsi": "Laporan akademik, mahasiswa, nilai/yudisium, dan laporan keuangan."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nomor": "BAB III",
+      "judul": "PENUTUP",
+      "ringkasan": "SIAKAD dirancang sebagai sistem informasi akademik terintegrasi antara Admin, Dosen, Mahasiswa, dan Pimpinan, dengan hak akses sesuai peran masing-masing. Tampilan dan fitur dapat disesuaikan selama pengembangan tanpa mengubah fungsi utama. Sistem diharapkan sederhana, mudah dipahami, praktis, efektif, serta responsive/mobile-friendly agar dapat diakses melalui komputer, tablet, maupun handphone."
+    }
+  ]
+}
