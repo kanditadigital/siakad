@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import {
+    ArrowLeft,
     Edit,
     User,
     GraduationCap,
@@ -95,6 +96,14 @@ export default function MahasiswaShow({ mahasiswa }: Props) {
             <Head title={`Mahasiswa - ${mahasiswa.nama}`} />
 
             <div className="space-y-6">
+                <Link
+                    href="/admin/mahasiswa"
+                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Kembali ke Daftar Mahasiswa
+                </Link>
+
                 {/* Header Card */}
                 <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">

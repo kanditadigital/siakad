@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, User, Upload, X } from 'lucide-react';
+import { ArrowLeft, Sparkles, Upload, User, X } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import AppLayout from '@/layouts/app-layout';
 
 type ProgramStudi = {
     id: number;
@@ -42,6 +43,10 @@ const JENIS_KELAMIN_OPTIONS = [
     { value: 'Laki-laki', label: 'Laki-laki' },
     { value: 'Perempuan', label: 'Perempuan' },
 ];
+
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
 
 export default function MahasiswaCreate({ programStudis }: Props) {
     const { data, setData, post, processing, errors } = useForm({
@@ -86,8 +91,8 @@ export default function MahasiswaCreate({ programStudis }: Props) {
 
     const selectedProdi = useMemo(() => {
         if (!data.program_studi_id) {
-return null;
-}
+            return null;
+        }
 
         return (
             programStudis.find(
@@ -98,8 +103,8 @@ return null;
 
     const previewNim = useMemo(() => {
         if (!selectedProdi) {
-return 'Pilih Program Studi';
-}
+            return null;
+        }
 
         const year = new Date().getFullYear();
         const yearSuffix = String(year).slice(-selectedProdi.nim_year_digits);
@@ -118,23 +123,27 @@ return 'Pilih Program Studi';
             <Head title="Tambah Mahasiswa" />
 
             <div className="space-y-6">
-                <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
-                        Tambah Mahasiswa
-                    </h1>
-                    <p className="text-gray-600">
-                        Isi form berikut untuk menambahkan mahasiswa baru
-                    </p>
+                <div className="flex items-center gap-4">
+                    <Link href="/admin/mahasiswa">
+                        <Button variant="ghost" size="icon">
+                            <ArrowLeft className="h-4 w-4" />
+                        </Button>
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Tambah Mahasiswa
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Isi form berikut untuk menambahkan mahasiswa baru
+                        </p>
+                    </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Photo Upload */}
-                    <Card className="border border-gray-200 shadow-sm">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-gray-900">
-                                <User className="h-5 w-5 text-green-700" />
-                                Foto Profil
-                            </CardTitle>
+                            <CardTitle>Foto Profil</CardTitle>
                             <CardDescription>
                                 Upload foto mahasiswa (opsional)
                             </CardDescription>
@@ -152,13 +161,13 @@ return 'Pilih Program Studi';
                                             <button
                                                 type="button"
                                                 onClick={removePhoto}
-                                                className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+                                                className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-white hover:bg-destructive/90"
                                             >
                                                 <X className="h-4 w-4" />
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-green-200 bg-green-100">
+                                        <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-green-200 bg-green-50">
                                             <User className="h-16 w-16 text-green-400" />
                                         </div>
                                     )}
@@ -181,11 +190,11 @@ return 'Pilih Program Studi';
                                         <Upload className="mr-2 h-4 w-4" />
                                         Pilih Foto
                                     </Button>
-                                    <p className="mt-2 text-xs text-gray-500">
+                                    <p className="mt-2 text-xs text-muted-foreground">
                                         JPG, JPEG, atau PNG. Maks 2MB.
                                     </p>
                                     {errors.photo && (
-                                        <p className="mt-1 text-sm text-red-500">
+                                        <p className="mt-1 text-sm text-destructive">
                                             {errors.photo}
                                         </p>
                                     )}
@@ -195,20 +204,19 @@ return 'Pilih Program Studi';
                     </Card>
 
                     {/* Data Diri */}
-                    <Card className="border border-gray-200 shadow-sm">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="text-gray-900">
-                                Data Diri
-                            </CardTitle>
+                            <CardTitle>Data Diri</CardTitle>
                             <CardDescription>
                                 Informasi pribadi mahasiswa
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label className="text-gray-700">
+                                    <Label>
                                         Program Studi
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.program_studi_id}
@@ -217,7 +225,9 @@ return 'Pilih Program Studi';
                                         }
                                     >
                                         <SelectTrigger
-                                            className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.program_studi_id ? 'border-red-500' : ''}`}
+                                            aria-invalid={
+                                                !!errors.program_studi_id
+                                            }
                                         >
                                             <SelectValue placeholder="Pilih Program Studi" />
                                         </SelectTrigger>
@@ -233,30 +243,27 @@ return 'Pilih Program Studi';
                                         </SelectContent>
                                     </Select>
                                     {errors.program_studi_id && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.program_studi_id}
                                         </p>
                                     )}
                                 </div>
+
                                 <div className="space-y-2">
-                                    <Label className="text-gray-700">
-                                        NIM (Otomatis)
-                                    </Label>
-                                    <div className="flex h-10 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 font-mono text-sm font-medium text-gray-900">
-                                        {previewNim}
+                                    <Label>NIM (Otomatis)</Label>
+                                    <div className="flex h-9 w-full items-center rounded-md border bg-muted px-3 font-mono text-sm font-medium text-muted-foreground">
+                                        {previewNim ?? 'Pilih program studi'}
                                     </div>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-muted-foreground">
                                         NIM akan otomatis digenerate saat
                                         disimpan
                                     </p>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="nama"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="nama">
                                         Nama Lengkap
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nama"
@@ -265,21 +272,19 @@ return 'Pilih Program Studi';
                                             setData('nama', e.target.value)
                                         }
                                         placeholder="Ahmad Fauzi"
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.nama ? 'border-red-500' : ''}`}
+                                        aria-invalid={!!errors.nama}
                                     />
                                     {errors.nama && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nama}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="jenis_kelamin"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="jenis_kelamin">
                                         Jenis Kelamin
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.jenis_kelamin}
@@ -288,7 +293,10 @@ return 'Pilih Program Studi';
                                         }
                                     >
                                         <SelectTrigger
-                                            className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.jenis_kelamin ? 'border-red-500' : ''}`}
+                                            id="jenis_kelamin"
+                                            aria-invalid={
+                                                !!errors.jenis_kelamin
+                                            }
                                         >
                                             <SelectValue placeholder="Pilih Jenis Kelamin" />
                                         </SelectTrigger>
@@ -304,18 +312,16 @@ return 'Pilih Program Studi';
                                         </SelectContent>
                                     </Select>
                                     {errors.jenis_kelamin && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.jenis_kelamin}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="tanggal_lahir"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="tanggal_lahir">
                                         Tanggal Lahir
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="tanggal_lahir"
@@ -327,21 +333,19 @@ return 'Pilih Program Studi';
                                                 e.target.value,
                                             )
                                         }
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.tanggal_lahir ? 'border-red-500' : ''}`}
+                                        aria-invalid={!!errors.tanggal_lahir}
                                     />
                                     {errors.tanggal_lahir && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.tanggal_lahir}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="tempat_lahir"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="tempat_lahir">
                                         Tempat Lahir
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="tempat_lahir"
@@ -353,22 +357,17 @@ return 'Pilih Program Studi';
                                             )
                                         }
                                         placeholder="Banda Aceh"
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.tempat_lahir ? 'border-red-500' : ''}`}
+                                        aria-invalid={!!errors.tempat_lahir}
                                     />
                                     {errors.tempat_lahir && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.tempat_lahir}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="no_ktp"
-                                        className="text-gray-700"
-                                    >
-                                        No. KTP
-                                    </Label>
+                                    <Label htmlFor="no_ktp">No. KTP</Label>
                                     <Input
                                         id="no_ktp"
                                         value={data.no_ktp}
@@ -376,21 +375,19 @@ return 'Pilih Program Studi';
                                             setData('no_ktp', e.target.value)
                                         }
                                         placeholder="Opsional"
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.no_ktp ? 'border-red-500' : ''}`}
+                                        aria-invalid={!!errors.no_ktp}
                                     />
                                     {errors.no_ktp && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.no_ktp}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="alamat"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="alamat">
                                         Alamat
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="alamat"
@@ -399,21 +396,19 @@ return 'Pilih Program Studi';
                                             setData('alamat', e.target.value)
                                         }
                                         placeholder="Jl. Merdeka No. 10"
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.alamat ? 'border-red-500' : ''}`}
+                                        aria-invalid={!!errors.alamat}
                                     />
                                     {errors.alamat && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.alamat}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="kode_domisili"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="kode_domisili">
                                         Kode Domisili
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="kode_domisili"
@@ -425,35 +420,46 @@ return 'Pilih Program Studi';
                                             )
                                         }
                                         placeholder="23001"
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.kode_domisili ? 'border-red-500' : ''}`}
+                                        aria-invalid={!!errors.kode_domisili}
                                     />
                                     {errors.kode_domisili && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.kode_domisili}
                                         </p>
                                     )}
                                 </div>
                             </div>
+
+                            {previewNim && (
+                                <div className="mt-5 flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4">
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-600">
+                                        <Sparkles className="h-4 w-4 text-white" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-green-700">
+                                            NIM yang akan digenerate
+                                        </p>
+                                        <p className="font-mono text-lg font-semibold text-green-800">
+                                            {previewNim}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
                     {/* Data Orang Tua */}
-                    <Card className="border border-gray-200 shadow-sm">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="text-gray-900">
-                                Data Orang Tua
-                            </CardTitle>
+                            <CardTitle>Data Orang Tua</CardTitle>
                             <CardDescription>
                                 Informasi kontak orang tua
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="email_orang_tua"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="email_orang_tua">
                                         Email Orang Tua
                                     </Label>
                                     <Input
@@ -467,19 +473,18 @@ return 'Pilih Program Studi';
                                             )
                                         }
                                         placeholder="Opsional"
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.email_orang_tua ? 'border-red-500' : ''}`}
+                                        aria-invalid={
+                                            !!errors.email_orang_tua
+                                        }
                                     />
                                     {errors.email_orang_tua && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.email_orang_tua}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="no_hp_orang_tua"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="no_hp_orang_tua">
                                         No. HP Orang Tua
                                     </Label>
                                     <Input
@@ -492,10 +497,12 @@ return 'Pilih Program Studi';
                                             )
                                         }
                                         placeholder="Opsional"
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.no_hp_orang_tua ? 'border-red-500' : ''}`}
+                                        aria-invalid={
+                                            !!errors.no_hp_orang_tua
+                                        }
                                     />
                                     {errors.no_hp_orang_tua && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.no_hp_orang_tua}
                                         </p>
                                     )}
@@ -505,22 +512,18 @@ return 'Pilih Program Studi';
                     </Card>
 
                     {/* Status */}
-                    <Card className="border border-gray-200 shadow-sm">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="text-gray-900">
-                                Status
-                            </CardTitle>
+                            <CardTitle>Status</CardTitle>
                             <CardDescription>
                                 Status keaktifan mahasiswa
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
-                                <Label
-                                    htmlFor="status"
-                                    className="text-gray-700"
-                                >
+                                <Label htmlFor="status">
                                     Status
+                                    <Required />
                                 </Label>
                                 <Select
                                     value={data.status}
@@ -529,7 +532,8 @@ return 'Pilih Program Studi';
                                     }
                                 >
                                     <SelectTrigger
-                                        className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.status ? 'border-red-500' : ''}`}
+                                        id="status"
+                                        aria-invalid={!!errors.status}
                                     >
                                         <SelectValue placeholder="Pilih Status" />
                                     </SelectTrigger>
@@ -545,7 +549,7 @@ return 'Pilih Program Studi';
                                     </SelectContent>
                                 </Select>
                                 {errors.status && (
-                                    <p className="text-sm text-red-500">
+                                    <p className="text-sm text-destructive">
                                         {errors.status}
                                     </p>
                                 )}
@@ -553,19 +557,15 @@ return 'Pilih Program Studi';
                         </CardContent>
                     </Card>
 
-                    <div className="flex items-center gap-4">
-                        <Button
-                            type="submit"
-                            disabled={processing}
-                            className="bg-green-700 hover:bg-green-800"
-                        >
-                            {processing ? 'Menyimpan...' : 'Simpan'}
-                        </Button>
+                    <div className="flex items-center justify-end gap-3">
                         <Link href="/admin/mahasiswa">
                             <Button type="button" variant="outline">
                                 Batal
                             </Button>
                         </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Simpan Mahasiswa'}
+                        </Button>
                     </div>
                 </form>
             </div>
@@ -573,10 +573,14 @@ return 'Pilih Program Studi';
     );
 }
 
-MahasiswaCreate.layout = (page: React.ReactNode) => ({
-    breadcrumbs: [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Mahasiswa', href: '/admin/mahasiswa' },
-        { title: 'Tambah', href: '#' },
-    ],
-});
+MahasiswaCreate.layout = (page: React.ReactNode) => (
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Mahasiswa', href: '/admin/mahasiswa' },
+            { title: 'Tambah', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
+);
