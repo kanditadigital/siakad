@@ -1,8 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
     Card,
     CardContent,
@@ -10,7 +8,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 
 type Dosen = {
@@ -45,8 +45,12 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold">Edit Profil Dosen</h1>
-                        <p className="text-muted-foreground">Perbarui data kontak anda</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-primary">
+                            Edit Profil Dosen
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Perbarui data kontak anda
+                        </p>
                     </div>
                 </div>
 
@@ -54,12 +58,13 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
                     <CardHeader>
                         <CardTitle>Profil Saya</CardTitle>
                         <CardDescription>
-                            Hanya no. telepon dan alamat yang dapat diperbarui. Hubungi admin untuk perubahan data lainnya.
+                            Hanya no. telepon dan alamat yang dapat diperbarui.
+                            Hubungi admin untuk perubahan data lainnya.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label>NIDN</Label>
                                     <Input value={dosen.nidn} disabled />
@@ -76,14 +81,25 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="no_telepon">No. Telepon</Label>
+                                    <Label htmlFor="no_telepon">
+                                        No. Telepon
+                                    </Label>
                                     <Input
                                         id="no_telepon"
                                         value={data.no_telepon}
-                                        onChange={(e) => setData('no_telepon', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'no_telepon',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="08xxxxxxxxxx"
                                     />
-                                    {errors.no_telepon && <p className="text-sm text-red-500">{errors.no_telepon}</p>}
+                                    {errors.no_telepon && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.no_telepon}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2 md:col-span-2">
@@ -91,11 +107,17 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
                                     <Textarea
                                         id="alamat"
                                         value={data.alamat}
-                                        onChange={(e) => setData('alamat', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('alamat', e.target.value)
+                                        }
                                         placeholder="Alamat lengkap"
                                         rows={3}
                                     />
-                                    {errors.alamat && <p className="text-sm text-red-500">{errors.alamat}</p>}
+                                    {errors.alamat && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.alamat}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -104,7 +126,9 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
                                     {processing ? 'Menyimpan...' : 'Simpan'}
                                 </Button>
                                 <Link href="/dosen/profil">
-                                    <Button type="button" variant="outline">Batal</Button>
+                                    <Button type="button" variant="outline">
+                                        Batal
+                                    </Button>
                                 </Link>
                             </div>
                         </form>
@@ -116,9 +140,13 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
 }
 
 DosenProfilEdit.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Profil Dosen', href: '/dosen/profil' },
-        { title: 'Edit', href: '#' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Profil Dosen', href: '/dosen/profil' },
+            { title: 'Edit', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

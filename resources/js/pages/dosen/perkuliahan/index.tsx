@@ -1,27 +1,25 @@
 import { Head, router, useForm } from '@inertiajs/react';
+import {
+    Plus,
+    Trash2,
+    ClipboardCheck,
+    BookUp,
+    PenLine,
+    Search,
+    Download,
+    FileUp,
+    Upload,
+} from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -31,7 +29,25 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Trash2, ClipboardCheck, BookUp, PenLine, Search, Download, FileUp, Upload } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 
 type Kelas = {
@@ -91,7 +107,10 @@ type Props = {
     filters?: { search?: string };
 };
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     hadir: 'default',
     izin: 'secondary',
     sakit: 'outline',
@@ -105,14 +124,25 @@ const RPS_STATUS_LABELS: Record<string, string> = {
     disetujui: 'Disetujui',
 };
 
-const RPS_STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const RPS_STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     belum_upload: 'outline',
     sudah_upload: 'secondary',
     perlu_revisi: 'destructive',
     disetujui: 'default',
 };
 
-export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps, selectedKelasId, filters }: Props) {
+export default function PerkuliahanIndex({
+    kelas,
+    presensis,
+    materis,
+    krss,
+    rps,
+    selectedKelasId,
+    filters,
+}: Props) {
     const [openPresensi, setOpenPresensi] = useState(false);
     const [openMateri, setOpenMateri] = useState(false);
     const [editingKrs, setEditingKrs] = useState<Krs | null>(null);
@@ -121,7 +151,11 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
 
     const handleUploadRps = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedKelasId) return;
+
+        if (!selectedKelasId) {
+            return;
+        }
+
         rpsForm.post(`/dosen/perkuliahan/${selectedKelasId}/rps`, {
             forceFormData: true,
             onSuccess: () => rpsForm.reset(),
@@ -130,7 +164,11 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.get('/dosen/perkuliahan', { kelas_id: selectedKelasId, search }, { preserveState: true });
+        router.get(
+            '/dosen/perkuliahan',
+            { kelas_id: selectedKelasId, search },
+            { preserveState: true },
+        );
     };
 
     const presensiForm = useForm({
@@ -154,11 +192,17 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
         status: 'selesai',
     });
 
-    const presensiList = Array.isArray(presensis) ? presensis : presensis?.data || [];
+    const presensiList = Array.isArray(presensis)
+        ? presensis
+        : presensis?.data || [];
     const materiList = Array.isArray(materis) ? materis : materis?.data || [];
 
     const handleKelasChange = (value: string) => {
-        router.get('/dosen/perkuliahan', { kelas_id: value }, { preserveState: true });
+        router.get(
+            '/dosen/perkuliahan',
+            { kelas_id: value },
+            { preserveState: true },
+        );
     };
 
     const handlePresensiSubmit = (e: React.FormEvent) => {
@@ -196,7 +240,11 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
 
     const handleNilaiSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!editingKrs) return;
+
+        if (!editingKrs) {
+            return;
+        }
+
         nilaiForm.put(`/dosen/perkuliahan/nilai/${editingKrs.uuid}`, {
             onSuccess: () => {
                 setEditingKrs(null);
@@ -212,20 +260,31 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Perkuliahan</h1>
-                        <p className="text-muted-foreground">Kelola presensi, materi, dan nilai perkuliahan</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-primary">
+                            Perkuliahan
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Kelola presensi, materi, dan nilai perkuliahan
+                        </p>
                     </div>
                     {kelas.length > 1 && (
                         <div className="flex items-center gap-2">
                             <Label>Kelas:</Label>
-                            <Select value={selectedKelasId || ''} onValueChange={handleKelasChange}>
+                            <Select
+                                value={selectedKelasId || ''}
+                                onValueChange={handleKelasChange}
+                            >
                                 <SelectTrigger className="w-[250px]">
                                     <SelectValue placeholder="Pilih kelas" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {kelas.map((k) => (
-                                        <SelectItem key={k.id} value={k.id.toString()}>
-                                            {k.nama_kelas} - {k.mata_kuliah?.nama_mk}
+                                        <SelectItem
+                                            key={k.id}
+                                            value={k.id.toString()}
+                                        >
+                                            {k.nama_kelas} -{' '}
+                                            {k.mata_kuliah?.nama_mk}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -234,7 +293,8 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                     )}
                     {kelas.length === 1 && selectedKelasId && (
                         <Badge variant="outline" className="text-sm">
-                            {kelas[0].nama_kelas} - {kelas[0].mata_kuliah?.nama_mk}
+                            {kelas[0].nama_kelas} -{' '}
+                            {kelas[0].mata_kuliah?.nama_mk}
                         </Badge>
                     )}
                 </div>
@@ -265,10 +325,17 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <div>
-                                        <CardTitle>Presensi Mahasiswa</CardTitle>
-                                        <CardDescription>Data kehadiran mahasiswa</CardDescription>
+                                        <CardTitle>
+                                            Presensi Mahasiswa
+                                        </CardTitle>
+                                        <CardDescription>
+                                            Data kehadiran mahasiswa
+                                        </CardDescription>
                                     </div>
-                                    <Dialog open={openPresensi} onOpenChange={setOpenPresensi}>
+                                    <Dialog
+                                        open={openPresensi}
+                                        onOpenChange={setOpenPresensi}
+                                    >
                                         <DialogTrigger asChild>
                                             <Button size="sm">
                                                 <Plus className="mr-2 h-4 w-4" />
@@ -277,55 +344,118 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                         </DialogTrigger>
                                         <DialogContent>
                                             <DialogHeader>
-                                                <DialogTitle>Tambah Presensi</DialogTitle>
-                                                <DialogDescription>Isi data presensi mahasiswa</DialogDescription>
+                                                <DialogTitle>
+                                                    Tambah Presensi
+                                                </DialogTitle>
+                                                <DialogDescription>
+                                                    Isi data presensi mahasiswa
+                                                </DialogDescription>
                                             </DialogHeader>
-                                            <form onSubmit={handlePresensiSubmit} className="space-y-4">
+                                            <form
+                                                onSubmit={handlePresensiSubmit}
+                                                className="space-y-4"
+                                            >
                                                 <div className="space-y-2">
                                                     <Label>Mahasiswa ID</Label>
                                                     <Input
-                                                        value={presensiForm.data.mahasiswa_id}
-                                                        onChange={(e) => presensiForm.setData('mahasiswa_id', e.target.value)}
+                                                        value={
+                                                            presensiForm.data
+                                                                .mahasiswa_id
+                                                        }
+                                                        onChange={(e) =>
+                                                            presensiForm.setData(
+                                                                'mahasiswa_id',
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                         placeholder="ID Mahasiswa"
                                                     />
-                                                    {presensiForm.errors.mahasiswa_id && (
-                                                        <p className="text-sm text-red-500">{presensiForm.errors.mahasiswa_id}</p>
+                                                    {presensiForm.errors
+                                                        .mahasiswa_id && (
+                                                        <p className="text-sm text-red-500">
+                                                            {
+                                                                presensiForm
+                                                                    .errors
+                                                                    .mahasiswa_id
+                                                            }
+                                                        </p>
                                                     )}
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label>Tanggal</Label>
                                                     <Input
                                                         type="date"
-                                                        value={presensiForm.data.tanggal}
-                                                        onChange={(e) => presensiForm.setData('tanggal', e.target.value)}
+                                                        value={
+                                                            presensiForm.data
+                                                                .tanggal
+                                                        }
+                                                        onChange={(e) =>
+                                                            presensiForm.setData(
+                                                                'tanggal',
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label>Status</Label>
                                                     <Select
-                                                        value={presensiForm.data.status}
-                                                        onValueChange={(v) => presensiForm.setData('status', v)}
+                                                        value={
+                                                            presensiForm.data
+                                                                .status
+                                                        }
+                                                        onValueChange={(v) =>
+                                                            presensiForm.setData(
+                                                                'status',
+                                                                v,
+                                                            )
+                                                        }
                                                     >
-                                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                                        <SelectTrigger>
+                                                            <SelectValue />
+                                                        </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="hadir">Hadir</SelectItem>
-                                                            <SelectItem value="izin">Izin</SelectItem>
-                                                            <SelectItem value="sakit">Sakit</SelectItem>
-                                                            <SelectItem value="alpha">Alpha</SelectItem>
+                                                            <SelectItem value="hadir">
+                                                                Hadir
+                                                            </SelectItem>
+                                                            <SelectItem value="izin">
+                                                                Izin
+                                                            </SelectItem>
+                                                            <SelectItem value="sakit">
+                                                                Sakit
+                                                            </SelectItem>
+                                                            <SelectItem value="alpha">
+                                                                Alpha
+                                                            </SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label>Keterangan</Label>
                                                     <Input
-                                                        value={presensiForm.data.keterangan}
-                                                        onChange={(e) => presensiForm.setData('keterangan', e.target.value)}
+                                                        value={
+                                                            presensiForm.data
+                                                                .keterangan
+                                                        }
+                                                        onChange={(e) =>
+                                                            presensiForm.setData(
+                                                                'keterangan',
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                         placeholder="Opsional"
                                                     />
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit" disabled={presensiForm.processing}>
-                                                        {presensiForm.processing ? 'Menyimpan...' : 'Simpan'}
+                                                    <Button
+                                                        type="submit"
+                                                        disabled={
+                                                            presensiForm.processing
+                                                        }
+                                                    >
+                                                        {presensiForm.processing
+                                                            ? 'Menyimpan...'
+                                                            : 'Simpan'}
                                                     </Button>
                                                 </DialogFooter>
                                             </form>
@@ -333,40 +463,79 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                     </Dialog>
                                 </CardHeader>
                                 <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Tanggal</TableHead>
-                                                <TableHead>NIM</TableHead>
-                                                <TableHead>Nama</TableHead>
-                                                <TableHead>Status</TableHead>
-                                                <TableHead>Keterangan</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {presensiList.length === 0 ? (
+                                    <div className="overflow-x-auto">
+                                        <Table>
+                                            <TableHeader>
                                                 <TableRow>
-                                                    <TableCell colSpan={5} className="text-center py-8">
-                                                        Belum ada data presensi
-                                                    </TableCell>
+                                                    <TableHead>
+                                                        Tanggal
+                                                    </TableHead>
+                                                    <TableHead>NIM</TableHead>
+                                                    <TableHead>Nama</TableHead>
+                                                    <TableHead>
+                                                        Status
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        Keterangan
+                                                    </TableHead>
                                                 </TableRow>
-                                            ) : (
-                                                presensiList.map((p) => (
-                                                    <TableRow key={p.id}>
-                                                        <TableCell>{new Date(p.tanggal).toLocaleDateString('id-ID')}</TableCell>
-                                                        <TableCell className="font-mono">{p.mahasiswa?.nim}</TableCell>
-                                                        <TableCell>{p.mahasiswa?.nama}</TableCell>
-                                                        <TableCell>
-                                                            <Badge variant={STATUS_VARIANTS[p.status] || 'outline'}>
-                                                                {p.status}
-                                                            </Badge>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {presensiList.length === 0 ? (
+                                                    <TableRow>
+                                                        <TableCell
+                                                            colSpan={5}
+                                                            className="py-8 text-center"
+                                                        >
+                                                            Belum ada data
+                                                            presensi
                                                         </TableCell>
-                                                        <TableCell>{p.keterangan || '-'}</TableCell>
                                                     </TableRow>
-                                                ))
-                                            )}
-                                        </TableBody>
-                                    </Table>
+                                                ) : (
+                                                    presensiList.map((p) => (
+                                                        <TableRow key={p.id}>
+                                                            <TableCell>
+                                                                {new Date(
+                                                                    p.tanggal,
+                                                                ).toLocaleDateString(
+                                                                    'id-ID',
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell className="font-mono">
+                                                                {
+                                                                    p.mahasiswa
+                                                                        ?.nim
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    p.mahasiswa
+                                                                        ?.nama
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Badge
+                                                                    variant={
+                                                                        STATUS_VARIANTS[
+                                                                            p
+                                                                                .status
+                                                                        ] ||
+                                                                        'outline'
+                                                                    }
+                                                                >
+                                                                    {p.status}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {p.keterangan ||
+                                                                    '-'}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -376,10 +545,17 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <div>
-                                        <CardTitle>Materi Perkuliahan</CardTitle>
-                                        <CardDescription>Materi yang telah diunggah</CardDescription>
+                                        <CardTitle>
+                                            Materi Perkuliahan
+                                        </CardTitle>
+                                        <CardDescription>
+                                            Materi yang telah diunggah
+                                        </CardDescription>
                                     </div>
-                                    <Dialog open={openMateri} onOpenChange={setOpenMateri}>
+                                    <Dialog
+                                        open={openMateri}
+                                        onOpenChange={setOpenMateri}
+                                    >
                                         <DialogTrigger asChild>
                                             <Button size="sm">
                                                 <Plus className="mr-2 h-4 w-4" />
@@ -388,40 +564,85 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                         </DialogTrigger>
                                         <DialogContent>
                                             <DialogHeader>
-                                                <DialogTitle>Tambah Materi</DialogTitle>
-                                                <DialogDescription>Isi data materi perkuliahan</DialogDescription>
+                                                <DialogTitle>
+                                                    Tambah Materi
+                                                </DialogTitle>
+                                                <DialogDescription>
+                                                    Isi data materi perkuliahan
+                                                </DialogDescription>
                                             </DialogHeader>
-                                            <form onSubmit={handleMateriSubmit} className="space-y-4">
+                                            <form
+                                                onSubmit={handleMateriSubmit}
+                                                className="space-y-4"
+                                            >
                                                 <div className="space-y-2">
                                                     <Label>Judul</Label>
                                                     <Input
-                                                        value={materiForm.data.judul}
-                                                        onChange={(e) => materiForm.setData('judul', e.target.value)}
+                                                        value={
+                                                            materiForm.data
+                                                                .judul
+                                                        }
+                                                        onChange={(e) =>
+                                                            materiForm.setData(
+                                                                'judul',
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                         placeholder="Judul materi"
                                                     />
-                                                    {materiForm.errors.judul && (
-                                                        <p className="text-sm text-red-500">{materiForm.errors.judul}</p>
+                                                    {materiForm.errors
+                                                        .judul && (
+                                                        <p className="text-sm text-red-500">
+                                                            {
+                                                                materiForm
+                                                                    .errors
+                                                                    .judul
+                                                            }
+                                                        </p>
                                                     )}
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label>Deskripsi</Label>
                                                     <Textarea
-                                                        value={materiForm.data.deskripsi}
-                                                        onChange={(e) => materiForm.setData('deskripsi', e.target.value)}
+                                                        value={
+                                                            materiForm.data
+                                                                .deskripsi
+                                                        }
+                                                        onChange={(e) =>
+                                                            materiForm.setData(
+                                                                'deskripsi',
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                         placeholder="Deskripsi materi"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <Label>File Path</Label>
                                                     <Input
-                                                        value={materiForm.data.file_path}
-                                                        onChange={(e) => materiForm.setData('file_path', e.target.value)}
+                                                        value={
+                                                            materiForm.data
+                                                                .file_path
+                                                        }
+                                                        onChange={(e) =>
+                                                            materiForm.setData(
+                                                                'file_path',
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                         placeholder="Path file (opsional)"
                                                     />
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button type="submit" disabled={materiForm.processing}>
-                                                        {materiForm.processing ? 'Menyimpan...' : 'Simpan'}
+                                                    <Button
+                                                        type="submit"
+                                                        disabled={
+                                                            materiForm.processing
+                                                        }
+                                                    >
+                                                        {materiForm.processing
+                                                            ? 'Menyimpan...'
+                                                            : 'Simpan'}
                                                     </Button>
                                                 </DialogFooter>
                                             </form>
@@ -429,44 +650,74 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                     </Dialog>
                                 </CardHeader>
                                 <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Judul</TableHead>
-                                                <TableHead>Deskripsi</TableHead>
-                                                <TableHead>File</TableHead>
-                                                <TableHead>Tanggal</TableHead>
-                                                <TableHead className="text-right">Aksi</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {materiList.length === 0 ? (
+                                    <div className="overflow-x-auto">
+                                        <Table>
+                                            <TableHeader>
                                                 <TableRow>
-                                                    <TableCell colSpan={5} className="text-center py-8">
-                                                        Belum ada data materi
-                                                    </TableCell>
+                                                    <TableHead>Judul</TableHead>
+                                                    <TableHead>
+                                                        Deskripsi
+                                                    </TableHead>
+                                                    <TableHead>File</TableHead>
+                                                    <TableHead>
+                                                        Tanggal
+                                                    </TableHead>
+                                                    <TableHead className="text-right">
+                                                        Aksi
+                                                    </TableHead>
                                                 </TableRow>
-                                            ) : (
-                                                materiList.map((m) => (
-                                                    <TableRow key={m.id}>
-                                                        <TableCell className="font-medium">{m.judul}</TableCell>
-                                                        <TableCell>{m.deskripsi || '-'}</TableCell>
-                                                        <TableCell>{m.file_path || '-'}</TableCell>
-                                                        <TableCell>{new Date(m.created_at).toLocaleDateString('id-ID')}</TableCell>
-                                                        <TableCell className="text-right">
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                onClick={() => handleDeleteMateri(m.id)}
-                                                            >
-                                                                <Trash2 className="h-4 w-4 text-red-500" />
-                                                            </Button>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {materiList.length === 0 ? (
+                                                    <TableRow>
+                                                        <TableCell
+                                                            colSpan={5}
+                                                            className="py-8 text-center"
+                                                        >
+                                                            Belum ada data
+                                                            materi
                                                         </TableCell>
                                                     </TableRow>
-                                                ))
-                                            )}
-                                        </TableBody>
-                                    </Table>
+                                                ) : (
+                                                    materiList.map((m) => (
+                                                        <TableRow key={m.id}>
+                                                            <TableCell className="font-medium">
+                                                                {m.judul}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {m.deskripsi ||
+                                                                    '-'}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {m.file_path ||
+                                                                    '-'}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {new Date(
+                                                                    m.created_at,
+                                                                ).toLocaleDateString(
+                                                                    'id-ID',
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell className="text-right">
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    onClick={() =>
+                                                                        handleDeleteMateri(
+                                                                            m.id,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                                </Button>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -477,17 +728,30 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                 <CardHeader className="flex flex-row items-start justify-between gap-4">
                                     <div>
                                         <CardTitle>Input Nilai</CardTitle>
-                                        <CardDescription>Nilai mahasiswa yang telah disetujui KRS-nya</CardDescription>
+                                        <CardDescription>
+                                            Nilai mahasiswa yang telah disetujui
+                                            KRS-nya
+                                        </CardDescription>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <form onSubmit={handleSearch} className="flex items-center gap-2">
+                                        <form
+                                            onSubmit={handleSearch}
+                                            className="flex items-center gap-2"
+                                        >
                                             <Input
                                                 placeholder="Cari NIM/nama..."
                                                 value={search}
-                                                onChange={(e) => setSearch(e.target.value)}
+                                                onChange={(e) =>
+                                                    setSearch(e.target.value)
+                                                }
                                                 className="h-9 w-48"
                                             />
-                                            <Button type="submit" variant="outline" size="icon" className="h-9 w-9">
+                                            <Button
+                                                type="submit"
+                                                variant="outline"
+                                                size="icon"
+                                                className="h-9 w-9"
+                                            >
                                                 <Search className="h-4 w-4" />
                                             </Button>
                                         </form>
@@ -495,7 +759,9 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => (window.location.href = `/dosen/perkuliahan/${selectedKelasId}/export-mahasiswa`)}
+                                                onClick={() =>
+                                                    (window.location.href = `/dosen/perkuliahan/${selectedKelasId}/export-mahasiswa`)
+                                                }
                                             >
                                                 <Download className="mr-2 h-4 w-4" />
                                                 Export
@@ -504,103 +770,248 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                     </div>
                                 </CardHeader>
                                 <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>NIM</TableHead>
-                                                <TableHead>Nama</TableHead>
-                                                <TableHead>Nilai Huruf</TableHead>
-                                                <TableHead>Nilai Angka</TableHead>
-                                                <TableHead>Status</TableHead>
-                                                <TableHead className="text-right">Aksi</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {krss.length === 0 ? (
+                                    <div className="overflow-x-auto">
+                                        <Table>
+                                            <TableHeader>
                                                 <TableRow>
-                                                    <TableCell colSpan={6} className="text-center py-8">
-                                                        Belum ada data nilai
-                                                    </TableCell>
+                                                    <TableHead>NIM</TableHead>
+                                                    <TableHead>Nama</TableHead>
+                                                    <TableHead>
+                                                        Nilai Huruf
+                                                    </TableHead>
+                                                    <TableHead className="text-right">
+                                                        Nilai Angka
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        Status
+                                                    </TableHead>
+                                                    <TableHead className="text-right">
+                                                        Aksi
+                                                    </TableHead>
                                                 </TableRow>
-                                            ) : (
-                                                krss.map((krs) => (
-                                                    <TableRow key={krs.id}>
-                                                        <TableCell className="font-mono">{krs.mahasiswa?.nim}</TableCell>
-                                                        <TableCell>{krs.mahasiswa?.nama}</TableCell>
-                                                        <TableCell className="font-medium">{krs.nilai || '-'}</TableCell>
-                                                        <TableCell>{krs.nilai_angka ?? '-'}</TableCell>
-                                                        <TableCell>
-                                                            <Badge variant={krs.status === 'selesai' ? 'default' : 'secondary'}>
-                                                                {krs.status === 'selesai' ? 'Selesai' : 'Proses'}
-                                                            </Badge>
-                                                        </TableCell>
-                                                        <TableCell className="text-right">
-                                                            <Dialog
-                                                                open={editingKrs?.id === krs.id}
-                                                                onOpenChange={(open) => !open && setEditingKrs(null)}
-                                                            >
-                                                                <DialogTrigger asChild>
-                                                                    <Button variant="ghost" size="icon" onClick={() => handleEditNilai(krs)}>
-                                                                        <PenLine className="h-4 w-4" />
-                                                                    </Button>
-                                                                </DialogTrigger>
-                                                                <DialogContent>
-                                                                    <DialogHeader>
-                                                                        <DialogTitle>Input Nilai</DialogTitle>
-                                                                        <DialogDescription>
-                                                                            Input nilai untuk {krs.mahasiswa?.nama}
-                                                                        </DialogDescription>
-                                                                    </DialogHeader>
-                                                                    <form onSubmit={handleNilaiSubmit} className="space-y-4">
-                                                                        <div className="space-y-2">
-                                                                            <Label>Nilai Huruf</Label>
-                                                                            <Select
-                                                                                value={nilaiForm.data.nilai}
-                                                                                onValueChange={(v) => nilaiForm.setData('nilai', v)}
-                                                                            >
-                                                                                <SelectTrigger><SelectValue placeholder="Pilih nilai" /></SelectTrigger>
-                                                                                <SelectContent>
-                                                                                    <SelectItem value="A">A</SelectItem>
-                                                                                    <SelectItem value="B+">B+</SelectItem>
-                                                                                    <SelectItem value="B">B</SelectItem>
-                                                                                    <SelectItem value="C+">C+</SelectItem>
-                                                                                    <SelectItem value="C">C</SelectItem>
-                                                                                    <SelectItem value="D">D</SelectItem>
-                                                                                    <SelectItem value="E">E</SelectItem>
-                                                                                </SelectContent>
-                                                                            </Select>
-                                                                            {nilaiForm.errors.nilai && (
-                                                                                <p className="text-sm text-red-500">{nilaiForm.errors.nilai}</p>
-                                                                            )}
-                                                                        </div>
-                                                                        <div className="space-y-2">
-                                                                            <Label>Nilai Angka</Label>
-                                                                            <Input
-                                                                                type="number"
-                                                                                step="0.01"
-                                                                                min="0"
-                                                                                max="4"
-                                                                                value={nilaiForm.data.nilai_angka}
-                                                                                onChange={(e) => nilaiForm.setData('nilai_angka', e.target.value)}
-                                                                            />
-                                                                            {nilaiForm.errors.nilai_angka && (
-                                                                                <p className="text-sm text-red-500">{nilaiForm.errors.nilai_angka}</p>
-                                                                            )}
-                                                                        </div>
-                                                                        <DialogFooter>
-                                                                            <Button type="submit" disabled={nilaiForm.processing}>
-                                                                                {nilaiForm.processing ? 'Menyimpan...' : 'Simpan'}
-                                                                            </Button>
-                                                                        </DialogFooter>
-                                                                    </form>
-                                                                </DialogContent>
-                                                            </Dialog>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {krss.length === 0 ? (
+                                                    <TableRow>
+                                                        <TableCell
+                                                            colSpan={6}
+                                                            className="py-8 text-center"
+                                                        >
+                                                            Belum ada data nilai
                                                         </TableCell>
                                                     </TableRow>
-                                                ))
-                                            )}
-                                        </TableBody>
-                                    </Table>
+                                                ) : (
+                                                    krss.map((krs) => (
+                                                        <TableRow key={krs.id}>
+                                                            <TableCell className="font-mono">
+                                                                {
+                                                                    krs
+                                                                        .mahasiswa
+                                                                        ?.nim
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    krs
+                                                                        .mahasiswa
+                                                                        ?.nama
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell className="font-medium">
+                                                                {krs.nilai ||
+                                                                    '-'}
+                                                            </TableCell>
+                                                            <TableCell className="text-right tabular-nums">
+                                                                {krs.nilai_angka ??
+                                                                    '-'}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Badge
+                                                                    variant={
+                                                                        krs.status ===
+                                                                        'selesai'
+                                                                            ? 'default'
+                                                                            : 'secondary'
+                                                                    }
+                                                                >
+                                                                    {krs.status ===
+                                                                    'selesai'
+                                                                        ? 'Selesai'
+                                                                        : 'Proses'}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell className="text-right">
+                                                                <Dialog
+                                                                    open={
+                                                                        editingKrs?.id ===
+                                                                        krs.id
+                                                                    }
+                                                                    onOpenChange={(
+                                                                        open,
+                                                                    ) =>
+                                                                        !open &&
+                                                                        setEditingKrs(
+                                                                            null,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <DialogTrigger
+                                                                        asChild
+                                                                    >
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="icon"
+                                                                            onClick={() =>
+                                                                                handleEditNilai(
+                                                                                    krs,
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <PenLine className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </DialogTrigger>
+                                                                    <DialogContent>
+                                                                        <DialogHeader>
+                                                                            <DialogTitle>
+                                                                                Input
+                                                                                Nilai
+                                                                            </DialogTitle>
+                                                                            <DialogDescription>
+                                                                                Input
+                                                                                nilai
+                                                                                untuk{' '}
+                                                                                {
+                                                                                    krs
+                                                                                        .mahasiswa
+                                                                                        ?.nama
+                                                                                }
+                                                                            </DialogDescription>
+                                                                        </DialogHeader>
+                                                                        <form
+                                                                            onSubmit={
+                                                                                handleNilaiSubmit
+                                                                            }
+                                                                            className="space-y-4"
+                                                                        >
+                                                                            <div className="space-y-2">
+                                                                                <Label>
+                                                                                    Nilai
+                                                                                    Huruf
+                                                                                </Label>
+                                                                                <Select
+                                                                                    value={
+                                                                                        nilaiForm
+                                                                                            .data
+                                                                                            .nilai
+                                                                                    }
+                                                                                    onValueChange={(
+                                                                                        v,
+                                                                                    ) =>
+                                                                                        nilaiForm.setData(
+                                                                                            'nilai',
+                                                                                            v,
+                                                                                        )
+                                                                                    }
+                                                                                >
+                                                                                    <SelectTrigger>
+                                                                                        <SelectValue placeholder="Pilih nilai" />
+                                                                                    </SelectTrigger>
+                                                                                    <SelectContent>
+                                                                                        <SelectItem value="A">
+                                                                                            A
+                                                                                        </SelectItem>
+                                                                                        <SelectItem value="B+">
+                                                                                            B+
+                                                                                        </SelectItem>
+                                                                                        <SelectItem value="B">
+                                                                                            B
+                                                                                        </SelectItem>
+                                                                                        <SelectItem value="C+">
+                                                                                            C+
+                                                                                        </SelectItem>
+                                                                                        <SelectItem value="C">
+                                                                                            C
+                                                                                        </SelectItem>
+                                                                                        <SelectItem value="D">
+                                                                                            D
+                                                                                        </SelectItem>
+                                                                                        <SelectItem value="E">
+                                                                                            E
+                                                                                        </SelectItem>
+                                                                                    </SelectContent>
+                                                                                </Select>
+                                                                                {nilaiForm
+                                                                                    .errors
+                                                                                    .nilai && (
+                                                                                    <p className="text-sm text-red-500">
+                                                                                        {
+                                                                                            nilaiForm
+                                                                                                .errors
+                                                                                                .nilai
+                                                                                        }
+                                                                                    </p>
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="space-y-2">
+                                                                                <Label>
+                                                                                    Nilai
+                                                                                    Angka
+                                                                                </Label>
+                                                                                <Input
+                                                                                    type="number"
+                                                                                    step="0.01"
+                                                                                    min="0"
+                                                                                    max="4"
+                                                                                    value={
+                                                                                        nilaiForm
+                                                                                            .data
+                                                                                            .nilai_angka
+                                                                                    }
+                                                                                    onChange={(
+                                                                                        e,
+                                                                                    ) =>
+                                                                                        nilaiForm.setData(
+                                                                                            'nilai_angka',
+                                                                                            e
+                                                                                                .target
+                                                                                                .value,
+                                                                                        )
+                                                                                    }
+                                                                                />
+                                                                                {nilaiForm
+                                                                                    .errors
+                                                                                    .nilai_angka && (
+                                                                                    <p className="text-sm text-red-500">
+                                                                                        {
+                                                                                            nilaiForm
+                                                                                                .errors
+                                                                                                .nilai_angka
+                                                                                        }
+                                                                                    </p>
+                                                                                )}
+                                                                            </div>
+                                                                            <DialogFooter>
+                                                                                <Button
+                                                                                    type="submit"
+                                                                                    disabled={
+                                                                                        nilaiForm.processing
+                                                                                    }
+                                                                                >
+                                                                                    {nilaiForm.processing
+                                                                                        ? 'Menyimpan...'
+                                                                                        : 'Simpan'}
+                                                                                </Button>
+                                                                            </DialogFooter>
+                                                                        </form>
+                                                                    </DialogContent>
+                                                                </Dialog>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -609,22 +1020,43 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                         <TabsContent value="rps">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Rencana Pembelajaran Semester (RPS)</CardTitle>
-                                    <CardDescription>Unggah dokumen RPS untuk kelas ini — akan ditinjau oleh admin</CardDescription>
+                                    <CardTitle>
+                                        Rencana Pembelajaran Semester (RPS)
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Unggah dokumen RPS untuk kelas ini —
+                                        akan ditinjau oleh admin
+                                    </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-sm text-muted-foreground">Status:</span>
-                                        <Badge variant={RPS_STATUS_VARIANTS[rps?.status || 'belum_upload']}>
-                                            {RPS_STATUS_LABELS[rps?.status || 'belum_upload']}
+                                        <span className="text-sm text-muted-foreground">
+                                            Status:
+                                        </span>
+                                        <Badge
+                                            variant={
+                                                RPS_STATUS_VARIANTS[
+                                                    rps?.status ||
+                                                        'belum_upload'
+                                                ]
+                                            }
+                                        >
+                                            {
+                                                RPS_STATUS_LABELS[
+                                                    rps?.status ||
+                                                        'belum_upload'
+                                                ]
+                                            }
                                         </Badge>
                                     </div>
 
-                                    {rps?.status === 'perlu_revisi' && rps.catatan && (
-                                        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-                                            <strong>Catatan revisi:</strong> {rps.catatan}
-                                        </div>
-                                    )}
+                                    {rps?.status === 'perlu_revisi' &&
+                                        rps.catatan && (
+                                            <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                                                <strong>Catatan revisi:</strong>{' '}
+                                                {rps.catatan}
+                                            </div>
+                                        )}
 
                                     {rps?.file_path && (
                                         <a
@@ -638,18 +1070,38 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
                                         </a>
                                     )}
 
-                                    <form onSubmit={handleUploadRps} className="flex items-center gap-3">
+                                    <form
+                                        onSubmit={handleUploadRps}
+                                        className="flex items-center gap-3"
+                                    >
                                         <Input
                                             type="file"
                                             accept=".pdf,.doc,.docx"
-                                            onChange={(e) => rpsForm.setData('file', e.target.files?.[0] || null)}
+                                            onChange={(e) =>
+                                                rpsForm.setData(
+                                                    'file',
+                                                    e.target.files?.[0] || null,
+                                                )
+                                            }
                                         />
-                                        <Button type="submit" disabled={rpsForm.processing || !rpsForm.data.file}>
+                                        <Button
+                                            type="submit"
+                                            disabled={
+                                                rpsForm.processing ||
+                                                !rpsForm.data.file
+                                            }
+                                        >
                                             <Upload className="mr-2 h-4 w-4" />
-                                            {rpsForm.processing ? 'Mengunggah...' : 'Unggah'}
+                                            {rpsForm.processing
+                                                ? 'Mengunggah...'
+                                                : 'Unggah'}
                                         </Button>
                                     </form>
-                                    {rpsForm.errors.file && <p className="text-sm text-destructive">{rpsForm.errors.file}</p>}
+                                    {rpsForm.errors.file && (
+                                        <p className="text-sm text-destructive">
+                                            {rpsForm.errors.file}
+                                        </p>
+                                    )}
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -661,8 +1113,12 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps,
 }
 
 PerkuliahanIndex.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Perkuliahan', href: '/dosen/perkuliahan' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Perkuliahan', href: '/dosen/perkuliahan' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

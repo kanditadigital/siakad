@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { BookMarked, Users, GraduationCap, FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type Dosen = {
     nama: string;
@@ -43,7 +43,12 @@ type Props = {
     materi_terbaru?: Materi[];
 };
 
-export default function DosenDashboard({ dosen, stats, kelas_diampu, materi_terbaru }: Props) {
+export default function DosenDashboard({
+    dosen,
+    stats,
+    kelas_diampu,
+    materi_terbaru,
+}: Props) {
     if (!dosen || !stats) {
         return (
             <>
@@ -85,10 +90,12 @@ export default function DosenDashboard({ dosen, stats, kelas_diampu, materi_terb
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {stats.total_kelas}
                             </div>
-                            <p className="mt-1 text-xs text-gray-500">{stats.kelas_aktif} aktif</p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {stats.kelas_aktif} aktif
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -102,10 +109,12 @@ export default function DosenDashboard({ dosen, stats, kelas_diampu, materi_terb
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {stats.total_mahasiswa_diampu}
                             </div>
-                            <p className="mt-1 text-xs text-gray-500">lintas seluruh kelas</p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                lintas seluruh kelas
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -119,7 +128,7 @@ export default function DosenDashboard({ dosen, stats, kelas_diampu, materi_terb
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {stats.total_mahasiswa_asuh}
                             </div>
                         </CardContent>
@@ -135,7 +144,7 @@ export default function DosenDashboard({ dosen, stats, kelas_diampu, materi_terb
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {materi_terbaru?.length ?? 0}
                             </div>
                         </CardContent>
@@ -145,20 +154,35 @@ export default function DosenDashboard({ dosen, stats, kelas_diampu, materi_terb
                 <div className="grid gap-6 md:grid-cols-2">
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900">Kelas yang Diampu</CardTitle>
+                            <CardTitle className="text-gray-900">
+                                Kelas yang Diampu
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {kelas_diampu && kelas_diampu.length > 0 ? (
                                 <div className="space-y-3">
                                     {kelas_diampu.map((kelas) => (
-                                        <div key={kelas.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
+                                        <div
+                                            key={kelas.id}
+                                            className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                                        >
                                             <div className="space-y-1">
-                                                <p className="text-sm font-medium text-gray-900">{kelas.mata_kuliah?.nama_mk}</p>
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {kelas.mata_kuliah?.nama_mk}
+                                                </p>
                                                 <p className="text-xs text-gray-500">
-                                                    {kelas.nama_kelas} • {kelas.tahun_akademik} - Semester {kelas.semester}
+                                                    {kelas.nama_kelas} •{' '}
+                                                    {kelas.tahun_akademik} -
+                                                    Semester {kelas.semester}
                                                 </p>
                                             </div>
-                                            <Badge variant={kelas.status === 'Aktif' ? 'default' : 'secondary'}>
+                                            <Badge
+                                                variant={
+                                                    kelas.status === 'Aktif'
+                                                        ? 'default'
+                                                        : 'secondary'
+                                                }
+                                            >
                                                 {kelas.status}
                                             </Badge>
                                         </div>
@@ -174,17 +198,29 @@ export default function DosenDashboard({ dosen, stats, kelas_diampu, materi_terb
 
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900">Materi Terbaru</CardTitle>
+                            <CardTitle className="text-gray-900">
+                                Materi Terbaru
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {materi_terbaru && materi_terbaru.length > 0 ? (
                                 <div className="space-y-3">
                                     {materi_terbaru.map((materi) => (
-                                        <div key={materi.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
+                                        <div
+                                            key={materi.id}
+                                            className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                                        >
                                             <div className="space-y-1">
-                                                <p className="text-sm font-medium text-gray-900">{materi.judul}</p>
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {materi.judul}
+                                                </p>
                                                 <p className="text-xs text-gray-500">
-                                                    {materi.kelas?.mata_kuliah?.nama_mk} • {materi.kelas?.nama_kelas}
+                                                    {
+                                                        materi.kelas
+                                                            ?.mata_kuliah
+                                                            ?.nama_mk
+                                                    }{' '}
+                                                    • {materi.kelas?.nama_kelas}
                                                 </p>
                                             </div>
                                         </div>
