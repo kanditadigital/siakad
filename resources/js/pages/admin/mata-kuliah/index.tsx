@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, BookOpen, X } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -124,6 +124,23 @@ export default function MataKuliahIndex({
         router.delete(`/admin/mata-kuliah/${uuid}`);
     };
 
+    const hasActiveFilters = Boolean(
+        filters.search ||
+            filters.status ||
+            filters.program_studi_id ||
+            filters.jenis ||
+            filters.semester,
+    );
+
+    const resetFilters = () => {
+        setSearch('');
+        setStatusFilter('all');
+        setProdiFilter('all');
+        setJenisFilter('all');
+        setSemesterFilter('all');
+        router.get('/admin/mata-kuliah');
+    };
+
     return (
         <>
             <Head title="Data Mata Kuliah" />
@@ -146,7 +163,7 @@ export default function MataKuliahIndex({
                     </Link>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="relative max-w-sm min-w-[200px] flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -159,6 +176,12 @@ export default function MataKuliahIndex({
                             className="pl-9"
                         />
                     </div>
+                    <Button
+                        variant="outline"
+                        onClick={() => applyFilters({ search })}
+                    >
+                        Cari
+                    </Button>
                     <Select
                         value={prodiFilter}
                         onValueChange={(v) =>
@@ -229,6 +252,16 @@ export default function MataKuliahIndex({
                             <SelectItem value="nonaktif">Nonaktif</SelectItem>
                         </SelectContent>
                     </Select>
+                    {hasActiveFilters && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={resetFilters}
+                        >
+                            <X className="mr-1 h-3.5 w-3.5" />
+                            Reset
+                        </Button>
+                    )}
                 </div>
 
                 <div className="rounded-lg border">
@@ -253,9 +286,33 @@ export default function MataKuliahIndex({
                                     <TableRow>
                                         <TableCell
                                             colSpan={8}
-                                            className="py-8 text-center"
+                                            className="py-12 text-center"
                                         >
-                                            Tidak ada data mata kuliah
+                                            <div className="flex flex-col items-center gap-2">
+                                                <BookOpen className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-foreground">
+                                                    {hasActiveFilters
+                                                        ? 'Tidak ada mata kuliah yang cocok'
+                                                        : 'Belum ada data mata kuliah'}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {hasActiveFilters
+                                                        ? 'Coba ubah kata kunci atau filter'
+                                                        : 'Mulai dengan menambahkan mata kuliah pertama'}
+                                                </p>
+                                                {!hasActiveFilters && (
+                                                    <Link
+                                                        href="/admin/mata-kuliah/create"
+                                                        className="mt-2"
+                                                    >
+                                                        <Button size="sm">
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Tambah Mata
+                                                            Kuliah
+                                                        </Button>
+                                                    </Link>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (

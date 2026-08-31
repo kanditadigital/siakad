@@ -38,6 +38,10 @@ const STATUS_OPTIONS = [
     { value: 'nonaktif', label: 'Nonaktif' },
 ];
 
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
+
 export default function MataKuliahCreate({ programStudis }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         kode_mk: '',
@@ -88,8 +92,8 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="kode_mk">
-                                        Kode Mata Kuliah{' '}
-                                        <span className="text-red-500">*</span>
+                                        Kode Mata Kuliah
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="kode_mk"
@@ -98,22 +102,18 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                             setData('kode_mk', e.target.value)
                                         }
                                         placeholder="MK001"
-                                        className={
-                                            errors.kode_mk
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
+                                        aria-invalid={!!errors.kode_mk}
                                     />
                                     {errors.kode_mk && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.kode_mk}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="nama_mk">
-                                        Nama Mata Kuliah{' '}
-                                        <span className="text-red-500">*</span>
+                                        Nama Mata Kuliah
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nama_mk"
@@ -122,22 +122,18 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                             setData('nama_mk', e.target.value)
                                         }
                                         placeholder="Pemrograman Web"
-                                        className={
-                                            errors.nama_mk
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
+                                        aria-invalid={!!errors.nama_mk}
                                     />
                                     {errors.nama_mk && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nama_mk}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="program_studi_id">
-                                        Program Studi{' '}
-                                        <span className="text-red-500">*</span>
+                                        Program Studi
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.program_studi_id}
@@ -146,10 +142,9 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.program_studi_id
-                                                    ? 'border-red-500'
-                                                    : ''
+                                            id="program_studi_id"
+                                            aria-invalid={
+                                                !!errors.program_studi_id
                                             }
                                         >
                                             <SelectValue placeholder="Pilih Program Studi" />
@@ -166,15 +161,15 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.program_studi_id && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.program_studi_id}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="jenis">
-                                        Jenis{' '}
-                                        <span className="text-red-500">*</span>
+                                        Jenis
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.jenis}
@@ -183,11 +178,8 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.jenis
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }
+                                            id="jenis"
+                                            aria-invalid={!!errors.jenis}
                                         >
                                             <SelectValue placeholder="Pilih Jenis" />
                                         </SelectTrigger>
@@ -203,7 +195,7 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.jenis && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.jenis}
                                         </p>
                                     )}
@@ -222,8 +214,8 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="sks">
-                                        SKS{' '}
-                                        <span className="text-red-500">*</span>
+                                        SKS
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="sks"
@@ -235,20 +227,18 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                             setData('sks', e.target.value)
                                         }
                                         placeholder="3"
-                                        className={
-                                            errors.sks ? 'border-red-500' : ''
-                                        }
+                                        aria-invalid={!!errors.sks}
                                     />
                                     {errors.sks && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.sks}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="semester">
-                                        Semester{' '}
-                                        <span className="text-red-500">*</span>
+                                        Semester
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.semester}
@@ -257,11 +247,8 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.semester
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }
+                                            id="semester"
+                                            aria-invalid={!!errors.semester}
                                         >
                                             <SelectValue placeholder="Pilih Semester" />
                                         </SelectTrigger>
@@ -280,15 +267,15 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.semester && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.semester}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="status">
-                                        Status{' '}
-                                        <span className="text-red-500">*</span>
+                                        Status
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.status}
@@ -297,11 +284,8 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.status
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }
+                                            id="status"
+                                            aria-invalid={!!errors.status}
                                         >
                                             <SelectValue placeholder="Pilih Status" />
                                         </SelectTrigger>
@@ -317,7 +301,7 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.status && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.status}
                                         </p>
                                     )}
@@ -327,15 +311,17 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-4">
-                        <Button type="submit" disabled={processing}>
-                            {processing ? 'Menyimpan...' : 'Simpan'}
-                        </Button>
+                    <div className="flex items-center justify-end gap-3">
                         <Link href="/admin/mata-kuliah">
                             <Button type="button" variant="outline">
                                 Batal
                             </Button>
                         </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing
+                                ? 'Menyimpan...'
+                                : 'Simpan Mata Kuliah'}
+                        </Button>
                     </div>
                 </form>
             </div>

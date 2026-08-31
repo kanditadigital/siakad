@@ -51,6 +51,10 @@ const STATUS_OPTIONS = [
     { value: 'nonaktif', label: 'Nonaktif' },
 ];
 
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
+
 export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
     const { data, setData, put, processing, errors } = useForm({
         kode_mk: mataKuliah.kode_mk,
@@ -70,6 +74,7 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
     return (
         <>
             <Head title={`Edit Mata Kuliah - ${mataKuliah.nama_mk}`} />
+
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
                     <Link href="/admin/mata-kuliah">
@@ -87,19 +92,21 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                     </div>
                 </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Form Edit Mata Kuliah</CardTitle>
-                        <CardDescription>
-                            Perbarui data mata kuliah
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {/* Informasi Mata Kuliah */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Informasi Mata Kuliah</CardTitle>
+                                <CardDescription>
+                                    Data identitas mata kuliah
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="kode_mk">
                                         Kode Mata Kuliah
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="kode_mk"
@@ -108,21 +115,38 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                             setData('kode_mk', e.target.value)
                                         }
                                         placeholder="MK001"
-                                        className={
-                                            errors.kode_mk
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
+                                        aria-invalid={!!errors.kode_mk}
                                     />
                                     {errors.kode_mk && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.kode_mk}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="nama_mk">
+                                        Nama Mata Kuliah
+                                        <Required />
+                                    </Label>
+                                    <Input
+                                        id="nama_mk"
+                                        value={data.nama_mk}
+                                        onChange={(e) =>
+                                            setData('nama_mk', e.target.value)
+                                        }
+                                        placeholder="Pemrograman Web"
+                                        aria-invalid={!!errors.nama_mk}
+                                    />
+                                    {errors.nama_mk && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.nama_mk}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="program_studi_id">
                                         Program Studi
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.program_studi_id}
@@ -131,10 +155,9 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.program_studi_id
-                                                    ? 'border-red-500'
-                                                    : ''
+                                            id="program_studi_id"
+                                            aria-invalid={
+                                                !!errors.program_studi_id
                                             }
                                         >
                                             <SelectValue placeholder="Pilih Program Studi" />
@@ -151,38 +174,16 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.program_studi_id && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.program_studi_id}
                                         </p>
                                     )}
                                 </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="nama_mk">
-                                    Nama Mata Kuliah
-                                </Label>
-                                <Input
-                                    id="nama_mk"
-                                    value={data.nama_mk}
-                                    onChange={(e) =>
-                                        setData('nama_mk', e.target.value)
-                                    }
-                                    placeholder="Pemrograman Web"
-                                    className={
-                                        errors.nama_mk ? 'border-red-500' : ''
-                                    }
-                                />
-                                {errors.nama_mk && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.nama_mk}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div className="space-y-2">
-                                    <Label htmlFor="jenis">Jenis</Label>
+                                    <Label htmlFor="jenis">
+                                        Jenis
+                                        <Required />
+                                    </Label>
                                     <Select
                                         value={data.jenis}
                                         onValueChange={(v) =>
@@ -190,11 +191,8 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.jenis
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }
+                                            id="jenis"
+                                            aria-invalid={!!errors.jenis}
                                         >
                                             <SelectValue placeholder="Pilih Jenis" />
                                         </SelectTrigger>
@@ -210,13 +208,28 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.jenis && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.jenis}
                                         </p>
                                     )}
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Detail */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Detail</CardTitle>
+                                <CardDescription>
+                                    Informasi SKS, semester, dan status
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="sks">SKS</Label>
+                                    <Label htmlFor="sks">
+                                        SKS
+                                        <Required />
+                                    </Label>
                                     <Input
                                         id="sks"
                                         type="number"
@@ -227,18 +240,19 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                             setData('sks', e.target.value)
                                         }
                                         placeholder="3"
-                                        className={
-                                            errors.sks ? 'border-red-500' : ''
-                                        }
+                                        aria-invalid={!!errors.sks}
                                     />
                                     {errors.sks && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.sks}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="semester">Semester</Label>
+                                    <Label htmlFor="semester">
+                                        Semester
+                                        <Required />
+                                    </Label>
                                     <Select
                                         value={data.semester}
                                         onValueChange={(v) =>
@@ -246,13 +260,10 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.semester
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }
+                                            id="semester"
+                                            aria-invalid={!!errors.semester}
                                         >
-                                            <SelectValue placeholder="Pilih" />
+                                            <SelectValue placeholder="Pilih Semester" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {Array.from(
@@ -269,59 +280,60 @@ export default function MataKuliahEdit({ mataKuliah, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.semester && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.semester}
                                         </p>
                                     )}
                                 </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="status">Status</Label>
-                                <Select
-                                    value={data.status}
-                                    onValueChange={(v) => setData('status', v)}
-                                >
-                                    <SelectTrigger
-                                        className={
-                                            errors.status
-                                                ? 'border-red-500'
-                                                : ''
+                                <div className="space-y-2">
+                                    <Label htmlFor="status">
+                                        Status
+                                        <Required />
+                                    </Label>
+                                    <Select
+                                        value={data.status}
+                                        onValueChange={(v) =>
+                                            setData('status', v)
                                         }
                                     >
-                                        <SelectValue placeholder="Pilih Status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {STATUS_OPTIONS.map((s) => (
-                                            <SelectItem
-                                                key={s.value}
-                                                value={s.value}
-                                            >
-                                                {s.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {errors.status && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.status}
-                                    </p>
-                                )}
-                            </div>
+                                        <SelectTrigger
+                                            id="status"
+                                            aria-invalid={!!errors.status}
+                                        >
+                                            <SelectValue placeholder="Pilih Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {STATUS_OPTIONS.map((s) => (
+                                                <SelectItem
+                                                    key={s.value}
+                                                    value={s.value}
+                                                >
+                                                    {s.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.status && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.status}
+                                        </p>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
 
-                            <div className="flex items-center gap-4 pt-4">
-                                <Button type="submit" disabled={processing}>
-                                    {processing ? 'Menyimpan...' : 'Simpan'}
-                                </Button>
-                                <Link href="/admin/mata-kuliah">
-                                    <Button type="button" variant="outline">
-                                        Batal
-                                    </Button>
-                                </Link>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                    <div className="flex items-center justify-end gap-3">
+                        <Link href="/admin/mata-kuliah">
+                            <Button type="button" variant="outline">
+                                Batal
+                            </Button>
+                        </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                        </Button>
+                    </div>
+                </form>
             </div>
         </>
     );
