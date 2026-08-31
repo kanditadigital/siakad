@@ -1,4 +1,4 @@
-import { Head, Link, useForm, router } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,10 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
+
 export default function DataAkademikCreate() {
     const { data, setData, post, processing, errors } = useForm({
         nama_tahun_akademik: '',
@@ -32,11 +36,7 @@ export default function DataAkademikCreate() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/admin/data-akademik', {
-            onSuccess: () => {
-                router.visit('/admin/data-akademik');
-            },
-        });
+        post('/admin/data-akademik');
     };
 
     return (
@@ -55,26 +55,26 @@ export default function DataAkademikCreate() {
                             Tambah Tahun Akademik
                         </h1>
                         <p className="text-muted-foreground">
-                            Tambahkan tahun akademik baru
+                            Isi form berikut untuk menambahkan tahun akademik
+                            baru
                         </p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        {/* Informasi Umum */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Informasi Umum</CardTitle>
-                                <CardDescription>
-                                    Data identitas tahun akademik
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Informasi Umum</CardTitle>
+                            <CardDescription>
+                                Data identitas tahun akademik
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="nama_tahun_akademik">
-                                        Tahun Akademik{' '}
-                                        <span className="text-red-500">*</span>
+                                        Tahun Akademik
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nama_tahun_akademik"
@@ -86,22 +86,21 @@ export default function DataAkademikCreate() {
                                                 e.target.value,
                                             )
                                         }
-                                        className={
-                                            errors.nama_tahun_akademik
-                                                ? 'border-red-500'
-                                                : ''
+                                        aria-invalid={
+                                            !!errors.nama_tahun_akademik
                                         }
                                     />
                                     {errors.nama_tahun_akademik && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nama_tahun_akademik}
                                         </p>
                                     )}
                                 </div>
+
                                 <div className="space-y-2">
                                     <Label htmlFor="semester">
-                                        Semester{' '}
-                                        <span className="text-red-500">*</span>
+                                        Semester
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.semester}
@@ -110,11 +109,8 @@ export default function DataAkademikCreate() {
                                         }
                                     >
                                         <SelectTrigger
-                                            className={
-                                                errors.semester
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }
+                                            id="semester"
+                                            aria-invalid={!!errors.semester}
                                         >
                                             <SelectValue placeholder="Pilih Semester" />
                                         </SelectTrigger>
@@ -131,65 +127,64 @@ export default function DataAkademikCreate() {
                                         </SelectContent>
                                     </Select>
                                     {errors.semester && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.semester}
                                         </p>
                                     )}
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="status">
-                                        Status{' '}
-                                        <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Select
-                                        value={data.status}
-                                        onValueChange={(value) =>
-                                            setData('status', value)
-                                        }
-                                    >
-                                        <SelectTrigger
-                                            className={
-                                                errors.status
-                                                    ? 'border-red-500'
-                                                    : ''
-                                            }
-                                        >
-                                            <SelectValue placeholder="Pilih Status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="aktif">
-                                                Aktif
-                                            </SelectItem>
-                                            <SelectItem value="nonaktif">
-                                                Nonaktif
-                                            </SelectItem>
-                                            <SelectItem value="arsip">
-                                                Arsip
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.status && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.status}
-                                        </p>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
+                            </div>
 
-                        {/* Jadwal */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Jadwal</CardTitle>
-                                <CardDescription>
-                                    Periode waktu tahun akademik
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="status">
+                                    Status
+                                    <Required />
+                                </Label>
+                                <Select
+                                    value={data.status}
+                                    onValueChange={(value) =>
+                                        setData('status', value)
+                                    }
+                                >
+                                    <SelectTrigger
+                                        id="status"
+                                        aria-invalid={!!errors.status}
+                                    >
+                                        <SelectValue placeholder="Pilih Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="aktif">
+                                            Aktif
+                                        </SelectItem>
+                                        <SelectItem value="nonaktif">
+                                            Nonaktif
+                                        </SelectItem>
+                                        <SelectItem value="arsip">
+                                            Arsip
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {errors.status && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.status}
+                                    </p>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Jadwal</CardTitle>
+                            <CardDescription>
+                                Periode waktu tahun akademik
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_mulai">
-                                        Tanggal Mulai{' '}
-                                        <span className="text-red-500">*</span>
+                                        Tanggal Mulai
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="tanggal_mulai"
@@ -201,22 +196,19 @@ export default function DataAkademikCreate() {
                                                 e.target.value,
                                             )
                                         }
-                                        className={
-                                            errors.tanggal_mulai
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
+                                        aria-invalid={!!errors.tanggal_mulai}
                                     />
                                     {errors.tanggal_mulai && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.tanggal_mulai}
                                         </p>
                                     )}
                                 </div>
+
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_selesai">
-                                        Tanggal Selesai{' '}
-                                        <span className="text-red-500">*</span>
+                                        Tanggal Selesai
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="tanggal_selesai"
@@ -228,18 +220,19 @@ export default function DataAkademikCreate() {
                                                 e.target.value,
                                             )
                                         }
-                                        className={
-                                            errors.tanggal_selesai
-                                                ? 'border-red-500'
-                                                : ''
+                                        aria-invalid={
+                                            !!errors.tanggal_selesai
                                         }
                                     />
                                     {errors.tanggal_selesai && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.tanggal_selesai}
                                         </p>
                                     )}
                                 </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="periode_krs">
                                         Periode KRS
@@ -254,8 +247,15 @@ export default function DataAkademikCreate() {
                                                 e.target.value,
                                             )
                                         }
+                                        aria-invalid={!!errors.periode_krs}
                                     />
+                                    {errors.periode_krs && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.periode_krs}
+                                        </p>
+                                    )}
                                 </div>
+
                                 <div className="space-y-2">
                                     <Label htmlFor="periode_input_nilai">
                                         Periode Input Nilai
@@ -270,22 +270,29 @@ export default function DataAkademikCreate() {
                                                 e.target.value,
                                             )
                                         }
+                                        aria-invalid={
+                                            !!errors.periode_input_nilai
+                                        }
                                     />
+                                    {errors.periode_input_nilai && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.periode_input_nilai}
+                                        </p>
+                                    )}
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-4">
-                        <Button type="submit" disabled={processing}>
-                            {processing ? 'Menyimpan...' : 'Simpan'}
-                        </Button>
+                    <div className="flex items-center justify-end gap-3">
                         <Link href="/admin/data-akademik">
                             <Button type="button" variant="outline">
                                 Batal
                             </Button>
                         </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Simpan Tahun Akademik'}
+                        </Button>
                     </div>
                 </form>
             </div>
@@ -298,7 +305,7 @@ DataAkademikCreate.layout = (page: React.ReactNode) => (
         breadcrumbs={[
             { title: 'Dashboard', href: '/dashboard' },
             { title: 'Data Akademik', href: '/admin/data-akademik' },
-            { title: 'Tambah', href: '/admin/data-akademik/create' },
+            { title: 'Tambah', href: '#' },
         ]}
     >
         {page}

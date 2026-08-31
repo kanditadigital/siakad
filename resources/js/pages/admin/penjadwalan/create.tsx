@@ -50,6 +50,10 @@ type Props = {
     academicYearSemesters: AcademicYearSemester[];
 };
 
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
+
 export default function PenjadwalanCreate({
     mataKuliahs,
     dosens,
@@ -89,24 +93,26 @@ export default function PenjadwalanCreate({
                             Tambah Kelas
                         </h1>
                         <p className="text-muted-foreground">
-                            Tambahkan jadwal kelas baru
+                            Isi form berikut untuk menambahkan jadwal kelas
+                            baru
                         </p>
                     </div>
                 </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Form Tambah Kelas</CardTitle>
-                        <CardDescription>
-                            Isi data kelas perkuliahan
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Informasi Kelas</CardTitle>
+                            <CardDescription>
+                                Identitas dan kapasitas kelas
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="kode_kelas">
                                         Kode Kelas
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="kode_kelas"
@@ -118,9 +124,10 @@ export default function PenjadwalanCreate({
                                             )
                                         }
                                         placeholder="KEL001"
+                                        aria-invalid={!!errors.kode_kelas}
                                     />
                                     {errors.kode_kelas && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.kode_kelas}
                                         </p>
                                     )}
@@ -129,6 +136,7 @@ export default function PenjadwalanCreate({
                                 <div className="space-y-2">
                                     <Label htmlFor="nama_kelas">
                                         Nama Kelas
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nama_kelas"
@@ -140,53 +148,148 @@ export default function PenjadwalanCreate({
                                             )
                                         }
                                         placeholder="Kelas A"
+                                        aria-invalid={!!errors.nama_kelas}
                                     />
                                     {errors.nama_kelas && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nama_kelas}
                                         </p>
                                     )}
                                 </div>
+                            </div>
 
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label>Mata Kuliah</Label>
-                                    <Select
-                                        value={data.mata_kuliah_id}
-                                        onValueChange={(v) =>
-                                            setData('mata_kuliah_id', v)
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Pilih Mata Kuliah" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {mataKuliahs.map((mk) => (
-                                                <SelectItem
-                                                    key={mk.id}
-                                                    value={mk.id.toString()}
-                                                >
-                                                    {mk.kode_mk} - {mk.nama_mk}{' '}
-                                                    ({mk.sks} SKS)
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.mata_kuliah_id && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.mata_kuliah_id}
+                                    <Label htmlFor="kapasitas">
+                                        Kapasitas
+                                        <Required />
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="kapasitas"
+                                            type="number"
+                                            min="1"
+                                            max="200"
+                                            value={data.kapasitas}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'kapasitas',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="30"
+                                            aria-invalid={!!errors.kapasitas}
+                                            className="pr-24"
+                                        />
+                                        <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
+                                            Mahasiswa
+                                        </span>
+                                    </div>
+                                    {errors.kapasitas && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.kapasitas}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Dosen</Label>
+                                    <Label htmlFor="status">
+                                        Status
+                                        <Required />
+                                    </Label>
+                                    <Select
+                                        value={data.status}
+                                        onValueChange={(v) =>
+                                            setData('status', v)
+                                        }
+                                    >
+                                        <SelectTrigger
+                                            id="status"
+                                            aria-invalid={!!errors.status}
+                                        >
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Aktif">
+                                                Aktif
+                                            </SelectItem>
+                                            <SelectItem value="Tidak Aktif">
+                                                Tidak Aktif
+                                            </SelectItem>
+                                            <SelectItem value="Selesai">
+                                                Selesai
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.status && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.status}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Jadwal & Pengampu</CardTitle>
+                            <CardDescription>
+                                Mata kuliah, dosen, ruang, dan periode kelas
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            <div className="space-y-2">
+                                <Label htmlFor="mata_kuliah_id">
+                                    Mata Kuliah
+                                    <Required />
+                                </Label>
+                                <Select
+                                    value={data.mata_kuliah_id}
+                                    onValueChange={(v) =>
+                                        setData('mata_kuliah_id', v)
+                                    }
+                                >
+                                    <SelectTrigger
+                                        id="mata_kuliah_id"
+                                        aria-invalid={
+                                            !!errors.mata_kuliah_id
+                                        }
+                                    >
+                                        <SelectValue placeholder="Pilih Mata Kuliah" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {mataKuliahs.map((mk) => (
+                                            <SelectItem
+                                                key={mk.id}
+                                                value={mk.id.toString()}
+                                            >
+                                                {mk.kode_mk} - {mk.nama_mk} (
+                                                {mk.sks} SKS)
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors.mata_kuliah_id && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.mata_kuliah_id}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Label htmlFor="dosen_id">Dosen</Label>
                                     <Select
                                         value={data.dosen_id}
                                         onValueChange={(v) =>
                                             setData('dosen_id', v)
                                         }
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger
+                                            id="dosen_id"
+                                            aria-invalid={!!errors.dosen_id}
+                                        >
                                             <SelectValue placeholder="Pilih Dosen" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -201,21 +304,24 @@ export default function PenjadwalanCreate({
                                         </SelectContent>
                                     </Select>
                                     {errors.dosen_id && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.dosen_id}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Ruang</Label>
+                                    <Label htmlFor="ruang_id">Ruang</Label>
                                     <Select
                                         value={data.ruang_id}
                                         onValueChange={(v) =>
                                             setData('ruang_id', v)
                                         }
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger
+                                            id="ruang_id"
+                                            aria-invalid={!!errors.ruang_id}
+                                        >
                                             <SelectValue placeholder="Pilih Ruang" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -231,39 +337,29 @@ export default function PenjadwalanCreate({
                                         </SelectContent>
                                     </Select>
                                     {errors.ruang_id && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.ruang_id}
                                         </p>
                                     )}
                                 </div>
+                            </div>
 
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="kapasitas">Kapasitas</Label>
-                                    <Input
-                                        id="kapasitas"
-                                        type="number"
-                                        value={data.kapasitas}
-                                        onChange={(e) =>
-                                            setData('kapasitas', e.target.value)
-                                        }
-                                        placeholder="30"
-                                    />
-                                    {errors.kapasitas && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.kapasitas}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label>Semester</Label>
+                                    <Label htmlFor="semester">
+                                        Semester
+                                        <Required />
+                                    </Label>
                                     <Select
                                         value={data.semester}
                                         onValueChange={(v) =>
                                             setData('semester', v)
                                         }
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger
+                                            id="semester"
+                                            aria-invalid={!!errors.semester}
+                                        >
                                             <SelectValue placeholder="Pilih Semester" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -281,14 +377,17 @@ export default function PenjadwalanCreate({
                                         </SelectContent>
                                     </Select>
                                     {errors.semester && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.semester}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Tahun Akademik</Label>
+                                    <Label htmlFor="academic_year_semester_id">
+                                        Tahun Akademik
+                                        <Required />
+                                    </Label>
                                     <Select
                                         value={data.academic_year_semester_id}
                                         onValueChange={(v) =>
@@ -298,7 +397,12 @@ export default function PenjadwalanCreate({
                                             )
                                         }
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger
+                                            id="academic_year_semester_id"
+                                            aria-invalid={
+                                                !!errors.academic_year_semester_id
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Tahun Akademik" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -318,56 +422,26 @@ export default function PenjadwalanCreate({
                                         </SelectContent>
                                     </Select>
                                     {errors.academic_year_semester_id && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.academic_year_semester_id}
                                         </p>
                                     )}
                                 </div>
-
-                                <div className="space-y-2">
-                                    <Label>Status</Label>
-                                    <Select
-                                        value={data.status}
-                                        onValueChange={(v) =>
-                                            setData('status', v)
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Aktif">
-                                                Aktif
-                                            </SelectItem>
-                                            <SelectItem value="Tidak Aktif">
-                                                Tidak Aktif
-                                            </SelectItem>
-                                            <SelectItem value="Selesai">
-                                                Selesai
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.status && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.status}
-                                        </p>
-                                    )}
-                                </div>
                             </div>
+                        </CardContent>
+                    </Card>
 
-                            <div className="flex items-center gap-4">
-                                <Button type="submit" disabled={processing}>
-                                    {processing ? 'Menyimpan...' : 'Simpan'}
-                                </Button>
-                                <Link href="/admin/penjadwalan">
-                                    <Button type="button" variant="outline">
-                                        Batal
-                                    </Button>
-                                </Link>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                    <div className="flex items-center justify-end gap-3">
+                        <Link href="/admin/penjadwalan">
+                            <Button type="button" variant="outline">
+                                Batal
+                            </Button>
+                        </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Simpan Kelas'}
+                        </Button>
+                    </div>
+                </form>
             </div>
         </>
     );

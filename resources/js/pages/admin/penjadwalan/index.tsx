@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, CalendarClock, X } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -87,22 +87,13 @@ type Props = {
     };
 };
 
-const STATUS_VARIANTS: Record<
-    string,
-    'default' | 'secondary' | 'destructive' | 'outline'
-> = {
-    Aktif: 'default',
-    'Tidak Aktif': 'secondary',
-    Selesai: 'outline',
+const STATUS_BADGE: Record<string, string> = {
+    Aktif: 'bg-green-100 text-green-800',
+    'Tidak Aktif': 'bg-gray-100 text-gray-800',
+    Selesai: 'bg-yellow-100 text-yellow-800',
 };
 
-export default function PenjadwalanIndex({
-    kelases,
-    mataKuliahs,
-    dosens,
-    ruangs,
-    filters,
-}: Props) {
+export default function PenjadwalanIndex({ kelases, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const [semesterFilter, setSemesterFilter] = useState(
@@ -126,6 +117,9 @@ export default function PenjadwalanIndex({
         router.delete(`/admin/penjadwalan/${uuid}`);
     };
 
+    const hasActiveFilters =
+        filters.search || filters.status || filters.semester;
+
     return (
         <>
             <Head title="Data Penjadwalan" />
@@ -148,7 +142,8 @@ export default function PenjadwalanIndex({
                     </Link>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
+                {/* Filters */}
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="relative max-w-sm min-w-[200px] flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -161,13 +156,20 @@ export default function PenjadwalanIndex({
                             className="pl-9"
                         />
                     </div>
+                    <Button
+                        variant="outline"
+                        onClick={() => applyFilters({ search })}
+                    >
+                        Cari
+                    </Button>
                     <Select
                         value={semesterFilter}
-                        onValueChange={(v) =>
-                            applyFilters({ semester: v === 'all' ? '' : v })
-                        }
+                        onValueChange={(v) => {
+                            setSemesterFilter(v);
+                            applyFilters({ semester: v === 'all' ? '' : v });
+                        }}
                     >
-                        <SelectTrigger className="w-[150px]">
+                        <SelectTrigger className="w-[160px]">
                             <SelectValue placeholder="Semua Semester" />
                         </SelectTrigger>
                         <SelectContent>
@@ -183,11 +185,12 @@ export default function PenjadwalanIndex({
                     </Select>
                     <Select
                         value={statusFilter}
-                        onValueChange={(v) =>
-                            applyFilters({ status: v === 'all' ? '' : v })
-                        }
+                        onValueChange={(v) => {
+                            setStatusFilter(v);
+                            applyFilters({ status: v === 'all' ? '' : v });
+                        }}
                     >
-                        <SelectTrigger className="w-[150px]">
+                        <SelectTrigger className="w-[160px]">
                             <SelectValue placeholder="Semua Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -199,8 +202,24 @@ export default function PenjadwalanIndex({
                             <SelectItem value="Selesai">Selesai</SelectItem>
                         </SelectContent>
                     </Select>
+                    {hasActiveFilters && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                                setSearch('');
+                                setStatusFilter('all');
+                                setSemesterFilter('all');
+                                router.get('/admin/penjadwalan');
+                            }}
+                        >
+                            <X className="mr-1 h-3.5 w-3.5" />
+                            Reset
+                        </Button>
+                    )}
                 </div>
 
+                {/* Table */}
                 <div className="rounded-lg border">
                     <div className="overflow-x-auto">
                         <Table>
@@ -225,9 +244,32 @@ export default function PenjadwalanIndex({
                                     <TableRow>
                                         <TableCell
                                             colSpan={10}
-                                            className="py-8 text-center"
+                                            className="py-12 text-center"
                                         >
-                                            Tidak ada data penjadwalan
+                                            <div className="flex flex-col items-center gap-2">
+                                                <CalendarClock className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {hasActiveFilters
+                                                        ? 'Tidak ada kelas yang cocok'
+                                                        : 'Belum ada jadwal kelas'}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {hasActiveFilters
+                                                        ? 'Coba ubah kata kunci atau filter'
+                                                        : 'Mulai dengan menambahkan kelas pertama'}
+                                                </p>
+                                                {!hasActiveFilters && (
+                                                    <Link
+                                                        href="/admin/penjadwalan/create"
+                                                        className="mt-2"
+                                                    >
+                                                        <Button size="sm">
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Tambah Kelas
+                                                        </Button>
+                                                    </Link>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -259,10 +301,11 @@ export default function PenjadwalanIndex({
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
-                                                    variant={
-                                                        STATUS_VARIANTS[
+                                                    className={
+                                                        STATUS_BADGE[
                                                             kelas.status
-                                                        ] || 'outline'
+                                                        ] ||
+                                                        'bg-gray-100 text-gray-800'
                                                     }
                                                 >
                                                     {kelas.status}
@@ -344,6 +387,7 @@ export default function PenjadwalanIndex({
                     </div>
                 </div>
 
+                {/* Pagination */}
                 {kelases.last_page > 1 && (
                     <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">

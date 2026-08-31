@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, CalendarDays, X } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -92,11 +92,7 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
     };
 
     const handleDelete = (uuid: string) => {
-        router.delete(`/admin/data-akademik/${uuid}`, {
-            onSuccess: () => {
-                // Toast success
-            },
-        });
+        router.delete(`/admin/data-akademik/${uuid}`);
     };
 
     const getStatusBadge = (status: string) => {
@@ -145,7 +141,7 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
                 </div>
 
                 {/* Filters */}
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="relative max-w-sm flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -158,6 +154,9 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
                             className="pl-9"
                         />
                     </div>
+                    <Button variant="outline" onClick={handleSearch}>
+                        Cari
+                    </Button>
                     <Select value={status} onValueChange={handleStatusChange}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Semua Status" />
@@ -169,6 +168,20 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
                             <SelectItem value="arsip">Arsip</SelectItem>
                         </SelectContent>
                     </Select>
+                    {(filters.search || filters.status) && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                                setSearch('');
+                                setStatus('all');
+                                router.get('/admin/data-akademik');
+                            }}
+                        >
+                            <X className="mr-1 h-3.5 w-3.5" />
+                            Reset
+                        </Button>
+                    )}
                 </div>
 
                 {/* Table */}
@@ -194,9 +207,36 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
                                     <TableRow>
                                         <TableCell
                                             colSpan={8}
-                                            className="py-8 text-center"
+                                            className="py-12 text-center"
                                         >
-                                            Tidak ada data tahun akademik
+                                            <div className="flex flex-col items-center gap-2">
+                                                <CalendarDays className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {filters.search ||
+                                                    filters.status
+                                                        ? 'Tidak ada tahun akademik yang cocok'
+                                                        : 'Belum ada tahun akademik'}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {filters.search ||
+                                                    filters.status
+                                                        ? 'Coba ubah kata kunci atau filter status'
+                                                        : 'Mulai dengan menambahkan tahun akademik pertama'}
+                                                </p>
+                                                {!filters.search &&
+                                                    !filters.status && (
+                                                        <Link
+                                                            href="/admin/data-akademik/create"
+                                                            className="mt-2"
+                                                        >
+                                                            <Button size="sm">
+                                                                <Plus className="mr-2 h-4 w-4" />
+                                                                Tambah Tahun
+                                                                Akademik
+                                                            </Button>
+                                                        </Link>
+                                                    )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
