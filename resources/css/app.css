@@ -71,6 +71,23 @@
     --color-green-800: #166534;
     --color-green-900: #14532d;
     --color-green-950: #052e16;
+
+    /* Brand aliases used by the sidebar, table, and header chrome. Values are
+       drawn from the green scale above — kept as named aliases (rather than
+       inlined) because they map to specific fixed roles (active nav state,
+       table header wash, hairline borders) independent of the primary/accent
+       semantic tokens used in page content. */
+    --color-siak-pine: var(--color-green-800);
+    --color-siak-pine-deep: var(--color-green-900);
+    --color-siak-fern: var(--color-green-500);
+    --color-siak-mist: var(--color-green-50);
+    --color-siak-moss: #cbd9d0;
+    --color-siak-sage: #55685d;
+
+    /* Secondary institutional accent (from siakad.json: "tema warna hijau & kuning").
+       Used sparingly — decorative borders/details, never large fills. */
+    --color-gold: #a9822f;
+    --color-gold-soft: #d9c48c;
 }
 
 :root {

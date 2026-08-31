@@ -1,6 +1,4 @@
 import { Head, Link } from '@inertiajs/react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import {
     ArrowLeft,
     Mail,
@@ -11,6 +9,8 @@ import {
     Award,
     Hash,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 
 type Dosen = {
@@ -37,7 +37,10 @@ function getInitials(name: string) {
         .slice(0, 2);
 }
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     aktif: 'default',
     cuti: 'secondary',
     pensiun: 'outline',
@@ -58,7 +61,7 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                 <div>
                     <Link
                         href="/admin-prodi/dosen"
-                        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-2"
+                        className="mb-2 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
                     >
                         <ArrowLeft className="mr-1 h-4 w-4" />
                         Kembali ke Daftar
@@ -69,16 +72,18 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
 
                 <Card className="overflow-hidden">
                     <div className="flex flex-col md:flex-row">
-                        <div className="flex items-center justify-center bg-gradient-to-br from-siak-pine to-siak-pine-deep p-8 md:w-64 md:min-h-[280px]">
+                        <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="h-32 w-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-4 border-white/30 shadow-xl">
-                                    <span className="text-4xl font-bold text-white">
+                                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-white shadow-sm">
+                                    <span className="text-4xl font-semibold text-siak-pine">
                                         {getInitials(dosen.nama)}
                                     </span>
                                 </div>
                                 <div className="text-center text-white">
                                     <p className="text-sm opacity-80">NIDN</p>
-                                    <p className="font-mono text-lg font-semibold">{dosen.nidn}</p>
+                                    <p className="font-mono text-lg font-semibold">
+                                        {dosen.nidn}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -86,17 +91,23 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                         <div className="flex-1 p-6 md:p-8">
                             <div className="space-y-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold tracking-tight">{dosen.nama}</h2>
+                                    <h2 className="text-2xl font-bold tracking-tight">
+                                        {dosen.nama}
+                                    </h2>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
                                             <Hash className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground">NUPTK</p>
-                                            <p className="font-mono font-medium">{dosen.nuptk || '-'}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                NUPTK
+                                            </p>
+                                            <p className="font-mono font-medium">
+                                                {dosen.nuptk || '-'}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -105,8 +116,12 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                             <User className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground">Jenis Kelamin</p>
-                                            <p className="font-medium">{dosen.jenis_kelamin}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Jenis Kelamin
+                                            </p>
+                                            <p className="font-medium">
+                                                {dosen.jenis_kelamin}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -115,8 +130,12 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                             <Award className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground">Pangkat / Golongan</p>
-                                            <p className="font-medium">{dosen.pangkat_golongan || '-'}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Pangkat / Golongan
+                                            </p>
+                                            <p className="font-medium">
+                                                {dosen.pangkat_golongan || '-'}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -125,8 +144,13 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                             <GraduationCap className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground">Pendidikan Terakhir</p>
-                                            <p className="font-medium">{dosen.pendidikan_terakhir || '-'}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Pendidikan Terakhir
+                                            </p>
+                                            <p className="font-medium">
+                                                {dosen.pendidikan_terakhir ||
+                                                    '-'}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -135,8 +159,12 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                             <Mail className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground">Email</p>
-                                            <p className="font-medium truncate">{dosen.email}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Email
+                                            </p>
+                                            <p className="truncate font-medium">
+                                                {dosen.email}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -145,8 +173,12 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                             <Phone className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground">No. Telepon</p>
-                                            <p className="font-medium">{dosen.no_telepon || '-'}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                No. Telepon
+                                            </p>
+                                            <p className="font-medium">
+                                                {dosen.no_telepon || '-'}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -155,15 +187,25 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                             <MapPin className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground">Alamat</p>
-                                            <p className="font-medium">{dosen.alamat || '-'}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Alamat
+                                            </p>
+                                            <p className="font-medium">
+                                                {dosen.alamat || '-'}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Badge variant={STATUS_VARIANTS[dosen.status] || 'outline'}>
-                                        {STATUS_LABELS[dosen.status] || dosen.status}
+                                    <Badge
+                                        variant={
+                                            STATUS_VARIANTS[dosen.status] ||
+                                            'outline'
+                                        }
+                                    >
+                                        {STATUS_LABELS[dosen.status] ||
+                                            dosen.status}
                                     </Badge>
                                 </div>
                             </div>
@@ -176,12 +218,14 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
 }
 
 DosenShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Admin Prodi', href: '/admin-prodi' },
-        { title: 'Dosen', href: '/admin-prodi/dosen' },
-        { title: 'Detail', href: '#' },
-    ]}>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Admin Prodi', href: '/admin-prodi' },
+            { title: 'Dosen', href: '/admin-prodi/dosen' },
+            { title: 'Detail', href: '#' },
+        ]}
+    >
         {page}
     </AppLayout>
 );

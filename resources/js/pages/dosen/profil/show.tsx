@@ -101,10 +101,10 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                 <Card className="overflow-hidden">
                     <div className="flex flex-col md:flex-row">
                         {/* Photo Section */}
-                        <div className="from-siak-pine to-siak-pine-deep flex items-center justify-center bg-gradient-to-br p-8 md:min-h-[280px] md:w-64">
+                        <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white/30 bg-white/20 shadow-xl backdrop-blur-sm">
-                                    <span className="text-4xl font-bold text-white">
+                                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-white shadow-sm">
+                                    <span className="text-4xl font-semibold text-siak-pine">
                                         {getInitials(dosen.nama)}
                                     </span>
                                 </div>
@@ -355,8 +355,8 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                     </h3>
                                     <div className="space-y-4">
                                         <div className="flex items-start gap-4 rounded-lg border bg-card p-4">
-                                            <div className="bg-siak-pine/10 flex h-12 w-12 items-center justify-center rounded-full">
-                                                <GraduationCap className="text-siak-pine h-6 w-6" />
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-siak-pine/10">
+                                                <GraduationCap className="h-6 w-6 text-siak-pine" />
                                             </div>
                                             <div className="flex-1">
                                                 <p className="font-semibold">

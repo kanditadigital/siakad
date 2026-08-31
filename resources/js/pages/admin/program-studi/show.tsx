@@ -47,10 +47,10 @@ export default function ProgramStudiShow({ programStudi }: Props) {
                 {/* Header Card */}
                 <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
-                        <div className="flex items-center justify-center bg-green-700 p-8 md:min-h-[200px] md:w-64">
+                        <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[200px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/30 bg-white/20">
-                                    <School className="h-12 w-12 text-white" />
+                                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-sm">
+                                    <School className="h-12 w-12 text-siak-pine" />
                                 </div>
                                 <div className="text-center text-white">
                                     <p className="text-sm opacity-80">

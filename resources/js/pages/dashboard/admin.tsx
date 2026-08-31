@@ -41,86 +41,86 @@ export default function AdminDashboard({ stats }: Props) {
                 </div>
 
                 {/* Main Stats */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    <Card className="border border-gray-200 bg-gradient-to-br from-green-50 to-white shadow-sm">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">
                                         Total Mahasiswa
                                     </p>
-                                    <p className="text-3xl font-bold text-green-800">
+                                    <p className="text-3xl font-bold text-gray-900 tabular-nums">
                                         {stats.total_mahasiswa}
                                     </p>
-                                    <p className="mt-1 text-xs text-green-600">
+                                    <p className="mt-1 text-xs text-gray-500">
                                         {stats.mahasiswa_aktif} aktif
                                     </p>
                                 </div>
-                                <div className="rounded-full bg-green-100 p-3">
-                                    <GraduationCap className="h-6 w-6 text-green-700" />
+                                <div className="rounded-lg bg-green-600 p-2.5">
+                                    <GraduationCap className="h-5 w-5 text-white" />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="border border-gray-200 bg-gradient-to-br from-blue-50 to-white shadow-sm">
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">
                                         Total Dosen
                                     </p>
-                                    <p className="text-3xl font-bold text-blue-800">
+                                    <p className="text-3xl font-bold text-gray-900 tabular-nums">
                                         {stats.total_dosen}
                                     </p>
-                                    <p className="mt-1 text-xs text-blue-600">
+                                    <p className="mt-1 text-xs text-gray-500">
                                         Pengajar aktif
                                     </p>
                                 </div>
-                                <div className="rounded-full bg-blue-100 p-3">
-                                    <Users className="h-6 w-6 text-blue-700" />
+                                <div className="rounded-lg bg-green-700 p-2.5">
+                                    <Users className="h-5 w-5 text-white" />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="border border-gray-200 bg-gradient-to-br from-purple-50 to-white shadow-sm">
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">
                                         Total Kelas
                                     </p>
-                                    <p className="text-3xl font-bold text-purple-800">
+                                    <p className="text-3xl font-bold text-gray-900 tabular-nums">
                                         {stats.total_kelas}
                                     </p>
-                                    <p className="mt-1 text-xs text-purple-600">
+                                    <p className="mt-1 text-xs text-gray-500">
                                         {stats.total_mata_kuliah} mata kuliah
                                     </p>
                                 </div>
-                                <div className="rounded-full bg-purple-100 p-3">
-                                    <BookOpen className="h-6 w-6 text-purple-700" />
+                                <div className="rounded-lg bg-green-800 p-2.5">
+                                    <BookOpen className="h-5 w-5 text-white" />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="border border-gray-200 bg-gradient-to-br from-amber-50 to-white shadow-sm">
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">
                                         Program Studi
                                     </p>
-                                    <p className="text-3xl font-bold text-amber-800">
+                                    <p className="text-3xl font-bold text-gray-900 tabular-nums">
                                         {stats.total_program_studi}
                                     </p>
-                                    <p className="mt-1 text-xs text-amber-600">
+                                    <p className="mt-1 text-xs text-gray-500">
                                         Aktif
                                     </p>
                                 </div>
-                                <div className="rounded-full bg-amber-100 p-3">
-                                    <School className="h-6 w-6 text-amber-700" />
+                                <div className="rounded-lg bg-siak-sage p-2.5">
+                                    <School className="h-5 w-5 text-white" />
                                 </div>
                             </div>
                         </CardContent>

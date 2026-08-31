@@ -91,9 +91,9 @@ export default function DosenShow({ dosen }: Props) {
                 {/* Header Card */}
                 <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
-                        <div className="flex items-center justify-center bg-green-700 p-8 md:min-h-[280px] md:w-64">
+                        <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white/30 bg-white/20">
+                                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm">
                                     {dosen.user?.photo ? (
                                         <img
                                             src={`/storage/${dosen.user.photo}`}
@@ -101,7 +101,7 @@ export default function DosenShow({ dosen }: Props) {
                                             className="h-full w-full object-cover"
                                         />
                                     ) : (
-                                        <span className="text-4xl font-bold text-white">
+                                        <span className="text-4xl font-semibold text-siak-pine">
                                             {getInitials(dosen.nama)}
                                         </span>
                                     )}
