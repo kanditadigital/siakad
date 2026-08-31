@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 #[Fillable([
@@ -59,6 +60,14 @@ class Kelas extends Model
     public function ruang(): BelongsTo
     {
         return $this->belongsTo(Ruang::class);
+    }
+
+    /**
+     * @return HasOne<Rps, $this>
+     */
+    public function rps(): HasOne
+    {
+        return $this->hasOne(Rps::class);
     }
 
     public function getRouteKeyName(): string

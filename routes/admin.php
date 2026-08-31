@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\PengaturanController;
 use App\Http\Controllers\Admin\PenjadwalanController;
 use App\Http\Controllers\Admin\ProgramStudiController;
+use App\Http\Controllers\Admin\RpsController;
 use App\Http\Controllers\Admin\RuangController;
 use App\Http\Controllers\Admin\TagihanUktController;
 use App\Http\Controllers\Admin\TendikController;
@@ -124,6 +125,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('yudisium/{yudisium}/edit', [YudisiumController::class, 'edit'])->name('yudisium.edit');
     Route::put('yudisium/{yudisium}', [YudisiumController::class, 'update'])->name('yudisium.update');
     Route::delete('yudisium/{yudisium}', [YudisiumController::class, 'destroy'])->name('yudisium.destroy');
+    Route::get('yudisium/{yudisium}/berita-acara', [YudisiumController::class, 'exportBeritaAcara'])->name('yudisium.berita-acara');
+    Route::get('yudisium/{yudisium}/sk', [YudisiumController::class, 'exportSk'])->name('yudisium.sk');
 
     // Tagihan UKT
     Route::get('tagihan-ukt', [TagihanUktController::class, 'index'])->name('tagihan-ukt.index');
@@ -157,6 +160,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('laporan/export-mahasiswa', [LaporanController::class, 'exportMahasiswa'])->name('laporan.export-mahasiswa');
     Route::get('laporan/export-nilai', [LaporanController::class, 'exportNilai'])->name('laporan.export-nilai');
     Route::get('laporan/export-keuangan', [LaporanController::class, 'exportKeuangan'])->name('laporan.export-keuangan');
+    Route::get('laporan/export-sumber-daya', [LaporanController::class, 'exportSumberDaya'])->name('laporan.export-sumber-daya');
+
+    // RPS
+    Route::get('rps', [RpsController::class, 'index'])->name('rps.index');
+    Route::patch('rps/{rps}/approve', [RpsController::class, 'approve'])->name('rps.approve');
+    Route::patch('rps/{rps}/request-revision', [RpsController::class, 'requestRevision'])->name('rps.request-revision');
 
     // Pengaturan Sistem
     Route::get('pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');

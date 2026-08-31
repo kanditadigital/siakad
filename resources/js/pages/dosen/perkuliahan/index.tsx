@@ -31,7 +31,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Trash2, ClipboardCheck, BookUp, PenLine, Search, Download } from 'lucide-react';
+import { Plus, Trash2, ClipboardCheck, BookUp, PenLine, Search, Download, FileUp, Upload } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type Kelas = {
@@ -73,11 +73,20 @@ type Krs = {
     mahasiswa: Mahasiswa;
 };
 
+type Rps = {
+    id: number;
+    status: string;
+    file_path: string | null;
+    catatan: string | null;
+    uploaded_at: string | null;
+};
+
 type Props = {
     kelas: Kelas[];
     presensis: { data: Presensi[] } | Presensi[];
     materis: { data: Materi[] } | Materi[];
     krss: Krs[];
+    rps: Rps | null;
     selectedKelasId: string | null;
     filters?: { search?: string };
 };
@@ -89,11 +98,35 @@ const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 
     alpha: 'destructive',
 };
 
-export default function PerkuliahanIndex({ kelas, presensis, materis, krss, selectedKelasId, filters }: Props) {
+const RPS_STATUS_LABELS: Record<string, string> = {
+    belum_upload: 'Belum Upload',
+    sudah_upload: 'Sudah Upload',
+    perlu_revisi: 'Perlu Revisi',
+    disetujui: 'Disetujui',
+};
+
+const RPS_STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+    belum_upload: 'outline',
+    sudah_upload: 'secondary',
+    perlu_revisi: 'destructive',
+    disetujui: 'default',
+};
+
+export default function PerkuliahanIndex({ kelas, presensis, materis, krss, rps, selectedKelasId, filters }: Props) {
     const [openPresensi, setOpenPresensi] = useState(false);
     const [openMateri, setOpenMateri] = useState(false);
     const [editingKrs, setEditingKrs] = useState<Krs | null>(null);
     const [search, setSearch] = useState(filters?.search || '');
+    const rpsForm = useForm<{ file: File | null }>({ file: null });
+
+    const handleUploadRps = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedKelasId) return;
+        rpsForm.post(`/dosen/perkuliahan/${selectedKelasId}/rps`, {
+            forceFormData: true,
+            onSuccess: () => rpsForm.reset(),
+        });
+    };
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -220,6 +253,10 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, sele
                             <TabsTrigger value="nilai">
                                 <PenLine className="mr-2 h-4 w-4" />
                                 Nilai
+                            </TabsTrigger>
+                            <TabsTrigger value="rps">
+                                <FileUp className="mr-2 h-4 w-4" />
+                                RPS
                             </TabsTrigger>
                         </TabsList>
 
@@ -564,6 +601,55 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, sele
                                             )}
                                         </TableBody>
                                     </Table>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+
+                        {/* Tab RPS */}
+                        <TabsContent value="rps">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Rencana Pembelajaran Semester (RPS)</CardTitle>
+                                    <CardDescription>Unggah dokumen RPS untuk kelas ini — akan ditinjau oleh admin</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-sm text-muted-foreground">Status:</span>
+                                        <Badge variant={RPS_STATUS_VARIANTS[rps?.status || 'belum_upload']}>
+                                            {RPS_STATUS_LABELS[rps?.status || 'belum_upload']}
+                                        </Badge>
+                                    </div>
+
+                                    {rps?.status === 'perlu_revisi' && rps.catatan && (
+                                        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                                            <strong>Catatan revisi:</strong> {rps.catatan}
+                                        </div>
+                                    )}
+
+                                    {rps?.file_path && (
+                                        <a
+                                            href={`/storage/${rps.file_path}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                                        >
+                                            <FileUp className="h-4 w-4" />
+                                            Lihat file RPS saat ini
+                                        </a>
+                                    )}
+
+                                    <form onSubmit={handleUploadRps} className="flex items-center gap-3">
+                                        <Input
+                                            type="file"
+                                            accept=".pdf,.doc,.docx"
+                                            onChange={(e) => rpsForm.setData('file', e.target.files?.[0] || null)}
+                                        />
+                                        <Button type="submit" disabled={rpsForm.processing || !rpsForm.data.file}>
+                                            <Upload className="mr-2 h-4 w-4" />
+                                            {rpsForm.processing ? 'Mengunggah...' : 'Unggah'}
+                                        </Button>
+                                    </form>
+                                    {rpsForm.errors.file && <p className="text-sm text-destructive">{rpsForm.errors.file}</p>}
                                 </CardContent>
                             </Card>
                         </TabsContent>

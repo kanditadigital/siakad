@@ -51,12 +51,15 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
         Fortify::authenticateUsing(function (Request $request) {
-            $loginField = $request->input('login_field', 'email');
             $loginValue = $request->input('login_value') ?? $request->input('email');
 
             if (! is_string($loginValue) || $loginValue === '') {
                 return null;
             }
+
+            // Explicit login_field (if the frontend ever sends one) wins; otherwise
+            // auto-detect from the shape of the value: email → NIM → NIDN, in that order.
+            $loginField = $request->input('login_field') ?? $this->detectLoginField($loginValue);
 
             $user = match ($loginField) {
                 'nim' => User::query()
@@ -80,6 +83,36 @@ class FortifyServiceProvider extends ServiceProvider
 
             return $user;
         });
+    }
+
+    /**
+     * Auto-detect whether a login value is an email, NIM, or NIDN based on its shape
+     * and whether it matches an existing record — so the login form can stay a single
+     * generic field without the frontend needing to know which type it is.
+     */
+    private function detectLoginField(string $loginValue): string
+    {
+        if (str_contains($loginValue, '@')) {
+            return 'email';
+        }
+
+        $matchesNim = User::query()->where('nim', $loginValue)
+            ->orWhereHas('mahasiswa', fn ($mahasiswa) => $mahasiswa->where('nim', $loginValue))
+            ->exists();
+
+        if ($matchesNim) {
+            return 'nim';
+        }
+
+        $matchesNidn = User::query()->where('nidn', $loginValue)
+            ->orWhereHas('dosen', fn ($dosen) => $dosen->where('nidn', $loginValue))
+            ->exists();
+
+        if ($matchesNidn) {
+            return 'nidn';
+        }
+
+        return 'email';
     }
 
     /**

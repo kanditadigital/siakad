@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dosen\BimbinganTugasAkhirController;
 use App\Http\Controllers\Dosen\DosenProfileController;
 use App\Http\Controllers\Dosen\MahasiswaAsuhController;
 use App\Http\Controllers\Dosen\PerkuliahanController;
@@ -20,9 +21,15 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->name('do
     Route::put('perkuliahan/materi/{materi}', [PerkuliahanController::class, 'updateMateri'])->name('perkuliahan.materi.update');
     Route::delete('perkuliahan/materi/{materi}', [PerkuliahanController::class, 'destroyMateri'])->name('perkuliahan.materi.destroy');
     Route::put('perkuliahan/nilai/{krs}', [PerkuliahanController::class, 'updateNilai'])->name('perkuliahan.nilai.update');
+    Route::post('perkuliahan/{kelasId}/rps', [PerkuliahanController::class, 'uploadRps'])->name('perkuliahan.rps.upload');
 
     // Mahasiswa Asuh
     Route::get('mahasiswa-asuh', [MahasiswaAsuhController::class, 'index'])->name('mahasiswa-asuh.index');
     Route::put('mahasiswa-asuh/{mahasiswa}', [MahasiswaAsuhController::class, 'update'])->name('mahasiswa-asuh.update');
     Route::delete('mahasiswa-asuh/{mahasiswa}', [MahasiswaAsuhController::class, 'destroy'])->name('mahasiswa-asuh.destroy');
+
+    // Bimbingan Tugas Akhir
+    Route::get('bimbingan-tugas-akhir', [BimbinganTugasAkhirController::class, 'index'])->name('bimbingan-tugas-akhir.index');
+    Route::post('bimbingan-tugas-akhir', [BimbinganTugasAkhirController::class, 'store'])->name('bimbingan-tugas-akhir.store');
+    Route::put('bimbingan-tugas-akhir/{bimbinganTugasAkhir}', [BimbinganTugasAkhirController::class, 'update'])->name('bimbingan-tugas-akhir.update');
 });

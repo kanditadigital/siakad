@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dosen;
 use App\Models\Krs;
 use App\Models\Mahasiswa;
 use App\Models\Nilai;
+use App\Models\Ruang;
 use App\Models\TagihanUkt;
+use App\Models\Tendik;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,6 +32,9 @@ class LaporanController extends Controller
             'total_nilai' => Nilai::count(),
             'tagihan_lunas' => TagihanUkt::where('status', 'lunas')->count(),
             'tagihan_belum_lunas' => TagihanUkt::whereIn('status', ['belum', 'terlambat'])->count(),
+            'total_dosen' => Dosen::count(),
+            'total_tendik' => Tendik::count(),
+            'total_ruang' => Ruang::count(),
         ];
 
         return Inertia::render('admin/laporan/index', [
@@ -85,5 +91,23 @@ class LaporanController extends Controller
         ]);
 
         return $pdf->download('laporan-keuangan.pdf');
+    }
+
+    /**
+     * Export laporan sumber daya (dosen, tendik, ruang).
+     */
+    public function exportSumberDaya(Request $request)
+    {
+        $dosens = Dosen::with('programStudi')->get();
+        $tendiks = Tendik::all();
+        $ruangs = Ruang::all();
+
+        $pdf = Pdf::loadView('pdf.laporan-sumber-daya', [
+            'dosens' => $dosens,
+            'tendiks' => $tendiks,
+            'ruangs' => $ruangs,
+        ]);
+
+        return $pdf->download('laporan-sumber-daya.pdf');
     }
 }

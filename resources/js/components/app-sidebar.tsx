@@ -115,6 +115,11 @@ export function AppSidebar() {
                                 icon: FileText,
                             },
                             {
+                                title: 'RPS',
+                                href: '/admin/rps',
+                                icon: FileUp,
+                            },
+                            {
                                 title: 'Yudisium',
                                 href: '/admin/yudisium',
                                 icon: FileCheck,
@@ -264,6 +269,11 @@ export function AppSidebar() {
             case 'pimpinan':
                 return [
                     ...baseItems,
+                    {
+                        title: 'Monitoring Akademik',
+                        href: '/pimpinan/monitoring-akademik',
+                        icon: ClipboardList,
+                    },
                     {
                         title: 'Monitoring Keuangan',
                         href: '/pimpinan/monitoring-keuangan',

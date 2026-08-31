@@ -9,6 +9,7 @@ import {
     Users,
     FileText,
     TrendingUp,
+    Building,
 } from 'lucide-react';
 
 type Props = {
@@ -101,7 +102,7 @@ export default function LaporanIndex({ stats }: Props) {
                 </div>
 
                 {/* Export Options */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-4">
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
                             <CardTitle className="text-gray-900 flex items-center gap-2">
@@ -157,6 +158,27 @@ export default function LaporanIndex({ stats }: Props) {
                             </p>
                             <Button
                                 onClick={() => window.location.href = '/admin/laporan/export-keuangan'}
+                                className="w-full bg-green-700 hover:bg-green-800"
+                            >
+                                <Download className="mr-2 h-4 w-4" />
+                                Download PDF
+                            </Button>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-gray-900 flex items-center gap-2">
+                                <Building className="h-5 w-5 text-green-700" />
+                                Laporan Sumber Daya
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-gray-600 mb-4">
+                                Ekspor data dosen, tendik, dan ruang ke PDF
+                            </p>
+                            <Button
+                                onClick={() => window.location.href = '/admin/laporan/export-sumber-daya'}
                                 className="w-full bg-green-700 hover:bg-green-800"
                             >
                                 <Download className="mr-2 h-4 w-4" />

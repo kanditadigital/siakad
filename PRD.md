@@ -45,8 +45,8 @@ Legenda status: ✅ Sudah ada di kode · 🟡 Ada kerangka tapi belum lengkap/fu
 | Fitur | Status | Catatan |
 |---|---|---|
 | Halaman login dengan identitas kampus, logo, tema hijau-kuning | ✅ | `resources/js/pages/auth` |
-| Login dosen via NIDN atau Email | ⬜ | Perlu custom guard/resolver: cek input sebagai NIDN dulu, fallback ke email |
-| Login mahasiswa via NIM | ⬜ | Sama — resolver NIM → email/username |
+| Login dosen via NIDN atau Email | ✅ | Selesai 2026-09-01. Backend (`FortifyServiceProvider::authenticateUsing`) sudah lengkap sejak sebelumnya, tapi **frontend hanya mengirim `login_value` tanpa `login_field`** sehingga fitur ini tidak pernah tercapai dari UI — selalu jatuh ke pencarian email. Ditambahkan auto-deteksi server-side (`detectLoginField`): `@` → email, else cek NIM, else cek NIDN, else email |
+| Login mahasiswa via NIM | ✅ | Sama seperti di atas — satu perbaikan mencakup NIM dan NIDN sekaligus. Diuji di `tests/Feature/Auth/LoginIdentifierAutoDetectTest.php` (4 test, memakai bentuk request asli dari form — tanpa `login_field`) |
 | Reset password, verifikasi email, 2FA | ✅ | Ditangani modul Fortify (`app/Actions/Fortify`) |
 | Manajemen keamanan akun (ganti password, sesi aktif) | ✅ | `Settings/SecurityController` |
 
@@ -57,7 +57,7 @@ Legenda status: ✅ Sudah ada di kode · 🟡 Ada kerangka tapi belum lengkap/fu
 | Dashboard Admin Prodi — ringkasan terbatas ke prodi sendiri | ✅ | `AdminProdi/DashboardController` |
 | Dashboard Dosen | ✅ | Diimplementasikan 2026-08-31 — sebelumnya halaman placeholder kosong. Sekarang menampilkan kelas diampu, mahasiswa diampu (distinct dari KRS disetujui), mahasiswa asuh (PA), materi terbaru. "Jadwal hari ini" tidak dibuat karena tabel `kelas` tidak punya kolom hari/jam (lihat catatan skema jadwal di §6.1) |
 | Dashboard Mahasiswa — ringkasan KRS, nilai, tagihan | ✅ | `dashboard/mahasiswa.tsx` |
-| Dashboard Pimpinan — monitoring akademik & keuangan | ⬜ | Route/menu ada di sidebar (`/pimpinan/...`) tapi controller & halaman belum dibuat |
+| Dashboard Pimpinan — monitoring akademik & keuangan | ✅ | Selesai 2026-09-01 — sebelumnya halaman placeholder kosong tanpa branch role di `DashboardController`. Sekarang menampilkan ringkasan akademik (mahasiswa aktif, dosen, kelas, KRS pending) dan keuangan (tagihan belum lunas, total tunggakan, % lunas) |
 
 ### 3.3 Data Master (Admin)
 | Fitur | Status |
@@ -85,7 +85,7 @@ Legenda status: ✅ Sudah ada di kode · 🟡 Ada kerangka tapi belum lengkap/fu
 | Transkrip Nilai (seluruh riwayat studi) | ✅ | `Mahasiswa/TranskripNilaiController` |
 | Unduh Transkrip (PDF) | ✅ | Sudah ada sebelumnya (`Mahasiswa/TranskripNilaiController::exportPdf` + `resources/views/pdf/transkrip-nilai.blade.php`) — status 🟡 sebelumnya salah |
 | Yudisium (penetapan kelulusan) | ✅ | `YudisiumController` — perlu verifikasi validasi syarat kelulusan (IPK min., nilai bermasalah, administrasi) |
-| Output Berita Acara & SK Yudisium (PDF) | ⬜ | |
+| Output Berita Acara & SK Yudisium (PDF) | ✅ | Selesai 2026-09-01 — `YudisiumController::exportBeritaAcara`/`exportSk` + 2 view PDF baru. Hanya bisa diunduh untuk yudisium berstatus `lulus` (422 untuk `tidak lulus`), tombol muncul kondisional di `admin/yudisium/show.tsx`. Diuji di `tests/Feature/YudisiumPdfTest.php` |
 
 ### 3.5 Modul Dosen
 | Fitur | Status | Catatan |
@@ -95,10 +95,10 @@ Legenda status: ✅ Sudah ada di kode · 🟡 Ada kerangka tapi belum lengkap/fu
 | Daftar Mahasiswa per kelas + pencarian + export Excel | ✅ | Selesai 2026-08-31. Pencarian NIM/nama ditambahkan ke query `krss` di `PerkuliahanController::index` (tab "Nilai" di halaman Perkuliahan, yang berfungsi sebagai daftar mahasiswa per kelas). Export lewat `App\Exports\DaftarMahasiswaKelasExport` + `PerkuliahanController::exportMahasiswa`, dibatasi hanya untuk kelas milik dosen yang login (403 jika bukan). Diuji di `tests/Feature/DaftarMahasiswaExportTest.php` |
 | Presensi (Hadir/Izin/Sakit/Alpha) per pertemuan, rekap, export Excel | ✅ | `Presensi` model ada |
 | Materi Perkuliahan (upload PDF/PPT/Word/video/tautan, pertemuan 1–16) | ✅ | `Materi` model ada |
-| RPS (upload, status Belum/Sudah Upload/Perlu Revisi/Disetujui) | ⬜ | Belum ada model/kolom terkait RPS |
+| RPS (upload, status Belum/Sudah Upload/Perlu Revisi/Disetujui) | ✅ | Selesai 2026-09-01. Tabel/model `Rps` baru (relasi 1:1 ke `Kelas`). Dosen unggah dari tab baru "RPS" di halaman Perkuliahan (`PerkuliahanController::uploadRps`, scoped ke kelas milik sendiri — 403 jika bukan). Admin meninjau di halaman baru `admin/rps` (`Admin/RpsController`) — approve atau minta revisi dengan catatan wajib. Alur status: `belum_upload` → `sudah_upload` → `disetujui`/`perlu_revisi`. Diuji di `tests/Feature/RpsTest.php` (5 test) |
 | Input Nilai per kelas | ✅ | Terhubung ke `NilaiController` |
 | Mahasiswa Asuh (PA) — 5 mahasiswa per dosen, bimbingan & catatan, riwayat, rekap, export | ✅ | `Dosen/MahasiswaAsuhController` |
-| Bimbingan Tugas Akhir (status Aktif/Revisi/Lainnya) | ⬜ | Menu ada di sidebar (`/dosen/bimbingan-tugas-akhir`), controller/model belum ada |
+| Bimbingan Tugas Akhir (status Aktif/Revisi/Lainnya) | ✅ | Selesai 2026-09-01. Model/tabel baru `BimbinganTugasAkhir` (mahasiswa, judul, pembimbing 1 & 2, status, catatan). `Dosen/BimbinganTugasAkhirController` — dosen menambah bimbingan (otomatis jadi Pembimbing I), melihat daftar (sebagai Pembimbing I *atau* II), update status/catatan hanya untuk bimbingan miliknya (403 jika bukan). Kolom sesuai spek `siakad.json`: NIM, Nama, Judul TA, Pembimbing I, Pembimbing II, Status. Diuji di `tests/Feature/BimbinganTugasAkhirTest.php` (4 test) |
 
 ### 3.6 Modul Mahasiswa
 | Fitur | Status |
@@ -126,31 +126,31 @@ Legenda status: ✅ Sudah ada di kode · 🟡 Ada kerangka tapi belum lengkap/fu
 | Export Laporan Mahasiswa (PDF) | ✅ |
 | Export Laporan Nilai (PDF) | ✅ |
 | Export Laporan Keuangan (PDF, dengan total lunas/belum lunas) | ✅ |
-| Laporan Sumber Daya (dosen, tendik, ruang) | ⬜ | Disebut di `siakad.json` (`kategori_laporan`), belum ada di `LaporanController` |
+| Laporan Sumber Daya (dosen, tendik, ruang) | ✅ | Selesai 2026-09-01 — `LaporanController::exportSumberDaya` + view PDF baru, 3 sub-tabel (Dosen, Tendik, Ruang). Diuji di `tests/Feature/LaporanSumberDayaTest.php` |
 
 ### 3.9 Pengaturan Sistem (Admin)
 | Fitur | Status | Catatan |
 |---|---|---|
-| Identitas Kampus, logo, info sistem | ⬜ | `PengaturanController` saat ini hanya mengembalikan config `app.*` (nama, url, locale, timezone) — **tidak benar-benar tersimpan**, `update()` adalah stub |
+| Identitas Kampus, logo, info sistem | ✅ | Selesai 2026-09-01. Tabel `settings` (key-value, di-cache lewat `Cache::rememberForever`) + `App\Models\Setting` (`get`/`set`/`setMany`). Nama kampus, alamat, website, dan upload logo (hapus logo lama saat diganti, pola sama seperti photo-upload) tersimpan permanen |
 | Tahun Akademik & Semester Aktif | ✅ | Sudah dikelola lewat modul Data Akademik terpisah |
-| Pengaturan KRS (periode buka/tutup, batas SKS) | ⬜ | |
-| Pengaturan Nilai (periode input, bobot default) | ⬜ | |
+| Pengaturan KRS (periode buka/tutup, batas SKS) | ✅ | `krs.sks_min`/`krs.sks_maks`/`krs.dibuka` tersimpan di `settings`. **Catatan:** nilai ini belum dikonsumsi oleh `Krs::MAX_SKS` (§3.4, masih hardcode 24) — perlu disambungkan di iterasi berikutnya agar admin bisa mengubah batas SKS tanpa deploy kode baru |
+| Pengaturan Nilai (periode input, bobot default) | ✅ | `nilai.bobot_*` (5 komponen, tervalidasi total 100%) + `nilai.periode_input_dibuka` tersimpan. **Catatan:** sama seperti di atas, belum dikonsumsi oleh `NilaiController` — nilai default ini belum jadi bobot aktual yang dipakai saat input nilai (`Nilai` model tidak punya breakdown komponen sama sekali, lihat gap baru di §6) |
 | Pengaturan UKT & Pembayaran | ⬜ | (skema UKT sudah ada sebagai modul terpisah — bukan bagian "pengaturan") |
-| Pengaturan Notifikasi | ⬜ | |
+| Pengaturan Notifikasi | ✅ | `notifikasi.email_aktif`/`notifikasi.tagihan_aktif` tersimpan sebagai toggle. **Catatan:** belum ada sistem notifikasi aktual yang membaca toggle ini — flag ini baru menyiapkan tempat, belum mengubah perilaku sistem |
 | Hak Akses & Keamanan | ✅ | Ditangani lewat `role` di `users` + middleware |
-| Backup & Restore | ⬜ | |
-| Log Aktivitas | ⬜ | Perlu audit trail (mis. `spatie/laravel-activitylog` atau tabel `activity_logs` sendiri) |
+| Backup & Restore | ⬜ | Ditunda — butuh keputusan arsitektur/dependency terpisah |
+| Log Aktivitas | ⬜ | Ditunda — butuh keputusan arsitektur/dependency terpisah (mis. `spatie/laravel-activitylog` vs tabel sendiri) |
 
-**Rekomendasi:** modul Pengaturan Sistem butuh tabel `settings` (key-value) agar `PengaturanController::update` benar-benar persisten, bukan hanya membaca `config()`.
+Diuji di `tests/Feature/PengaturanSistemTest.php` (4 test: default values, persistensi lintas request, validasi total bobot 100%, ganti logo menghapus file lama).
 
 ### 3.10 Modul Pimpinan
-| Fitur | Status |
-|---|---|
-| Monitoring Akademik (mahasiswa aktif, kelas, KRS, presensi, perkembangan akademik) | ⬜ |
-| Monitoring Keuangan (tagihan, pembayaran, tunggakan, % pembayaran) | ⬜ |
-| Laporan Ringkas (akademik, mahasiswa, nilai/yudisium, keuangan) | ⬜ |
+| Fitur | Status | Catatan |
+|---|---|---|
+| Monitoring Akademik (mahasiswa aktif, kelas, KRS, presensi, perkembangan akademik) | ✅ | Selesai 2026-09-01 — `Pimpinan/MonitoringAkademikController`, halaman baru, route baru `routes/pimpinan.php` (didaftarkan di `bootstrap/app.php`, sebelumnya tidak ada file route untuk Pimpinan sama sekali). Mahasiswa per status, KRS per status, % kehadiran, mahasiswa per prodi |
+| Monitoring Keuangan (tagihan, pembayaran, tunggakan, % pembayaran) | ✅ | `Pimpinan/MonitoringKeuanganController` — tagihan per status (jumlah & nominal), pembayaran per status, total tunggakan, % lunas |
+| Laporan Ringkas (akademik, mahasiswa, nilai/yudisium, keuangan) | ✅ | `Pimpinan/LaporanController` — 3 kategori ringkas (akademik & mahasiswa, nilai & yudisium, keuangan), read-only tanpa export (beda dengan modul Laporan Admin di §3.8 yang punya export PDF) |
 
-Seluruh modul Pimpinan baru ada sebagai entri menu di sidebar; belum ada route, controller, maupun halaman.
+Seluruhnya read-only sesuai spesifikasi ("bersifat monitoring/pengecekan saja") — middleware `role:pimpinan`, tidak ada endpoint yang mengubah data. Diuji di `tests/Feature/PimpinanModuleTest.php` (5 test, termasuk penolakan akses untuk role lain).
 
 ---
 
@@ -182,17 +182,19 @@ Entity inti yang sudah ada: `User`, `ProgramStudi`, `Mahasiswa`, `Dosen`, `Tendi
 Urutan disarankan berdasarkan dampak terhadap alur inti sistem. Status ✅ = selesai & diuji, ⬜ = belum dikerjakan.
 
 1. ✅ **Sambungkan `Pembayaran::verify` → update status `TagihanUkt`** — selesai 2026-08-31. `PembayaranController::verify` sekarang mengakumulasi `jumlah_bayar` pada `TagihanUkt` dan menghitung ulang status (`lunas` jika total bayar ≥ tagihan, `terlambat` jika lewat jatuh tempo, selain itu `belum`), dibungkus `DB::transaction()` dengan `lockForUpdate()` pada `Pembayaran` dan `TagihanUkt` (mencegah race condition & double-counting saat dua admin memverifikasi bersamaan). `verify`/`reject` sekarang menolak (`422`) pembayaran yang statusnya bukan `pending` (idempotent, sesuai RULES.md §7.1). Migration baru `add_unique_to_pembayaran_uuid` menambahkan constraint unik yang sebelumnya hilang di kolom route-key `uuid`. Diuji lewat `tests/Feature/PembayaranVerificationTest.php` (5 test: lunas penuh, pembayaran parsial, reject tidak mengubah saldo, tidak bisa diverifikasi dua kali, non-admin ditolak 403).
-2. ⬜ **Login via NIDN/NIM** — saat ini asumsinya login pakai email untuk semua peran; ini menyimpang dari spesifikasi.
-3. ⬜ **Modul Pimpinan** (monitoring + laporan ringkas) — sama sekali belum ada implementasi.
-4. ⬜ **Pengaturan Sistem yang benar-benar persisten** (tabel `settings`, bukan stub).
-5. ⬜ **Bimbingan Tugas Akhir** untuk Dosen — model & controller belum ada.
-6. ⬜ **RPS (Rencana Pembelajaran Semester)** dengan status approval.
-7. ⬜ **Log Aktivitas / audit trail** lintas modul kritikal (nilai, KRS, pembayaran, yudisium).
-8. ⬜ **Cetak PDF individual**: KHS, Transkrip, Kuitansi Pembayaran, Berita Acara/SK Yudisium (laporan massal PDF sudah ada, tinggal per-dokumen).
+2. ✅ **Login via NIDN/NIM** — selesai 2026-09-01, lihat §3.1.
+3. ✅ **Modul Pimpinan** (monitoring + laporan ringkas) — selesai 2026-09-01, lihat §3.10.
+4. ✅ **Pengaturan Sistem yang benar-benar persisten** (tabel `settings`) — selesai 2026-09-01, lihat §3.9. Nilai KRS/Nilai settings belum dikonsumsi oleh logic terkait, lihat item baru #13.
+5. ✅ **Bimbingan Tugas Akhir** untuk Dosen — selesai 2026-09-01, lihat §3.5.
+6. ✅ **RPS (Rencana Pembelajaran Semester)** dengan status approval — selesai 2026-09-01, lihat §3.5.
+7. ⬜ **Log Aktivitas / audit trail** lintas modul kritikal (nilai, KRS, pembayaran, yudisium) — ditunda, butuh keputusan arsitektur/dependency.
+8. ✅ **Cetak PDF individual**: KHS, Transkrip, Kuitansi Pembayaran (sudah ada dari sebelumnya, lihat §3.4/§3.7), Berita Acara/SK Yudisium (selesai 2026-09-01, lihat §3.4).
 9. ⬜ **`PembayaranController::index` masih `->get()` tanpa pagination** — ditandai saat mengerjakan item #1, sengaja tidak diubah karena halaman React (`admin/pembayaran/index.tsx`) mengasumsikan array datar; mengubah ke `paginate()` butuh penyesuaian frontend sekaligus (bukan perubahan backend-only).
 10. ✅ **Dependency `maatwebsite/excel` (^4.0)** — disetujui user 2026-08-31, terpasang, dipakai untuk Import/Export Nilai Excel dan export Daftar Mahasiswa per kelas (lihat §3.4/§3.5).
 11. ⬜ **Skema jadwal (hari/jam) tidak ada di tabel `kelas`** — modul "Penjadwalan" saat ini hanya assign dosen/ruang/semester, tanpa hari/jam. Ini membatasi "Jadwal Perkuliahan" mahasiswa (§3.6, sudah dibuat tapi hanya daftar kelas, bukan jadwal waktu) dan "jadwal hari ini" di Dashboard Dosen (§3.2). Butuh keputusan desain: tambah kolom `hari`/`jam_mulai`/`jam_selesai` ke `kelas`, atau tabel `jadwal` terpisah untuk mendukung kelas yang jadwalnya berubah per minggu.
 12. ⬜ **Alur pengajuan KRS mandiri oleh mahasiswa belum ada** — `siakad.json` mendeskripsikan alur "Pilih mata kuliah → Keranjang KRS → Ajukan KRS → Disetujui Dosen PA/BAAK", tapi implementasi saat ini KRS 100% dibuat oleh Admin (`Admin/KrsController::store`). Mahasiswa hanya bisa **melihat** KRS miliknya (`Mahasiswa/KrsController@index`), tidak mengajukan. Ini juga sebabnya "batas SKS minimal" (§3.4) tidak bisa diimplementasikan — tidak ada momen "submit" untuk divalidasi.
+13. ⬜ **Backup & Restore** — ditunda bersama Log Aktivitas (#7), butuh keputusan arsitektur/dependency yang sama.
+14. ⬜ **Setting KRS/Nilai belum disambungkan ke logic yang sesungguhnya** — `krs.sks_maks`/`krs.sks_min` di Pengaturan Sistem (§3.9) belum menggantikan `Krs::MAX_SKS` (masih hardcode 24 di `app/Models/Krs.php`); `nilai.bobot_*` belum dipakai `NilaiController` karena `Nilai` model sendiri tidak punya breakdown komponen (Tugas/UTS/UAS/Partisipasi/Kehadiran) — hanya kolom `nilai` tunggal. Menyambungkan ini butuh perubahan skema `nilai` (kolom per komponen) dan keputusan bagaimana `Krs::MAX_SKS` membaca dari `Setting` tanpa query berulang di setiap request (butuh cache, sudah tersedia infrastrukturnya di `Setting::allSettings()`).
 
 ### 6.1 Bug infrastruktur pre-existing yang ditemukan & diperbaiki saat mengerjakan #1
 
@@ -208,3 +210,9 @@ Ditemukan saat menjalankan test suite untuk memverifikasi perbaikan di atas — 
 
 - **`Krs.status` — mismatch `approved`/`rejected` vs nilai asli `disetujui`/`ditolak`** ditemukan di 5 tempat (lihat §4). Ini bug fungsional nyata: sebelum diperbaiki, kartu "KRS Disetujui" di dashboard mahasiswa selalu menunjukkan 0, total SKS di halaman KRS & PDF cetak KRS selalu 0, dan laporan admin `krs_approved` selalu 0 — meski data KRS yang disetujui benar-benar ada di database. Semua sudah diperbaiki dan tercakup test yang lolos.
 - **`Kelas` model tidak punya relasi `academicYearSemester`** (kelas hanya punya kolom string `semester`/`tahun_akademik`, bukan foreign key ke `academic_year_semesters`) — tapi `Dosen/PerkuliahanController::index` dan `Dosen/DosenProfileController::show` memanggil `Kelas::with([..., 'academicYearSemester'])`, yang melempar `RelationNotFoundException` (HTTP 500) setiap kali dosen membuka halaman Perkuliahan atau Profil. **Ini blocker penuh** — dua halaman inti modul Dosen sama sekali tidak bisa diakses sebelum perbaikan ini. Diperbaiki dengan menghapus eager-load relasi yang tidak ada dan menyesuaikan frontend (`dosen/perkuliahan/index.tsx`, `dosen/profil/show.tsx`) untuk memakai kolom `semester`/`tahun_akademik` langsung. Diuji di `tests/Feature/DosenProfilePerkuliahanTest.php`.
+
+### 6.3 Bug ditemukan & diperbaiki saat mengerjakan fitur ⬜ (2026-09-01)
+
+- **Login NIM/NIDN backend sudah lengkap tapi tidak pernah tercapai dari UI** — `FortifyServiceProvider::authenticateUsing` sudah mendukung resolusi `login_field` = `nim`/`nidn`/`email` sejak sebelumnya, tapi halaman login (`resources/js/pages/auth/login.tsx`) hanya mengirim field generik `login_value` tanpa `login_field`, sehingga selalu jatuh ke pencarian `email` — login via NIM/NIDN **tidak pernah berfungsi** dari form manapun. Diperbaiki dengan auto-deteksi server-side (`detectLoginField`), bukan mengubah UI.
+- **`App\Models\Setting::all()` — fatal error, ditemukan sebelum sempat di-commit**: method ini override `Illuminate\Database\Eloquent\Model::all()` dengan signature return type yang tidak kompatibel (`Collection` vs `static[]|Collection` bawaan Eloquent), menyebabkan `Symfony\Component\ErrorHandler\Error\FatalError` setiap kali class `Setting` di-load — bukan exception yang bisa di-catch, PHP mati total di level compile/class-declaration. Gejalanya membingungkan: `vendor/bin/pest` untuk file test terkait berhenti tanpa output apa pun (bukan pesan error) karena fatal terjadi sebelum test runner sempat mem-flush apa pun ke printer JSON kustom. Diperbaiki dengan rename ke `Setting::allSettings()`. **Pelajaran:** jangan pernah menamai method static di model Eloquent sama dengan method bawaan (`all`, `find`, `create`, `query`, dst) tanpa mengecek signature aslinya.
+- **IDOR di `Dosen/PerkuliahanController::index`** — parameter `kelas_id` dari query string dipakai langsung untuk query presensi/materi/KRS tanpa memverifikasi kelas itu milik dosen yang login; dosen mana pun bisa melihat data kelas dosen lain dengan mengubah `?kelas_id=` di URL. Ditemukan saat menambahkan fitur RPS (yang butuh melakukan write berdasarkan `kelas_id` yang sama). Diperbaiki dengan validasi `$kelas->contains('id', ...)` sebelum dipakai.

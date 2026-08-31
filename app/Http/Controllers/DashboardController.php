@@ -107,6 +107,20 @@ class DashboardController extends Controller
                     ->take(5)
                     ->get();
             }
+        } elseif ($role === 'pimpinan') {
+            $data['stats'] = [
+                'mahasiswa_aktif' => Mahasiswa::where('status', 'aktif')->count(),
+                'total_dosen' => Dosen::count(),
+                'total_kelas' => Kelas::count(),
+                'krs_pending' => Krs::where('status', 'pending')->count(),
+                'tagihan_belum_lunas' => TagihanUkt::whereIn('status', ['belum', 'terlambat'])->count(),
+                'total_tunggakan' => TagihanUkt::whereIn('status', ['belum', 'terlambat'])
+                    ->get()
+                    ->sum(fn (TagihanUkt $t) => $t->jumlah_tagihan - $t->jumlah_bayar),
+                'persentase_lunas' => TagihanUkt::count() > 0
+                    ? round(TagihanUkt::where('status', 'lunas')->count() / TagihanUkt::count() * 100, 1)
+                    : 0,
+            ];
         }
 
         return Inertia::render("dashboard/{$role}", $data);

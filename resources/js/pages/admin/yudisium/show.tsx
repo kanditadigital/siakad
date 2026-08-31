@@ -7,7 +7,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Download } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type Mahasiswa = {
@@ -63,6 +63,18 @@ export default function YudisiumShow({ yudisium }: { yudisium: Yudisium }) {
                         <p className="text-muted-foreground">Informasi lengkap yudisium mahasiswa</p>
                     </div>
                     <div className="flex items-center gap-2">
+                        {yudisium.status === 'lulus' && (
+                            <>
+                                <Button variant="outline" onClick={() => window.location.href = `/admin/yudisium/${yudisium.uuid}/berita-acara`}>
+                                    <Download className="mr-2 h-4 w-4" />
+                                    Berita Acara
+                                </Button>
+                                <Button variant="outline" onClick={() => window.location.href = `/admin/yudisium/${yudisium.uuid}/sk`}>
+                                    <Download className="mr-2 h-4 w-4" />
+                                    SK Yudisium
+                                </Button>
+                            </>
+                        )}
                         <Link href={`/admin/yudisium/${yudisium.uuid}/edit`}>
                             <Button variant="outline">
                                 <Edit className="mr-2 h-4 w-4" />

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Mahasiswa;
 use App\Models\Yudisium;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -136,5 +137,33 @@ class YudisiumController extends Controller
 
         return redirect()->route('admin.yudisium.index')
             ->with('success', 'Yudisium berhasil dihapus');
+    }
+
+    /**
+     * Export berita acara yudisium (PDF), only for status "lulus".
+     */
+    public function exportBeritaAcara(Yudisium $yudisium)
+    {
+        abort_unless($yudisium->status === 'lulus', 422);
+
+        $yudisium->load('mahasiswa.programStudi');
+
+        $pdf = Pdf::loadView('pdf.berita-acara-yudisium', ['yudisium' => $yudisium]);
+
+        return $pdf->download("berita-acara-yudisium-{$yudisium->mahasiswa->nim}.pdf");
+    }
+
+    /**
+     * Export SK (surat keputusan) yudisium (PDF), only for status "lulus".
+     */
+    public function exportSk(Yudisium $yudisium)
+    {
+        abort_unless($yudisium->status === 'lulus', 422);
+
+        $yudisium->load('mahasiswa.programStudi');
+
+        $pdf = Pdf::loadView('pdf.sk-yudisium', ['yudisium' => $yudisium]);
+
+        return $pdf->download("sk-yudisium-{$yudisium->mahasiswa->nim}.pdf");
     }
 }

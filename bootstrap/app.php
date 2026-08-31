@@ -23,6 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/admin-prodi.php'));
             Route::middleware('web')
                 ->group(base_path('routes/mahasiswa.php'));
+            Route::middleware('web')
+                ->group(base_path('routes/pimpinan.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {

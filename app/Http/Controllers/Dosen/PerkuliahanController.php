@@ -8,8 +8,10 @@ use App\Models\Kelas;
 use App\Models\Krs;
 use App\Models\Materi;
 use App\Models\Presensi;
+use App\Models\Rps;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
@@ -29,6 +31,11 @@ class PerkuliahanController extends Controller
 
         $selectedKelasId = $request->input('kelas_id');
 
+        // Only allow selecting a kelas that belongs to this dosen.
+        if ($selectedKelasId && ! $kelas->contains('id', (int) $selectedKelasId)) {
+            $selectedKelasId = null;
+        }
+
         // Auto-select first class if no class selected and dosen has classes
         if (! $selectedKelasId && $kelas->isNotEmpty()) {
             $selectedKelasId = $kelas->first()->id;
@@ -37,8 +44,11 @@ class PerkuliahanController extends Controller
         $presensis = [];
         $materis = [];
         $krss = [];
+        $rps = null;
 
         if ($selectedKelasId) {
+            $rps = Rps::firstOrCreate(['kelas_id' => $selectedKelasId]);
+
             $presensis = Presensi::with(['mahasiswa'])
                 ->where('kelas_id', $selectedKelasId)
                 ->orderBy('tanggal', 'desc')
@@ -68,9 +78,38 @@ class PerkuliahanController extends Controller
             'presensis' => $presensis,
             'materis' => $materis,
             'krss' => $krss,
+            'rps' => $rps,
             'selectedKelasId' => $selectedKelasId,
             'filters' => $request->only(['search']),
         ]);
+    }
+
+    /**
+     * Upload or replace the RPS document for a kelas owned by the logged-in dosen.
+     */
+    public function uploadRps(Request $request, int $kelasId): RedirectResponse
+    {
+        $kelas = Kelas::findOrFail($kelasId);
+        abort_unless($kelas->dosen_id === $request->user()->dosen?->id, 403);
+
+        $validated = $request->validate([
+            'file' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+        ]);
+
+        $rps = Rps::firstOrNew(['kelas_id' => $kelas->id]);
+
+        if ($rps->file_path) {
+            Storage::disk('public')->delete($rps->file_path);
+        }
+
+        $rps->file_path = $request->file('file')->store('rps', 'public');
+        $rps->status = 'sudah_upload';
+        $rps->catatan = null;
+        $rps->uploaded_at = now();
+        $rps->kelas_id = $kelas->id;
+        $rps->save();
+
+        return back()->with('success', 'RPS berhasil diunggah');
     }
 
     /**
