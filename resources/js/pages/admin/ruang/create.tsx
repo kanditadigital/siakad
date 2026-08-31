@@ -12,6 +12,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
+
 export default function RuangCreate() {
     const { data, setData, post, processing, errors } = useForm({
         kode_ruang: '',
@@ -47,17 +51,20 @@ export default function RuangCreate() {
                     </div>
                 </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Form Tambah Ruang</CardTitle>
-                        <CardDescription>Isi data ruang kelas</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Informasi Ruang</CardTitle>
+                            <CardDescription>
+                                Isi data ruang kelas
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="kode_ruang">
                                         Kode Ruang
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="kode_ruang"
@@ -69,9 +76,10 @@ export default function RuangCreate() {
                                             )
                                         }
                                         placeholder="R-001"
+                                        aria-invalid={!!errors.kode_ruang}
                                     />
                                     {errors.kode_ruang && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.kode_ruang}
                                         </p>
                                     )}
@@ -80,6 +88,7 @@ export default function RuangCreate() {
                                 <div className="space-y-2">
                                     <Label htmlFor="nama_ruang">
                                         Nama Ruang
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nama_ruang"
@@ -91,52 +100,20 @@ export default function RuangCreate() {
                                             )
                                         }
                                         placeholder="Ruang Kelas A"
+                                        aria-invalid={!!errors.nama_ruang}
                                     />
                                     {errors.nama_ruang && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nama_ruang}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="kapasitas">Kapasitas</Label>
-                                    <Input
-                                        id="kapasitas"
-                                        type="number"
-                                        min="1"
-                                        value={data.kapasitas}
-                                        onChange={(e) =>
-                                            setData('kapasitas', e.target.value)
-                                        }
-                                        placeholder="40"
-                                    />
-                                    {errors.kapasitas && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.kapasitas}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="lantai">Lantai</Label>
-                                    <Input
-                                        id="lantai"
-                                        value={data.lantai}
-                                        onChange={(e) =>
-                                            setData('lantai', e.target.value)
-                                        }
-                                        placeholder="1"
-                                    />
-                                    {errors.lantai && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.lantai}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="gedung">Gedung</Label>
+                                    <Label htmlFor="gedung">
+                                        Gedung
+                                        <Required />
+                                    </Label>
                                     <Input
                                         id="gedung"
                                         value={data.gedung}
@@ -144,28 +121,83 @@ export default function RuangCreate() {
                                             setData('gedung', e.target.value)
                                         }
                                         placeholder="Gedung A"
+                                        aria-invalid={!!errors.gedung}
                                     />
                                     {errors.gedung && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.gedung}
                                         </p>
                                     )}
                                 </div>
-                            </div>
 
-                            <div className="flex items-center gap-4">
-                                <Button type="submit" disabled={processing}>
-                                    {processing ? 'Menyimpan...' : 'Simpan'}
-                                </Button>
-                                <Link href="/admin/ruang">
-                                    <Button type="button" variant="outline">
-                                        Batal
-                                    </Button>
-                                </Link>
+                                <div className="space-y-2">
+                                    <Label htmlFor="lantai">
+                                        Lantai
+                                        <Required />
+                                    </Label>
+                                    <Input
+                                        id="lantai"
+                                        value={data.lantai}
+                                        onChange={(e) =>
+                                            setData('lantai', e.target.value)
+                                        }
+                                        placeholder="1"
+                                        aria-invalid={!!errors.lantai}
+                                    />
+                                    {errors.lantai && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.lantai}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="kapasitas">
+                                        Kapasitas
+                                        <Required />
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="kapasitas"
+                                            type="number"
+                                            min="1"
+                                            max="500"
+                                            value={data.kapasitas}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'kapasitas',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="40"
+                                            aria-invalid={!!errors.kapasitas}
+                                            className="pr-14"
+                                        />
+                                        <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
+                                            orang
+                                        </span>
+                                    </div>
+                                    {errors.kapasitas && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.kapasitas}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+
+                    <div className="flex items-center justify-end gap-3">
+                        <Link href="/admin/ruang">
+                            <Button type="button" variant="outline">
+                                Batal
+                            </Button>
+                        </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Simpan Ruang'}
+                        </Button>
+                    </div>
+                </form>
             </div>
         </>
     );

@@ -26,6 +26,10 @@ type Props = {
     ruang: Ruang;
 };
 
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
+
 export default function RuangEdit({ ruang }: Props) {
     const { data, setData, put, processing, errors } = useForm({
         kode_ruang: ruang.kode_ruang,
@@ -42,7 +46,7 @@ export default function RuangEdit({ ruang }: Props) {
 
     return (
         <>
-            <Head title="Edit Ruang" />
+            <Head title={`Edit Ruang - ${ruang.nama_ruang}`} />
 
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
@@ -61,19 +65,20 @@ export default function RuangEdit({ ruang }: Props) {
                     </div>
                 </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Form Edit Ruang</CardTitle>
-                        <CardDescription>
-                            Perbarui data ruang kelas
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Informasi Ruang</CardTitle>
+                            <CardDescription>
+                                Perbarui data ruang kelas
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="kode_ruang">
                                         Kode Ruang
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="kode_ruang"
@@ -84,9 +89,10 @@ export default function RuangEdit({ ruang }: Props) {
                                                 e.target.value,
                                             )
                                         }
+                                        aria-invalid={!!errors.kode_ruang}
                                     />
                                     {errors.kode_ruang && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.kode_ruang}
                                         </p>
                                     )}
@@ -95,6 +101,7 @@ export default function RuangEdit({ ruang }: Props) {
                                 <div className="space-y-2">
                                     <Label htmlFor="nama_ruang">
                                         Nama Ruang
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nama_ruang"
@@ -105,78 +112,101 @@ export default function RuangEdit({ ruang }: Props) {
                                                 e.target.value,
                                             )
                                         }
+                                        aria-invalid={!!errors.nama_ruang}
                                     />
                                     {errors.nama_ruang && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nama_ruang}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="kapasitas">Kapasitas</Label>
-                                    <Input
-                                        id="kapasitas"
-                                        type="number"
-                                        min="1"
-                                        value={data.kapasitas}
-                                        onChange={(e) =>
-                                            setData('kapasitas', e.target.value)
-                                        }
-                                    />
-                                    {errors.kapasitas && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.kapasitas}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="lantai">Lantai</Label>
-                                    <Input
-                                        id="lantai"
-                                        value={data.lantai}
-                                        onChange={(e) =>
-                                            setData('lantai', e.target.value)
-                                        }
-                                    />
-                                    {errors.lantai && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.lantai}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="gedung">Gedung</Label>
+                                    <Label htmlFor="gedung">
+                                        Gedung
+                                        <Required />
+                                    </Label>
                                     <Input
                                         id="gedung"
                                         value={data.gedung}
                                         onChange={(e) =>
                                             setData('gedung', e.target.value)
                                         }
+                                        aria-invalid={!!errors.gedung}
                                     />
                                     {errors.gedung && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.gedung}
                                         </p>
                                     )}
                                 </div>
-                            </div>
 
-                            <div className="flex items-center gap-4">
-                                <Button type="submit" disabled={processing}>
-                                    {processing ? 'Menyimpan...' : 'Perbarui'}
-                                </Button>
-                                <Link href="/admin/ruang">
-                                    <Button type="button" variant="outline">
-                                        Batal
-                                    </Button>
-                                </Link>
+                                <div className="space-y-2">
+                                    <Label htmlFor="lantai">
+                                        Lantai
+                                        <Required />
+                                    </Label>
+                                    <Input
+                                        id="lantai"
+                                        value={data.lantai}
+                                        onChange={(e) =>
+                                            setData('lantai', e.target.value)
+                                        }
+                                        aria-invalid={!!errors.lantai}
+                                    />
+                                    {errors.lantai && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.lantai}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="kapasitas">
+                                        Kapasitas
+                                        <Required />
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="kapasitas"
+                                            type="number"
+                                            min="1"
+                                            max="500"
+                                            value={data.kapasitas}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'kapasitas',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            aria-invalid={!!errors.kapasitas}
+                                            className="pr-14"
+                                        />
+                                        <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
+                                            orang
+                                        </span>
+                                    </div>
+                                    {errors.kapasitas && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.kapasitas}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+
+                    <div className="flex items-center justify-end gap-3">
+                        <Link href="/admin/ruang">
+                            <Button type="button" variant="outline">
+                                Batal
+                            </Button>
+                        </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                        </Button>
+                    </div>
+                </form>
             </div>
         </>
     );
