@@ -13,6 +13,11 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
+    /* Used sparingly — the SIAKAD wordmark and other single brand moments,
+       not body text. Pairs a warm editorial serif against the grotesk used
+       everywhere else, per the "distinctive display + refined body" rule. */
+    --font-display: 'Fraunces', ui-serif, Georgia, serif;
+
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);

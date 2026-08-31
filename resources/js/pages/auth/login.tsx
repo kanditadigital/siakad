@@ -60,9 +60,15 @@ function GeometricPattern() {
  * Institutional emblem — a mosque/book motif inside an 8-pointed star.
  * Solid fills only, no glow/blur filters.
  */
-function LogoBadge({ className }: { className?: string }) {
+function LogoBadge({
+    className,
+    style,
+}: {
+    className?: string;
+    style?: React.CSSProperties;
+}) {
     return (
-        <div className={className}>
+        <div className={className} style={style}>
             <svg viewBox="0 0 120 120" className="h-full w-full">
                 <polygon
                     points="60,8 72,40 108,40 80,60 90,95 60,76 30,95 40,60 12,40 48,40"
@@ -143,6 +149,17 @@ export default function Login() {
         <>
             <Head title="Login SIAKAD" />
 
+            {/* One considered page-load reveal — a staggered fade+rise, nothing more. */}
+            <style>{`
+                @keyframes login-reveal {
+                    from { opacity: 0; transform: translateY(8px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .login-reveal {
+                    animation: login-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+                }
+            `}</style>
+
             <div className="flex min-h-screen">
                 {/* Left panel — institutional identity, solid color, no gradient */}
                 <div className="relative hidden w-[52%] flex-col justify-between overflow-hidden bg-siak-pine lg:flex">
@@ -150,26 +167,47 @@ export default function Login() {
 
                     <div className="relative z-10 flex h-full flex-col items-center justify-center px-16">
                         <div className="flex flex-col items-center space-y-6 text-center">
-                            <LogoBadge className="h-32 w-32" />
+                            <LogoBadge
+                                className="login-reveal h-32 w-32"
+                                style={{ animationDelay: '0ms' }}
+                            />
 
                             <div className="space-y-2">
-                                <p className="text-sm tracking-widest text-white/70 uppercase">
+                                <p
+                                    className="login-reveal text-sm tracking-widest text-white/70 uppercase"
+                                    style={{ animationDelay: '80ms' }}
+                                >
                                     Selamat Datang di
                                 </p>
-                                <h1 className="text-5xl leading-none font-semibold tracking-tight text-white">
+                                <h1
+                                    className="login-reveal font-display text-6xl leading-none font-semibold text-white"
+                                    style={{ animationDelay: '140ms' }}
+                                >
                                     SIAKAD
                                 </h1>
-                                <p className="text-lg font-medium text-gold-soft">
+                                <p
+                                    className="login-reveal font-display text-lg text-gold-soft italic"
+                                    style={{ animationDelay: '220ms' }}
+                                >
                                     STIT Daarurrahmah Sepadan
                                 </p>
-                                <div className="mx-auto mt-4 h-px w-40 bg-white/20" />
-                                <p className="pt-1 text-xs tracking-widest text-white/50 uppercase">
+                                <div
+                                    className="login-reveal mx-auto mt-4 h-px w-40 bg-white/20"
+                                    style={{ animationDelay: '300ms' }}
+                                />
+                                <p
+                                    className="login-reveal pt-1 text-xs tracking-widest text-white/50 uppercase"
+                                    style={{ animationDelay: '340ms' }}
+                                >
                                     Sistem Informasi Akademik Terintegrasi
                                 </p>
                             </div>
                         </div>
 
-                        <div className="absolute right-0 bottom-12 left-0 flex justify-center">
+                        <div
+                            className="login-reveal absolute right-0 bottom-12 left-0 flex justify-center"
+                            style={{ animationDelay: '420ms' }}
+                        >
                             <div className="flex items-center gap-8">
                                 {NILAI_INSTITUSI.map(
                                     ({ icon: Icon, label }) => (
@@ -196,7 +234,7 @@ export default function Login() {
                     {/* Mobile-only branded header */}
                     <div className="mb-8 flex flex-col items-center lg:hidden">
                         <LogoBadge className="mb-3 h-14 w-14" />
-                        <h2 className="text-lg font-semibold text-siak-pine">
+                        <h2 className="font-display text-xl font-semibold text-siak-pine">
                             SIAKAD
                         </h2>
                         <p className="text-xs text-muted-foreground">
@@ -204,7 +242,10 @@ export default function Login() {
                         </p>
                     </div>
 
-                    <div className="w-full max-w-[400px]">
+                    <div
+                        className="login-reveal w-full max-w-[400px]"
+                        style={{ animationDelay: '120ms' }}
+                    >
                         <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
                             <div className="h-1 bg-siak-pine" />
 
