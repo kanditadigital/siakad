@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import {
+    ArrowLeft,
     Edit,
     School,
     BookOpen,
@@ -44,6 +45,14 @@ export default function ProgramStudiShow({ programStudi }: Props) {
             <Head title={`Program Studi - ${programStudi.nama_prodi}`} />
 
             <div className="space-y-6">
+                <Link
+                    href="/admin/program-studi"
+                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Kembali ke Daftar Program Studi
+                </Link>
+
                 {/* Header Card */}
                 <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">

@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, School, X } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -123,11 +123,11 @@ export default function ProgramStudiIndex({
                 </div>
 
                 {/* Filters */}
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="relative max-w-sm flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
-                            placeholder="Cari program studi..."
+                            placeholder="Cari kode atau nama program studi..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={(e) =>
@@ -136,6 +136,9 @@ export default function ProgramStudiIndex({
                             className="pl-9"
                         />
                     </div>
+                    <Button variant="outline" onClick={handleSearch}>
+                        Cari
+                    </Button>
                     <Select
                         value={fakultasFilter}
                         onValueChange={handleFakultasChange}
@@ -152,6 +155,20 @@ export default function ProgramStudiIndex({
                             ))}
                         </SelectContent>
                     </Select>
+                    {(filters.search || filters.fakultas) && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                                setSearch('');
+                                setFakultasFilter('all');
+                                router.get('/admin/program-studi');
+                            }}
+                        >
+                            <X className="mr-1 h-3.5 w-3.5" />
+                            Reset
+                        </Button>
+                    )}
                 </div>
 
                 {/* Table */}
@@ -175,9 +192,36 @@ export default function ProgramStudiIndex({
                                     <TableRow>
                                         <TableCell
                                             colSpan={6}
-                                            className="py-8 text-center"
+                                            className="py-12 text-center"
                                         >
-                                            Tidak ada data program studi
+                                            <div className="flex flex-col items-center gap-2">
+                                                <School className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {filters.search ||
+                                                    filters.fakultas
+                                                        ? 'Tidak ada program studi yang cocok'
+                                                        : 'Belum ada program studi'}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {filters.search ||
+                                                    filters.fakultas
+                                                        ? 'Coba ubah kata kunci atau filter fakultas'
+                                                        : 'Mulai dengan menambahkan program studi pertama'}
+                                                </p>
+                                                {!filters.search &&
+                                                    !filters.fakultas && (
+                                                        <Link
+                                                            href="/admin/program-studi/create"
+                                                            className="mt-2"
+                                                        >
+                                                            <Button size="sm">
+                                                                <Plus className="mr-2 h-4 w-4" />
+                                                                Tambah Program
+                                                                Studi
+                                                            </Button>
+                                                        </Link>
+                                                    )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
