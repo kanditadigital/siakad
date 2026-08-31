@@ -16,6 +16,8 @@ Yang dihindari secara eksplisit (ciri khas "generic AI dashboard"):
 - Font-weight yang sama untuk judul dan isi, dibedakan hanya lewat ukuran.
 - Empty state dengan ilustrasi generik bertema "cloud" atau "rocket" yang tidak relevan dengan konteks akademik.
 - Warna aksen sembarang (indigo/violet) yang tidak berhubungan dengan identitas kampus.
+- Glassmorphism (`bg-white/20` + `backdrop-blur` di atas panel berwarna) — dibersihkan total dari aplikasi 2026-09-01, jangan diperkenalkan kembali.
+- Gradient dekoratif apa pun (`bg-gradient-to-*`), termasuk gradient "halus" seperti `from-green-50 to-white` pada kartu KPI — solid + border + shadow-sm sudah cukup memberi kedalaman.
 
 ---
 
@@ -32,6 +34,9 @@ Sumber kebenaran: `resources/css/app.css` (`@theme` dan `:root`). **Jangan** men
 | `--destructive` | `#dc2626` | Error, status "belum lunas"/"ditolak" |
 | `--muted` | `#f5f5f5` | Latar sekunder, baris tabel alternatif |
 | skala `green-50…950` | — | Satu-satunya skala warna aksen kustom; dipakai konsisten, bukan campur dengan Tailwind default indigo/violet/purple |
+| `--color-siak-pine` / `-pine-deep` | `green-800` / `green-900` | Alias untuk panel/header bermerek non-sidebar (mis. panel foto di halaman profil) — dipakai bukan `--primary` langsung karena perannya spesifik (blok warna solid, bukan aksi) |
+| `--color-siak-mist` / `-sage` / `-moss` / `-fern` | lihat `app.css` | Dipakai khusus oleh `Table` (header wash, label uppercase) dan `nav-main` (indikator aktif) — **jangan hapus tanpa memeriksa kedua komponen itu**, sempat tidak terdefinisi sama sekali (2026-09-01) sehingga highlight sidebar aktif dan header tabel senyap total tanpa warna |
+| `--color-gold` / `-gold-soft` | `#a9822f` / `#d9c48c` | Aksen emas institusi (dipakai di halaman login) — token, bukan hex literal berulang |
 
 Tema institusi: **hijau & kuning** (`siakad.json`). Kuning/emas dipakai secara **sangat selektif** — untuk badge/aksen "perlu perhatian" (mis. status "menunggu konfirmasi", RPS "perlu revisi") — bukan sebagai warna latar besar. Jangan campur hijau institusi dengan hijau "sukses" generik Tailwind (`emerald`/`teal`) — pakai skala `green` yang sudah didefinisikan agar identitas konsisten.
 
