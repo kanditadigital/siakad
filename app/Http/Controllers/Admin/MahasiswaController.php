@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -84,9 +85,15 @@ class MahasiswaController extends Controller
             'alamat' => ['required', 'string', 'max:255'],
             'kode_domisili' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,nonaktif,lulus'],
+            'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($validated): void {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        DB::transaction(function () use ($validated, $photoPath): void {
             $programStudi = ProgramStudi::findOrFail($validated['program_studi_id']);
             $nim = $programStudi->generateNim();
 
@@ -96,6 +103,7 @@ class MahasiswaController extends Controller
                 'password' => bcrypt('password'),
                 'role' => 'mahasiswa',
                 'nim' => $nim,
+                'photo' => $photoPath,
             ]);
 
             $validated['user_id'] = $user->id;
@@ -125,7 +133,7 @@ class MahasiswaController extends Controller
      */
     public function edit(Mahasiswa $mahasiswa): Response
     {
-        $mahasiswa->load('programStudi');
+        $mahasiswa->load('programStudi', 'user');
         $programStudis = ProgramStudi::orderBy('nama_prodi')->get();
         $dosens = Dosen::where('status', 'aktif')->orderBy('nama')->get();
 
@@ -154,15 +162,26 @@ class MahasiswaController extends Controller
             'alamat' => ['required', 'string', 'max:255'],
             'kode_domisili' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,nonaktif,lulus'],
+            'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($mahasiswa, $validated): void {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            if ($mahasiswa->user?->photo) {
+                Storage::disk('public')->delete($mahasiswa->user->photo);
+            }
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        DB::transaction(function () use ($mahasiswa, $validated, $photoPath): void {
             $mahasiswa->update($validated);
 
             if ($mahasiswa->user) {
-                $mahasiswa->user->update([
-                    'name' => $validated['nama'],
-                ]);
+                $userUpdate = ['name' => $validated['nama']];
+                if ($photoPath) {
+                    $userUpdate['photo'] = $photoPath;
+                }
+                $mahasiswa->user->update($userUpdate);
             }
         });
 
@@ -176,6 +195,9 @@ class MahasiswaController extends Controller
     public function destroy(Mahasiswa $mahasiswa): RedirectResponse
     {
         DB::transaction(function () use ($mahasiswa): void {
+            if ($mahasiswa->user?->photo) {
+                Storage::disk('public')->delete($mahasiswa->user->photo);
+            }
             if ($mahasiswa->user) {
                 $mahasiswa->user->delete();
             }

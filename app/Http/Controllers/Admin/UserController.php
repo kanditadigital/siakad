@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -75,6 +76,7 @@ class UserController extends Controller
             'role' => ['required', 'string', 'in:admin,admin_prodi,dosen,mahasiswa,pimpinan'],
             'program_studi_id' => ['required_if:role,admin_prodi', 'nullable', 'integer', 'exists:program_studi,id'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
 
         if ($validated['role'] === 'admin_prodi' && ! empty($validated['program_studi_id'])) {
@@ -89,14 +91,20 @@ class UserController extends Controller
             }
         }
 
-        DB::transaction(function () use ($validated): void {
-            User::create([
+        DB::transaction(function () use ($validated, $request): void {
+            $data = [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'role' => $validated['role'],
                 'program_studi_id' => $validated['program_studi_id'] ?? null,
                 'password' => Hash::make($validated['password']),
-            ]);
+            ];
+
+            if ($request->hasFile('photo')) {
+                $data['photo'] = $request->file('photo')->store('photos', 'public');
+            }
+
+            User::create($data);
         });
 
         return redirect()->route('admin.user.index')
@@ -146,6 +154,7 @@ class UserController extends Controller
             'role' => ['required', 'string', 'in:admin,admin_prodi,dosen,mahasiswa,pimpinan'],
             'program_studi_id' => ['required_if:role,admin_prodi', 'nullable', 'integer', 'exists:program_studi,id'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
 
         if ($validated['role'] === 'admin_prodi' && ! empty($validated['program_studi_id'])) {
@@ -161,7 +170,7 @@ class UserController extends Controller
             }
         }
 
-        DB::transaction(function () use ($user, $validated): void {
+        DB::transaction(function () use ($user, $validated, $request): void {
             $data = [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -171,6 +180,14 @@ class UserController extends Controller
 
             if (! empty($validated['password'])) {
                 $data['password'] = Hash::make($validated['password']);
+            }
+
+            if ($request->hasFile('photo')) {
+                // Delete old photo
+                if ($user->photo) {
+                    Storage::disk('public')->delete($user->photo);
+                }
+                $data['photo'] = $request->file('photo')->store('photos', 'public');
             }
 
             $user->update($data);
@@ -185,6 +202,11 @@ class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
+        // Delete photo
+        if ($user->photo) {
+            Storage::disk('public')->delete($user->photo);
+        }
+
         $user->delete();
 
         return redirect()->route('admin.user.index')

@@ -6,10 +6,6 @@ import {
     ClipboardList,
     Receipt,
     BookOpen,
-    TrendingUp,
-    Clock,
-    CheckCircle,
-    XCircle,
 } from 'lucide-react';
 
 type Mahasiswa = {
@@ -64,14 +60,14 @@ type Props = {
 
 const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
     pending: 'outline',
-    approved: 'default',
-    rejected: 'destructive',
+    disetujui: 'default',
+    ditolak: 'destructive',
 };
 
 const STATUS_LABELS: Record<string, string> = {
     pending: 'Pending',
-    approved: 'Disetujui',
-    rejected: 'Ditolak',
+    disetujui: 'Disetujui',
+    ditolak: 'Ditolak',
 };
 
 const GRADE_COLORS: Record<string, string> = {
@@ -89,10 +85,10 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                 <Head title="Mahasiswa Dashboard" />
                 <div className="space-y-6">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                        <h1 className="text-2xl font-bold text-green-800">
                             Dashboard Mahasiswa
                         </h1>
-                        <p className="text-siak-sage">Memuat data...</p>
+                        <p className="text-gray-600">Memuat data...</p>
                     </div>
                 </div>
             </>
@@ -104,106 +100,98 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
             <Head title="Mahasiswa Dashboard" />
 
             <div className="space-y-6">
-                {/* Header */}
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                    <h1 className="text-2xl font-bold text-green-800">
                         Dashboard Mahasiswa
                     </h1>
-                    <p className="text-siak-sage">
+                    <p className="text-gray-600">
                         Selamat datang, {mahasiswa.nama} ({mahasiswa.nim})
                     </p>
                 </div>
 
-                {/* Stats Cards */}
                 <div className="grid gap-4 md:grid-cols-4">
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Total KRS
                             </CardTitle>
-                            <ClipboardList className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-600">
+                                <ClipboardList className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                            <div className="text-3xl font-bold text-gray-900">
                                 {stats.krs_count}
                             </div>
-                            <div className="mt-1 flex items-center gap-1 text-xs text-siak-sage">
-                                <span>{stats.krs_active} disetujui</span>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">{stats.krs_active} disetujui</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Tagihan UKT
                             </CardTitle>
-                            <Receipt className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-700">
+                                <Receipt className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                            <div className="text-3xl font-bold text-gray-900">
                                 {stats.tagihan_count}
                             </div>
-                            <div className="mt-1 flex items-center gap-1 text-xs text-siak-sage">
-                                <span>belum lunas</span>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">belum lunas</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Mata Kuliah
                             </CardTitle>
-                            <BookOpen className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-800">
+                                <BookOpen className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                            <div className="text-3xl font-bold text-gray-900">
                                 {stats.nilai_count}
                             </div>
-                            <div className="mt-1 flex items-center gap-1 text-xs text-siak-sage">
-                                <span>sudah ada nilai</span>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">sudah ada nilai</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Status
                             </CardTitle>
-                            <GraduationCap className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-500">
+                                <GraduationCap className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold tracking-tight text-siak-pine dark:text-siak-fern capitalize">
+                            <div className="text-2xl font-bold text-gray-900 capitalize">
                                 {mahasiswa.status}
                             </div>
-                            <div className="mt-1 flex items-center gap-1 text-xs text-siak-sage">
-                                <span>{mahasiswa.program_studi?.nama_prodi}</span>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">{mahasiswa.program_studi?.nama_prodi}</p>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Recent KRS & Nilai */}
                 <div className="grid gap-6 md:grid-cols-2">
-                    {/* Recent KRS */}
-                    <Card className="border-siak-moss/60">
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-siak-pine">KRS Terbaru</CardTitle>
+                            <CardTitle className="text-gray-900">KRS Terbaru</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {recent_krs && recent_krs.length > 0 ? (
                                 <div className="space-y-3">
                                     {recent_krs.map((krs) => (
-                                        <div key={krs.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                        <div key={krs.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                                             <div className="space-y-1">
-                                                <p className="font-medium text-sm">{krs.kelas?.mata_kuliah?.nama_mk}</p>
-                                                <p className="text-xs text-muted-foreground">
+                                                <p className="font-medium text-sm text-gray-900">{krs.kelas?.mata_kuliah?.nama_mk}</p>
+                                                <p className="text-xs text-gray-500">
                                                     {krs.kelas?.nama_kelas} • {krs.kelas?.dosen?.nama || '-'}
                                                 </p>
                                             </div>
@@ -214,26 +202,25 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-siak-sage text-center py-4">
+                                <p className="text-sm text-gray-500 text-center py-4">
                                     Belum ada data KRS
                                 </p>
                             )}
                         </CardContent>
                     </Card>
 
-                    {/* Recent Nilai */}
-                    <Card className="border-siak-moss/60">
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-siak-pine">Nilai Terbaru</CardTitle>
+                            <CardTitle className="text-gray-900">Nilai Terbaru</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {recent_nilai && recent_nilai.length > 0 ? (
                                 <div className="space-y-3">
                                     {recent_nilai.map((nilai) => (
-                                        <div key={nilai.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                        <div key={nilai.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
                                             <div className="space-y-1">
-                                                <p className="font-medium text-sm">{nilai.krs?.kelas?.mata_kuliah?.nama_mk}</p>
-                                                <p className="text-xs text-muted-foreground">
+                                                <p className="font-medium text-sm text-gray-900">{nilai.krs?.kelas?.mata_kuliah?.nama_mk}</p>
+                                                <p className="text-xs text-gray-500">
                                                     Nilai: {nilai.nilai ?? '-'}
                                                 </p>
                                             </div>
@@ -248,7 +235,7 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-siak-sage text-center py-4">
+                                <p className="text-sm text-gray-500 text-center py-4">
                                     Belum ada data nilai
                                 </p>
                             )}

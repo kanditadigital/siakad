@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dosen;
 
+use App\Exports\DaftarMahasiswaKelasExport;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\Krs;
@@ -11,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PerkuliahanController extends Controller
 {
@@ -21,7 +23,7 @@ class PerkuliahanController extends Controller
     {
         $dosen = $request->user()->dosen;
 
-        $kelas = Kelas::with(['mataKuliah', 'academicYearSemester'])
+        $kelas = Kelas::with(['mataKuliah'])
             ->where('dosen_id', $dosen->id)
             ->get();
 
@@ -51,6 +53,13 @@ class PerkuliahanController extends Controller
             $krss = Krs::with(['mahasiswa'])
                 ->where('kelas_id', $selectedKelasId)
                 ->where('status', 'disetujui')
+                ->when($request->filled('search'), function ($q) use ($request): void {
+                    $search = $request->input('search');
+                    $q->whereHas('mahasiswa', function ($mq) use ($search): void {
+                        $mq->where('nim', 'like', "%{$search}%")
+                            ->orWhere('nama', 'like', "%{$search}%");
+                    });
+                })
                 ->get();
         }
 
@@ -60,7 +69,20 @@ class PerkuliahanController extends Controller
             'materis' => $materis,
             'krss' => $krss,
             'selectedKelasId' => $selectedKelasId,
+            'filters' => $request->only(['search']),
         ]);
+    }
+
+    /**
+     * Export the enrolled mahasiswa list for a kelas owned by the logged-in dosen.
+     */
+    public function exportMahasiswa(Request $request, int $kelasId)
+    {
+        $kelas = Kelas::findOrFail($kelasId);
+
+        abort_unless($kelas->dosen_id === $request->user()->dosen?->id, 403);
+
+        return Excel::download(new DaftarMahasiswaKelasExport($kelas->id), "mahasiswa-{$kelas->kode_kelas}.xlsx");
     }
 
     /**

@@ -13,6 +13,7 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->name('do
 
     // Perkuliahan
     Route::get('perkuliahan', [PerkuliahanController::class, 'index'])->name('perkuliahan.index');
+    Route::get('perkuliahan/{kelasId}/export-mahasiswa', [PerkuliahanController::class, 'exportMahasiswa'])->name('perkuliahan.export-mahasiswa');
     Route::post('perkuliahan/presensi', [PerkuliahanController::class, 'storePresensi'])->name('perkuliahan.presensi.store');
     Route::put('perkuliahan/presensi/{presensi}', [PerkuliahanController::class, 'updatePresensi'])->name('perkuliahan.presensi.update');
     Route::post('perkuliahan/materi', [PerkuliahanController::class, 'storeMateri'])->name('perkuliahan.materi.store');

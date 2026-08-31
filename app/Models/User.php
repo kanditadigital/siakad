@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasTeams;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -34,12 +35,12 @@ use Laravel\Fortify\PasskeyAuthenticatable;
  * @property-read Dosen|null $dosen
  * @property-read ProgramStudi|null $programStudi
  */
-#[Fillable(['name', 'email', 'password', 'role', 'nim', 'nidn', 'program_studi_id'])]
+#[Fillable(['name', 'email', 'password', 'role', 'nim', 'nidn', 'program_studi_id', 'photo'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, PasskeyAuthenticatable;
+    use HasFactory, HasTeams, Notifiable, PasskeyAuthenticatable;
 
     /**
      * Get the attributes that should be cast.

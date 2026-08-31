@@ -42,6 +42,7 @@ type User = {
     name: string;
     email: string;
     role: string;
+    photo: string | null;
     program_studi_id: number | null;
     program_studi?: ProgramStudi;
 };
@@ -158,6 +159,7 @@ export default function UserIndex({ users, programStudis, filters }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead> Foto</TableHead>
                                 <TableHead>Nama</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Role</TableHead>
@@ -175,6 +177,21 @@ export default function UserIndex({ users, programStudis, filters }: Props) {
                             ) : (
                                 users.data.map((user) => (
                                     <TableRow key={user.id}>
+                                        <TableCell>
+                                            {user.photo ? (
+                                                <img
+                                                    src={`/storage/${user.photo}`}
+                                                    alt={user.name}
+                                                    className="h-10 w-10 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <span className="text-sm font-medium text-green-700">
+                                                        {user.name.charAt(0).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </TableCell>
                                         <TableCell className="font-medium">
                                             {user.name}
                                         </TableCell>

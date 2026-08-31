@@ -21,6 +21,11 @@ class Krs extends Model
     use HasFactory;
 
     /**
+     * Batas maksimal SKS yang boleh disetujui untuk satu mahasiswa dalam satu periode akademik.
+     */
+    public const MAX_SKS = 24;
+
+    /**
      * @var string
      */
     protected $table = 'krs';
@@ -59,6 +64,21 @@ class Krs extends Model
     public function getRouteKeyName(): string
     {
         return 'uuid';
+    }
+
+    /**
+     * Total SKS yang sudah disetujui untuk mahasiswa pada satu periode akademik.
+     */
+    public static function totalSksDisetujui(int $mahasiswaId, int $academicYearSemesterId, ?int $excludingKrsId = null): int
+    {
+        return static::query()
+            ->where('mahasiswa_id', $mahasiswaId)
+            ->where('academic_year_semester_id', $academicYearSemesterId)
+            ->where('status', 'disetujui')
+            ->when($excludingKrsId, fn ($query) => $query->where('id', '!=', $excludingKrsId))
+            ->with('kelas.mataKuliah')
+            ->get()
+            ->sum(fn (Krs $krs) => $krs->kelas?->mataKuliah?->sks ?? 0);
     }
 
     protected static function booted(): void

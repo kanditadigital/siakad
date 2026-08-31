@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +29,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Download, Upload } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type Mahasiswa = {
@@ -120,6 +120,20 @@ export default function NilaiIndex({ nilais, filters }: Props) {
         router.delete(`/admin/nilai/${uuid}`);
     };
 
+    const importInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        router.post('/admin/nilai/import', { file }, {
+            forceFormData: true,
+            onFinish: () => {
+                if (importInputRef.current) importInputRef.current.value = '';
+            },
+        });
+    };
+
     return (
         <>
             <Head title="Data Nilai" />
@@ -130,12 +144,29 @@ export default function NilaiIndex({ nilais, filters }: Props) {
                         <h1 className="text-2xl font-bold">Data Nilai</h1>
                         <p className="text-muted-foreground">Kelola data nilai mahasiswa</p>
                     </div>
-                    <Link href="/admin/nilai/create">
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" />
-                            Tambah Nilai
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" onClick={() => (window.location.href = '/admin/nilai/export')}>
+                            <Download className="mr-2 h-4 w-4" />
+                            Export Excel
                         </Button>
-                    </Link>
+                        <Button variant="outline" onClick={() => importInputRef.current?.click()}>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Import Excel
+                        </Button>
+                        <input
+                            ref={importInputRef}
+                            type="file"
+                            accept=".xlsx,.xls,.csv"
+                            className="hidden"
+                            onChange={handleImport}
+                        />
+                        <Link href="/admin/nilai/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Tambah Nilai
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">

@@ -87,6 +87,18 @@ class KrsController extends Controller
             'status' => ['required', 'string', 'in:pending,disetujui,ditolak'],
         ]);
 
+        if ($validated['status'] === 'disetujui') {
+            $kelas = Kelas::with('mataKuliah')->findOrFail($validated['kelas_id']);
+            $totalSks = Krs::totalSksDisetujui($validated['mahasiswa_id'], $validated['academic_year_semester_id'])
+                + ($kelas->mataKuliah->sks ?? 0);
+
+            if ($totalSks > Krs::MAX_SKS) {
+                return back()->withErrors([
+                    'kelas_id' => "Total SKS akan menjadi {$totalSks}, melebihi batas maksimal ".Krs::MAX_SKS.' SKS per semester.',
+                ])->withInput();
+            }
+        }
+
         Krs::create($validated);
 
         return redirect()->route('admin.krs.index')
@@ -139,6 +151,18 @@ class KrsController extends Controller
             'academic_year_semester_id' => ['required', 'integer', 'exists:academic_year_semesters,id'],
             'status' => ['required', 'string', 'in:pending,disetujui,ditolak'],
         ]);
+
+        if ($validated['status'] === 'disetujui') {
+            $kelas = Kelas::with('mataKuliah')->findOrFail($validated['kelas_id']);
+            $totalSks = Krs::totalSksDisetujui($validated['mahasiswa_id'], $validated['academic_year_semester_id'], $krs->id)
+                + ($kelas->mataKuliah->sks ?? 0);
+
+            if ($totalSks > Krs::MAX_SKS) {
+                return back()->withErrors([
+                    'kelas_id' => "Total SKS akan menjadi {$totalSks}, melebihi batas maksimal ".Krs::MAX_SKS.' SKS per semester.',
+                ])->withInput();
+            }
+        }
 
         $krs->update($validated);
 

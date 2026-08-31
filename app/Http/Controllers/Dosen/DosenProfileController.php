@@ -17,7 +17,7 @@ class DosenProfileController extends Controller
      */
     public function show(Request $request): Response
     {
-        $dosen = Dosen::with(['programStudi', 'kelas.mataKuliah', 'kelas.academicYearSemester'])
+        $dosen = Dosen::with(['programStudi', 'kelas.mataKuliah'])
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 

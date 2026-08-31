@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -75,14 +76,21 @@ class TendikController extends Controller
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],
+            'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($validated): void {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        DB::transaction(function () use ($validated, $photoPath): void {
             $user = User::create([
                 'name' => $validated['nama'],
                 'email' => $validated['email'],
                 'password' => bcrypt('password'),
                 'role' => 'admin',
+                'photo' => $photoPath,
             ]);
 
             $validated['user_id'] = $user->id;
@@ -132,16 +140,29 @@ class TendikController extends Controller
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],
+            'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($tendik, $validated): void {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            if ($tendik->user?->photo) {
+                Storage::disk('public')->delete($tendik->user->photo);
+            }
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        DB::transaction(function () use ($tendik, $validated, $photoPath): void {
             $tendik->update($validated);
 
             if ($tendik->user) {
-                $tendik->user->update([
+                $userUpdate = [
                     'name' => $validated['nama'],
                     'email' => $validated['email'],
-                ]);
+                ];
+                if ($photoPath) {
+                    $userUpdate['photo'] = $photoPath;
+                }
+                $tendik->user->update($userUpdate);
             }
         });
 
@@ -155,6 +176,9 @@ class TendikController extends Controller
     public function destroy(Tendik $tendik): RedirectResponse
     {
         DB::transaction(function () use ($tendik): void {
+            if ($tendik->user?->photo) {
+                Storage::disk('public')->delete($tendik->user->photo);
+            }
             if ($tendik->user) {
                 $tendik->user->delete();
             }

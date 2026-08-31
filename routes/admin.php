@@ -3,9 +3,12 @@
 use App\Http\Controllers\Admin\AcademicYearSemesterController;
 use App\Http\Controllers\Admin\DosenController;
 use App\Http\Controllers\Admin\KrsController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Admin\MataKuliahController;
 use App\Http\Controllers\Admin\NilaiController;
+use App\Http\Controllers\Admin\PembayaranController;
+use App\Http\Controllers\Admin\PengaturanController;
 use App\Http\Controllers\Admin\PenjadwalanController;
 use App\Http\Controllers\Admin\ProgramStudiController;
 use App\Http\Controllers\Admin\RuangController;
@@ -106,6 +109,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('nilai', [NilaiController::class, 'index'])->name('nilai.index');
     Route::get('nilai/create', [NilaiController::class, 'create'])->name('nilai.create');
     Route::post('nilai', [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('nilai/export', [NilaiController::class, 'exportExcel'])->name('nilai.export');
+    Route::post('nilai/import', [NilaiController::class, 'importExcel'])->name('nilai.import');
     Route::get('nilai/{nilai}', [NilaiController::class, 'show'])->name('nilai.show');
     Route::get('nilai/{nilai}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
     Route::put('nilai/{nilai}', [NilaiController::class, 'update'])->name('nilai.update');
@@ -137,4 +142,23 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('ukt-scheme/{uktScheme}/edit', [UktSchemeController::class, 'edit'])->name('ukt-scheme.edit');
     Route::put('ukt-scheme/{uktScheme}', [UktSchemeController::class, 'update'])->name('ukt-scheme.update');
     Route::delete('ukt-scheme/{uktScheme}', [UktSchemeController::class, 'destroy'])->name('ukt-scheme.destroy');
+
+    // Pembayaran
+    Route::get('pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+    Route::get('pembayaran/create', [PembayaranController::class, 'create'])->name('pembayaran.create');
+    Route::post('pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.store');
+    Route::get('pembayaran/{pembayaran}', [PembayaranController::class, 'show'])->name('pembayaran.show');
+    Route::patch('pembayaran/{pembayaran}/verify', [PembayaranController::class, 'verify'])->name('pembayaran.verify');
+    Route::patch('pembayaran/{pembayaran}/reject', [PembayaranController::class, 'reject'])->name('pembayaran.reject');
+    Route::get('pembayaran/{pembayaran}/kuitansi', [PembayaranController::class, 'exportKuitansi'])->name('pembayaran.kuitansi');
+
+    // Laporan
+    Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('laporan/export-mahasiswa', [LaporanController::class, 'exportMahasiswa'])->name('laporan.export-mahasiswa');
+    Route::get('laporan/export-nilai', [LaporanController::class, 'exportNilai'])->name('laporan.export-nilai');
+    Route::get('laporan/export-keuangan', [LaporanController::class, 'exportKeuangan'])->name('laporan.export-keuangan');
+
+    // Pengaturan Sistem
+    Route::get('pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
+    Route::put('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
 });

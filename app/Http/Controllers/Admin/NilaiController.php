@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\NilaiExport;
 use App\Http\Controllers\Controller;
+use App\Imports\NilaiImport;
 use App\Models\Krs;
 use App\Models\Nilai;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NilaiController extends Controller
 {
@@ -136,5 +139,38 @@ class NilaiController extends Controller
 
         return redirect()->route('admin.nilai.index')
             ->with('success', 'Nilai berhasil dihapus');
+    }
+
+    /**
+     * Export all nilai records to Excel.
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new NilaiExport, 'nilai-'.now()->format('Y-m-d').'.xlsx');
+    }
+
+    /**
+     * Import nilai records from an uploaded Excel file.
+     */
+    public function importExcel(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:2048'],
+        ]);
+
+        $import = new NilaiImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->errors !== []) {
+            $summary = collect($import->errors)
+                ->map(fn ($message, $row) => "Baris {$row}: {$message}")
+                ->implode('; ');
+
+            return redirect()->route('admin.nilai.index')
+                ->with('error', "{$import->imported} nilai berhasil diimpor. Ada baris yang dilewati — {$summary}");
+        }
+
+        return redirect()->route('admin.nilai.index')
+            ->with('success', "{$import->imported} nilai berhasil diimpor");
     }
 }

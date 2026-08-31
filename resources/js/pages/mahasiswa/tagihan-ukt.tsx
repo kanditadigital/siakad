@@ -1,6 +1,7 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -9,10 +10,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Receipt, DollarSign, Clock, CheckCircle } from 'lucide-react';
+import { Receipt, Clock, CheckCircle, CreditCard } from 'lucide-react';
 
 type TagihanUkt = {
     id: number;
+    uuid: string;
     jumlah_tagihan: number;
     status: string;
     created_at: string;
@@ -35,14 +37,14 @@ type Props = {
 
 const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
     lunas: 'default',
-    belum_lunas: 'destructive',
-    cicilan: 'secondary',
+    belum: 'destructive',
+    terlambat: 'destructive',
 };
 
 const STATUS_LABELS: Record<string, string> = {
     lunas: 'Lunas',
-    belum_lunas: 'Belum Lunas',
-    cicilan: 'Cicilan',
+    belum: 'Belum Lunas',
+    terlambat: 'Terlambat',
 };
 
 export default function TagihanUktMahasiswa({ tagihans, mahasiswa }: Props) {
@@ -51,7 +53,7 @@ export default function TagihanUktMahasiswa({ tagihans, mahasiswa }: Props) {
         .filter((t) => t.status === 'lunas')
         .reduce((sum, t) => sum + t.jumlah_tagihan, 0);
     const totalBelumLunas = tagihans
-        .filter((t) => t.status === 'belum_lunas')
+        .filter((t) => t.status === 'belum' || t.status === 'terlambat')
         .reduce((sum, t) => sum + t.jumlah_tagihan, 0);
 
     const formatCurrency = (amount: number) => {
@@ -68,56 +70,59 @@ export default function TagihanUktMahasiswa({ tagihans, mahasiswa }: Props) {
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                    <h1 className="text-2xl font-bold text-green-800">
                         Tagihan UKT
                     </h1>
-                    <p className="text-siak-sage">
+                    <p className="text-gray-600">
                         {mahasiswa.nama} ({mahasiswa.nim})
                     </p>
                 </div>
 
                 {/* Stats */}
                 <div className="grid gap-4 md:grid-cols-3">
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Total Tagihan
                             </CardTitle>
-                            <Receipt className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-600">
+                                <Receipt className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                            <div className="text-2xl font-bold text-gray-900">
                                 {formatCurrency(totalTagihan)}
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-green-500" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Sudah Lunas
                             </CardTitle>
-                            <CheckCircle className="h-4 w-4 text-green-500/60" />
+                            <div className="p-2 rounded-lg bg-green-500">
+                                <CheckCircle className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold tracking-tight text-green-600">
+                            <div className="text-2xl font-bold text-green-600">
                                 {formatCurrency(totalLunas)}
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-red-500" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Belum Lunas
                             </CardTitle>
-                            <Clock className="h-4 w-4 text-red-500/60" />
+                            <div className="p-2 rounded-lg bg-red-500">
+                                <Clock className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold tracking-tight text-red-600">
+                            <div className="text-2xl font-bold text-red-600">
                                 {formatCurrency(totalBelumLunas)}
                             </div>
                         </CardContent>
@@ -125,41 +130,52 @@ export default function TagihanUktMahasiswa({ tagihans, mahasiswa }: Props) {
                 </div>
 
                 {/* Table */}
-                <Card className="border-siak-moss/60">
+                <Card className="border border-gray-200 shadow-sm">
                     <CardHeader>
-                        <CardTitle className="text-siak-pine">Daftar Tagihan</CardTitle>
+                        <CardTitle className="text-gray-900">Daftar Tagihan</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Tahun Akademik</TableHead>
-                                    <TableHead>Semester</TableHead>
-                                    <TableHead>Skema UKT</TableHead>
-                                    <TableHead>Jumlah Tagihan</TableHead>
-                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-gray-600">Tahun Akademik</TableHead>
+                                    <TableHead className="text-gray-600">Semester</TableHead>
+                                    <TableHead className="text-gray-600">Skema UKT</TableHead>
+                                    <TableHead className="text-gray-600">Jumlah Tagihan</TableHead>
+                                    <TableHead className="text-gray-600">Status</TableHead>
+                                    <TableHead className="text-gray-600">Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {tagihans.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center py-8">
+                                        <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                                             Belum ada data tagihan
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     tagihans.map((tagihan) => (
                                         <TableRow key={tagihan.id}>
-                                            <TableCell>{tagihan.academic_year_semester?.nama_tahun_akademik}</TableCell>
-                                            <TableCell>{tagihan.academic_year_semester?.semester}</TableCell>
-                                            <TableCell>{tagihan.ukt_scheme?.nama}</TableCell>
-                                            <TableCell className="font-medium">
+                                            <TableCell className="text-gray-900">{tagihan.academic_year_semester?.nama_tahun_akademik}</TableCell>
+                                            <TableCell className="text-gray-900">{tagihan.academic_year_semester?.semester}</TableCell>
+                                            <TableCell className="text-gray-900">{tagihan.ukt_scheme?.nama}</TableCell>
+                                            <TableCell className="font-medium text-gray-900">
                                                 {formatCurrency(tagihan.jumlah_tagihan)}
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant={STATUS_VARIANTS[tagihan.status] || 'outline'}>
                                                     {STATUS_LABELS[tagihan.status] || tagihan.status}
                                                 </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                {(tagihan.status === 'belum' || tagihan.status === 'terlambat') && (
+                                                    <Button asChild size="sm" className="bg-green-700 hover:bg-green-800">
+                                                        <Link href={`/mahasiswa/tagihan-ukt/${tagihan.uuid}/bayar`}>
+                                                            <CreditCard className="mr-1 h-3.5 w-3.5" />
+                                                            Bayar Sekarang
+                                                        </Link>
+                                                    </Button>
+                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))

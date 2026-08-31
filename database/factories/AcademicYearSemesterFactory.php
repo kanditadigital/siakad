@@ -17,8 +17,17 @@ class AcademicYearSemesterFactory extends Factory
      */
     public function definition(): array
     {
+        $tahunMulai = fake()->numberBetween(2023, 2026);
+        $tanggalMulai = fake()->dateTimeBetween("{$tahunMulai}-01-01", "{$tahunMulai}-06-01");
+
         return [
-            //
+            'nama_tahun_akademik' => "{$tahunMulai}/".($tahunMulai + 1),
+            'semester' => fake()->randomElement(['Ganjil', 'Genap', 'Summer']),
+            'tanggal_mulai' => $tanggalMulai,
+            'tanggal_selesai' => (clone $tanggalMulai)->modify('+6 months'),
+            'status' => 'nonaktif',
+            'periode_krs' => null,
+            'periode_input_nilai' => null,
         ];
     }
 }

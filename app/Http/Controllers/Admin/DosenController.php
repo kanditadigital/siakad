@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -81,15 +82,22 @@ class DosenController extends Controller
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],
+            'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($validated): void {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        DB::transaction(function () use ($validated, $photoPath): void {
             $user = User::create([
                 'name' => $validated['nama'],
                 'email' => $validated['email'],
                 'password' => bcrypt('password'),
                 'role' => 'dosen',
                 'nidn' => $validated['nidn'],
+                'photo' => $photoPath,
             ]);
 
             $validated['user_id'] = $user->id;
@@ -118,7 +126,7 @@ class DosenController extends Controller
      */
     public function edit(Dosen $dosen): Response
     {
-        $dosen->load('programStudi');
+        $dosen->load('programStudi', 'user');
         $programStudis = ProgramStudi::orderBy('nama_prodi')->get();
 
         return Inertia::render('admin/dosen/edit', [
@@ -144,17 +152,30 @@ class DosenController extends Controller
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],
+            'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($dosen, $validated): void {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            if ($dosen->user?->photo) {
+                Storage::disk('public')->delete($dosen->user->photo);
+            }
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        DB::transaction(function () use ($dosen, $validated, $photoPath): void {
             $dosen->update($validated);
 
             if ($dosen->user) {
-                $dosen->user->update([
+                $userUpdate = [
                     'name' => $validated['nama'],
                     'email' => $validated['email'],
                     'nidn' => $validated['nidn'],
-                ]);
+                ];
+                if ($photoPath) {
+                    $userUpdate['photo'] = $photoPath;
+                }
+                $dosen->user->update($userUpdate);
             }
         });
 
@@ -168,6 +189,9 @@ class DosenController extends Controller
     public function destroy(Dosen $dosen): RedirectResponse
     {
         DB::transaction(function () use ($dosen): void {
+            if ($dosen->user?->photo) {
+                Storage::disk('public')->delete($dosen->user->photo);
+            }
             if ($dosen->user) {
                 $dosen->user->delete();
             }

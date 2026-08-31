@@ -1,26 +1,32 @@
 import { Head, Link } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
-    ArrowLeft,
     Edit,
-    Mail,
-    Phone,
-    MapPin,
     User,
     GraduationCap,
-    Award,
+    MapPin,
     Hash,
     Calendar,
     Clock,
+    Phone,
+    Mail,
+    Award,
     BookOpen,
+    Trash2,
 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type ProgramStudi = {
     id: number;
+    kode_prodi: string;
     nama_prodi: string;
+};
+
+type User = {
+    id: number;
+    photo: string | null;
 };
 
 type Dosen = {
@@ -39,6 +45,7 @@ type Dosen = {
     created_at: string;
     updated_at: string;
     program_studi: ProgramStudi;
+    user?: User;
 };
 
 type Props = {
@@ -76,37 +83,23 @@ export default function DosenShow({ dosen }: Props) {
             <Head title={`Dosen - ${dosen.nama}`} />
 
             <div className="space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <Link
-                            href="/admin/dosen"
-                            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-2"
-                        >
-                            <ArrowLeft className="mr-1 h-4 w-4" />
-                            Kembali ke Daftar
-                        </Link>
-                        <h1 className="text-2xl font-bold">Profil Dosen</h1>
-                        <p className="text-muted-foreground">Detail data dosen</p>
-                    </div>
-                    <Link href={`/admin/dosen/${dosen.uuid}/edit`}>
-                        <Button variant="outline">
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                        </Button>
-                    </Link>
-                </div>
-
-                {/* Card 1: Photo & Biodata Singkat */}
-                <Card className="overflow-hidden">
+                {/* Header Card */}
+                <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
-                        {/* Photo Section */}
-                        <div className="flex items-center justify-center bg-gradient-to-br from-siak-pine to-siak-pine-deep p-8 md:w-64 md:min-h-[280px]">
+                        <div className="flex items-center justify-center bg-green-700 p-8 md:w-64 md:min-h-[280px]">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="h-32 w-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-4 border-white/30 shadow-xl">
-                                    <span className="text-4xl font-bold text-white">
-                                        {getInitials(dosen.nama)}
-                                    </span>
+                                <div className="h-32 w-32 rounded-full bg-white/20 flex items-center justify-center border-4 border-white/30 overflow-hidden">
+                                    {dosen.user?.photo ? (
+                                        <img
+                                            src={`/storage/${dosen.user.photo}`}
+                                            alt={dosen.nama}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <span className="text-4xl font-bold text-white">
+                                            {getInitials(dosen.nama)}
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="text-center text-white">
                                     <p className="text-sm opacity-80">NIDN</p>
@@ -114,137 +107,171 @@ export default function DosenShow({ dosen }: Props) {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Biodata Section */}
                         <div className="flex-1 p-6 md:p-8">
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 <div>
-                                    <h2 className="text-2xl font-bold tracking-tight">{dosen.nama}</h2>
-                                    <p className="text-muted-foreground">{dosen.program_studi?.nama_prodi}</p>
+                                    <h1 className="text-2xl font-bold text-gray-900">{dosen.nama}</h1>
+                                    <p className="text-gray-600">{dosen.program_studi?.nama_prodi}</p>
                                 </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Hash className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">NUPTK</p>
-                                            <p className="font-mono font-medium">{dosen.nuptk || '-'}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <User className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">Jenis Kelamin</p>
-                                            <p className="font-medium">{dosen.jenis_kelamin}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Award className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">Pangkat / Golongan</p>
-                                            <p className="font-medium">{dosen.pangkat_golongan || '-'}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">Pendidikan Terakhir</p>
-                                            <p className="font-medium">{dosen.pendidikan_terakhir || '-'}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Mail className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">Email</p>
-                                            <p className="font-medium truncate">{dosen.email}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Phone className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">No. Telepon</p>
-                                            <p className="font-medium">{dosen.no_telepon || '-'}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3 sm:col-span-2">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <MapPin className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">Alamat</p>
-                                            <p className="font-medium">{dosen.alamat || '-'}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div className="flex items-center gap-2">
                                     <Badge variant={STATUS_VARIANTS[dosen.status] || 'outline'}>
                                         {STATUS_LABELS[dosen.status] || dosen.status}
                                     </Badge>
-                                    <span className="text-sm text-muted-foreground">
-                                        • {dosen.program_studi?.nama_prodi}
+                                    <span className="text-sm text-gray-500">
+                                        • {dosen.jenis_kelamin}
                                     </span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Link href={`/admin/dosen/${dosen.uuid}/edit`}>
+                                        <Button className="bg-green-700 hover:bg-green-800">
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            Edit
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </Card>
 
-                {/* Card 2: Informasi Sistem */}
-                <Card>
-                    <CardContent className="p-6">
-                        <h3 className="text-lg font-semibold mb-4">Informasi Sistem</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-6 md:grid-cols-2">
+                    {/* Biodata */}
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-gray-900 flex items-center gap-2">
+                                <User className="h-5 w-5 text-green-700" />
+                                Biodata Diri
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Hash className="h-5 w-5 text-green-700" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-muted-foreground">Dibuat Pada</p>
-                                    <p className="font-medium">{formatDate(dosen.created_at)}</p>
+                                    <p className="text-xs text-gray-500">NIDN</p>
+                                    <p className="font-mono font-medium text-gray-900">{dosen.nidn}</p>
                                 </div>
                             </div>
+
                             <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                    <Clock className="h-5 w-5 text-muted-foreground" />
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Hash className="h-5 w-5 text-green-700" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-muted-foreground">Terakhir Diperbarui</p>
-                                    <p className="font-medium">{formatDate(dosen.updated_at)}</p>
+                                    <p className="text-xs text-gray-500">NUPTK</p>
+                                    <p className="font-mono font-medium text-gray-900">{dosen.nuptk || '-'}</p>
                                 </div>
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <User className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Jenis Kelamin</p>
+                                    <p className="font-medium text-gray-900">{dosen.jenis_kelamin}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Award className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Pangkat / Golongan</p>
+                                    <p className="font-medium text-gray-900">{dosen.pangkat_golongan || '-'}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <GraduationCap className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Pendidikan Terakhir</p>
+                                    <p className="font-medium text-gray-900">{dosen.pendidikan_terakhir || '-'}</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className="space-y-6">
+                        {/* Kontak */}
+                        <Card className="border border-gray-200 shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-gray-900 flex items-center gap-2">
+                                    <Phone className="h-5 w-5 text-green-700" />
+                                    Kontak
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <Mail className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Email</p>
+                                        <p className="font-medium text-gray-900 truncate">{dosen.email}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <Phone className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">No. Telepon</p>
+                                        <p className="font-medium text-gray-900">{dosen.no_telepon || '-'}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <MapPin className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Alamat</p>
+                                        <p className="font-medium text-gray-900">{dosen.alamat || '-'}</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Informasi Sistem */}
+                        <Card className="border border-gray-200 shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-gray-900 flex items-center gap-2">
+                                    <Clock className="h-5 w-5 text-green-700" />
+                                    Informasi Sistem
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">Dibuat Pada</span>
+                                    <span className="text-sm text-gray-900">
+                                        {formatDate(dosen.created_at)}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">Terakhir Diperbarui</span>
+                                    <span className="text-sm text-gray-900">
+                                        {formatDate(dosen.updated_at)}
+                                    </span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
             </div>
         </>
     );
 }
 
-DosenShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
+DosenShow.layout = (page: React.ReactNode) => ({
+    breadcrumbs: [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Dosen', href: '/admin/dosen' },
         { title: 'Detail', href: '#' },
-    ]}>
-        {page}
-    </AppLayout>
-);
+    ],
+});

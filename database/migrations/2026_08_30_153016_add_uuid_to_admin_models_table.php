@@ -30,7 +30,9 @@ return new class extends Migration
         ];
 
         foreach ($tables as $table) {
-            if (! Schema::hasColumn($table, 'uuid')) {
+            $columnIsNew = ! Schema::hasColumn($table, 'uuid');
+
+            if ($columnIsNew) {
                 Schema::table($table, function (Blueprint $table): void {
                     $table->uuid('uuid')->nullable()->after('id');
                 });
@@ -40,8 +42,11 @@ return new class extends Migration
                 DB::table($table)->where('id', $row->id)->update(['uuid' => (string) Str::uuid7()]);
             });
 
-            if (! DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", ["{$table}_uuid_unique"])) {
-                DB::statement("ALTER TABLE {$table} ADD UNIQUE {$table}_uuid_unique(uuid)");
+            if ($columnIsNew) {
+                $tableName = $table;
+                Schema::table($table, function (Blueprint $table) use ($tableName): void {
+                    $table->unique('uuid', "{$tableName}_uuid_unique");
+                });
             }
         }
     }

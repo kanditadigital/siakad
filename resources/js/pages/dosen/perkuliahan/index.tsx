@@ -31,14 +31,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Trash2, ClipboardCheck, BookUp, PenLine } from 'lucide-react';
+import { Plus, Trash2, ClipboardCheck, BookUp, PenLine, Search, Download } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type Kelas = {
     id: number;
     nama_kelas: string;
     mata_kuliah: { nama_mk: string };
-    academic_year_semester: { nama_tahun_akademik: string; semester: string };
+    semester: string;
+    tahun_akademik: string;
 };
 
 type Mahasiswa = {
@@ -78,6 +79,7 @@ type Props = {
     materis: { data: Materi[] } | Materi[];
     krss: Krs[];
     selectedKelasId: string | null;
+    filters?: { search?: string };
 };
 
 const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -87,10 +89,16 @@ const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 
     alpha: 'destructive',
 };
 
-export default function PerkuliahanIndex({ kelas, presensis, materis, krss, selectedKelasId }: Props) {
+export default function PerkuliahanIndex({ kelas, presensis, materis, krss, selectedKelasId, filters }: Props) {
     const [openPresensi, setOpenPresensi] = useState(false);
     const [openMateri, setOpenMateri] = useState(false);
     const [editingKrs, setEditingKrs] = useState<Krs | null>(null);
+    const [search, setSearch] = useState(filters?.search || '');
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.get('/dosen/perkuliahan', { kelas_id: selectedKelasId, search }, { preserveState: true });
+    };
 
     const presensiForm = useForm({
         kelas_id: selectedKelasId || '',
@@ -429,9 +437,34 @@ export default function PerkuliahanIndex({ kelas, presensis, materis, krss, sele
                         {/* Tab Nilai */}
                         <TabsContent value="nilai">
                             <Card>
-                                <CardHeader>
-                                    <CardTitle>Input Nilai</CardTitle>
-                                    <CardDescription>Nilai mahasiswa yang telah disetujui KRS-nya</CardDescription>
+                                <CardHeader className="flex flex-row items-start justify-between gap-4">
+                                    <div>
+                                        <CardTitle>Input Nilai</CardTitle>
+                                        <CardDescription>Nilai mahasiswa yang telah disetujui KRS-nya</CardDescription>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <form onSubmit={handleSearch} className="flex items-center gap-2">
+                                            <Input
+                                                placeholder="Cari NIM/nama..."
+                                                value={search}
+                                                onChange={(e) => setSearch(e.target.value)}
+                                                className="h-9 w-48"
+                                            />
+                                            <Button type="submit" variant="outline" size="icon" className="h-9 w-9">
+                                                <Search className="h-4 w-4" />
+                                            </Button>
+                                        </form>
+                                        {selectedKelasId && (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => (window.location.href = `/dosen/perkuliahan/${selectedKelasId}/export-mahasiswa`)}
+                                            >
+                                                <Download className="mr-2 h-4 w-4" />
+                                                Export
+                                            </Button>
+                                        )}
+                                    </div>
                                 </CardHeader>
                                 <CardContent>
                                     <Table>

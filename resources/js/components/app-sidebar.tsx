@@ -58,69 +58,90 @@ export function AppSidebar() {
                 return [
                     ...baseItems,
                     {
-                        title: 'Data Akademik',
-                        href: '/admin/data-akademik',
-                        icon: Calendar,
-                    },
-                    {
-                        title: 'Program Studi',
-                        href: '/admin/program-studi',
+                        title: 'Data Master',
+                        href: '#',
                         icon: School,
+                        children: [
+                            {
+                                title: 'Program Studi',
+                                href: '/admin/program-studi',
+                                icon: School,
+                            },
+                            {
+                                title: 'Mahasiswa',
+                                href: '/admin/mahasiswa',
+                                icon: GraduationCap,
+                            },
+                            {
+                                title: 'Dosen & Tendik',
+                                href: '/admin/dosen',
+                                icon: UserCheck,
+                            },
+                            {
+                                title: 'Mata Kuliah',
+                                href: '/admin/mata-kuliah',
+                                icon: BookOpen,
+                            },
+                            {
+                                title: 'Ruang Kelas',
+                                href: '/admin/ruang',
+                                icon: Building,
+                            },
+                        ],
                     },
                     {
-                        title: 'Data Mahasiswa',
-                        href: '/admin/mahasiswa',
-                        icon: GraduationCap,
+                        title: 'Akademik',
+                        href: '#',
+                        icon: Calendar,
+                        children: [
+                            {
+                                title: 'Tahun Akademik',
+                                href: '/admin/data-akademik',
+                                icon: Calendar,
+                            },
+                            {
+                                title: 'Penjadwalan',
+                                href: '/admin/penjadwalan',
+                                icon: ClipboardList,
+                            },
+                            {
+                                title: 'KRS',
+                                href: '/admin/krs',
+                                icon: ClipboardList,
+                            },
+                            {
+                                title: 'Nilai',
+                                href: '/admin/nilai',
+                                icon: FileText,
+                            },
+                            {
+                                title: 'Yudisium',
+                                href: '/admin/yudisium',
+                                icon: FileCheck,
+                            },
+                        ],
                     },
                     {
-                        title: 'Data Dosen & Tendik',
-                        href: '/admin/dosen',
-                        icon: UserCheck,
-                    },
-                    {
-                        title: 'Data Mata Kuliah',
-                        href: '/admin/mata-kuliah',
-                        icon: BookOpen,
-                    },
-                    {
-                        title: 'Ruang Kelas',
-                        href: '/admin/ruang',
-                        icon: Building,
-                    },
-                    {
-                        title: 'Penjadwalan',
-                        href: '/admin/penjadwalan',
-                        icon: ClipboardList,
-                    },
-                    {
-                        title: 'Data KRS',
-                        href: '/admin/krs',
-                        icon: ClipboardList,
-                    },
-                    {
-                        title: 'Data Nilai',
-                        href: '/admin/nilai',
-                        icon: FileText,
-                    },
-                    {
-                        title: 'Yudisium',
-                        href: '/admin/yudisium',
-                        icon: FileCheck,
-                    },
-                    {
-                        title: 'Tagihan UKT',
-                        href: '/admin/tagihan-ukt',
-                        icon: Receipt,
-                    },
-                    {
-                        title: 'Skema UKT',
-                        href: '/admin/ukt-scheme',
-                        icon: Receipt,
-                    },
-                    {
-                        title: 'Pembayaran',
-                        href: '/admin/pembayaran',
+                        title: 'Keuangan',
+                        href: '#',
                         icon: CreditCard,
+                        children: [
+                            {
+                                title: 'Skema UKT',
+                                href: '/admin/ukt-scheme',
+                                icon: Receipt,
+                            },
+                            {
+                                title: 'Tagihan UKT',
+                                href: '/admin/tagihan-ukt',
+                                icon: Receipt,
+                            },
+                            {
+                                title: 'Pembayaran',
+                                href: '/admin/pembayaran',
+                                icon: CreditCard,
+                            },
+                        ],
                     },
                     {
                         title: 'Laporan',
@@ -128,14 +149,21 @@ export function AppSidebar() {
                         icon: PieChart,
                     },
                     {
-                        title: 'Pengaturan Sistem',
-                        href: '/admin/pengaturan',
+                        title: 'Pengaturan',
+                        href: '#',
                         icon: Settings,
-                    },
-                    {
-                        title: 'Manajemen User',
-                        href: '/admin/user',
-                        icon: UserCog,
+                        children: [
+                            {
+                                title: 'Manajemen User',
+                                href: '/admin/user',
+                                icon: UserCog,
+                            },
+                            {
+                                title: 'Pengaturan Sistem',
+                                href: '/admin/pengaturan',
+                                icon: Settings,
+                            },
+                        ],
                     },
                 ];
 
@@ -186,6 +214,11 @@ export function AppSidebar() {
                         title: 'Transkrip Nilai',
                         href: '/mahasiswa/transkrip-nilai',
                         icon: BookOpen,
+                    },
+                    {
+                        title: 'Jadwal Perkuliahan',
+                        href: '/mahasiswa/jadwal',
+                        icon: Calendar,
                     },
                     {
                         title: 'Tagihan UKT',

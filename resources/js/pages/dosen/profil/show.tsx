@@ -31,17 +31,12 @@ type MataKuliah = {
     semester: number;
 };
 
-type AcademicYearSemester = {
-    id: number;
-    nama_tahun_akademik: string;
-    semester: string;
-};
-
 type Kelas = {
     id: number;
     nama_kelas: string;
     mata_kuliah: MataKuliah;
-    academic_year_semester: AcademicYearSemester;
+    semester: string;
+    tahun_akademik: string;
     status: string;
 };
 
@@ -302,7 +297,7 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                                     <div className="flex-1">
                                                         <p className="font-medium">{kelas.mata_kuliah?.nama_mk}</p>
                                                         <p className="text-sm text-muted-foreground">
-                                                            {kelas.nama_kelas} • {kelas.academic_year_semester?.nama_tahun_akademik} - {kelas.academic_year_semester?.semester}
+                                                            {kelas.nama_kelas} • {kelas.tahun_akademik} - Semester {kelas.semester}
                                                         </p>
                                                     </div>
                                                     <Badge variant={kelas.status === 'Aktif' ? 'default' : 'secondary'}>

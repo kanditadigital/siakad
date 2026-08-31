@@ -1,9 +1,16 @@
-import { Head, Link } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Head, Link, router } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Edit } from 'lucide-react';
-import AppLayout from '@/layouts/app-layout';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    Edit,
+    School,
+    BookOpen,
+    Hash,
+    Clock,
+    Calendar,
+    Trash2,
+} from 'lucide-react';
 
 type ProgramStudi = {
     id: number;
@@ -26,99 +33,207 @@ type Props = {
 };
 
 export default function ProgramStudiShow({ programStudi }: Props) {
+    const handleDelete = () => {
+        if (confirm('Apakah Anda yakin ingin menghapus program studi ini?')) {
+            router.delete(`/admin/program-studi/${programStudi.uuid}`);
+        }
+    };
+
     return (
         <>
             <Head title={`Program Studi - ${programStudi.nama_prodi}`} />
 
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <Link href="/admin/program-studi" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-2">
-                            <ArrowLeft className="mr-1 h-4 w-4" />
-                            Kembali ke Daftar
-                        </Link>
-                        <h1 className="text-2xl font-bold">{programStudi.nama_prodi}</h1>
+                {/* Header Card */}
+                <Card className="overflow-hidden border border-gray-200 shadow-sm">
+                    <div className="flex flex-col md:flex-row">
+                        <div className="flex items-center justify-center bg-green-700 p-8 md:w-64 md:min-h-[200px]">
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="h-24 w-24 rounded-full bg-white/20 flex items-center justify-center border-4 border-white/30">
+                                    <School className="h-12 w-12 text-white" />
+                                </div>
+                                <div className="text-center text-white">
+                                    <p className="text-sm opacity-80">Kode Prodi</p>
+                                    <p className="font-mono text-lg font-semibold">{programStudi.kode_prodi}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex-1 p-6 md:p-8">
+                            <div className="space-y-4">
+                                <div>
+                                    <h1 className="text-2xl font-bold text-gray-900">{programStudi.nama_prodi}</h1>
+                                    <p className="text-gray-600">{programStudi.fakultas}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="border-green-200 text-green-700">
+                                        {programStudi.jenis_prodi}
+                                    </Badge>
+                                    <span className="text-sm text-gray-500">
+                                        • {programStudi.lama_studi} Tahun
+                                    </span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Link href={`/admin/program-studi/${programStudi.uuid}/edit`}>
+                                        <Button className="bg-green-700 hover:bg-green-800">
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            Edit
+                                        </Button>
+                                    </Link>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleDelete}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Hapus
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <Link href={`/admin/program-studi/${programStudi.uuid}/edit`}>
-                        <Button>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                        </Button>
-                    </Link>
-                </div>
+                </Card>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                    <Card>
+                    {/* Info Utama */}
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle>Informasi Program Studi</CardTitle>
+                            <CardTitle className="text-gray-900 flex items-center gap-2">
+                                <School className="h-5 w-5 text-green-700" />
+                                Informasi Program Studi
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Kode Program Studi</p>
-                                <p className="font-mono font-medium">{programStudi.kode_prodi}</p>
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Hash className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Kode Program Studi</p>
+                                    <p className="font-mono font-medium text-gray-900">{programStudi.kode_prodi}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">Nama Program Studi</p>
-                                <p className="font-medium">{programStudi.nama_prodi}</p>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <School className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Nama Program Studi</p>
+                                    <p className="font-medium text-gray-900">{programStudi.nama_prodi}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">Fakultas</p>
-                                <p>{programStudi.fakultas}</p>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <BookOpen className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Fakultas</p>
+                                    <p className="text-gray-900">{programStudi.fakultas}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">Jenjang</p>
-                                <Badge variant="outline">{programStudi.jenis_prodi}</Badge>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <School className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Jenjang</p>
+                                    <Badge variant="outline" className="border-green-200 text-green-700">
+                                        {programStudi.jenis_prodi}
+                                    </Badge>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">Lama Studi</p>
-                                <p>{programStudi.lama_studi} Tahun</p>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Clock className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Lama Studi</p>
+                                    <p className="text-gray-900">{programStudi.lama_studi} Tahun</p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
 
+                    {/* Konfigurasi NIM */}
                     <div className="space-y-6">
-                        <Card>
+                        <Card className="border border-gray-200 shadow-sm">
                             <CardHeader>
-                                <CardTitle>Konfigurasi NIM</CardTitle>
+                                <CardTitle className="text-gray-900 flex items-center gap-2">
+                                    <Hash className="h-5 w-5 text-green-700" />
+                                    Konfigurasi NIM
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Prefix NIM</p>
-                                    <p className="font-mono font-medium text-lg">{programStudi.nim_prefix}</p>
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <Hash className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Prefix NIM</p>
+                                        <p className="font-mono font-medium text-lg text-gray-900">{programStudi.nim_prefix}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Digit Tahun Masuk</p>
-                                    <p>{programStudi.nim_year_digits} digit ({programStudi.nim_year_digits === 2 ? '26' : '026'})</p>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <Calendar className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Digit Tahun Masuk</p>
+                                        <p className="text-gray-900">{programStudi.nim_year_digits} digit ({programStudi.nim_year_digits === 2 ? '26' : '026'})</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Digit Counter</p>
-                                    <p>{programStudi.nim_digit_count} digit</p>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <Hash className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Digit Counter</p>
+                                        <p className="text-gray-900">{programStudi.nim_digit_count} digit</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Counter Terakhir</p>
-                                    <p>{programStudi.nim_counter} mahasiswa terdaftar</p>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <School className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Counter Terakhir</p>
+                                        <p className="text-gray-900">{programStudi.nim_counter} mahasiswa terdaftar</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">NIM Selanjutnya</p>
-                                    <p className="font-mono font-medium text-lg">
+
+                                <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                                    <p className="text-xs text-green-600 mb-1">NIM Selanjutnya</p>
+                                    <p className="font-mono font-medium text-lg text-green-800">
                                         {programStudi.nim_prefix}{String(new Date().getFullYear()).slice(-programStudi.nim_year_digits)}{String(programStudi.nim_counter + 1).padStart(programStudi.nim_digit_count, '0')}
                                     </p>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        <Card>
+                        <Card className="border border-gray-200 shadow-sm">
                             <CardHeader>
-                                <CardTitle>Informasi Sistem</CardTitle>
+                                <CardTitle className="text-gray-900 flex items-center gap-2">
+                                    <Clock className="h-5 w-5 text-green-700" />
+                                    Informasi Sistem
+                                </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Dibuat Pada</p>
-                                    <p>{new Date(programStudi.created_at).toLocaleDateString('id-ID', { dateStyle: 'full' })}</p>
+                            <CardContent className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">Dibuat Pada</span>
+                                    <span className="text-sm text-gray-900">
+                                        {new Date(programStudi.created_at).toLocaleDateString('id-ID', { dateStyle: 'full' })}
+                                    </span>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Terakhir Diperbarui</p>
-                                    <p>{new Date(programStudi.updated_at).toLocaleDateString('id-ID', { dateStyle: 'full' })}</p>
+                                <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">Terakhir Diperbarui</span>
+                                    <span className="text-sm text-gray-900">
+                                        {new Date(programStudi.updated_at).toLocaleDateString('id-ID', { dateStyle: 'full' })}
+                                    </span>
                                 </div>
                             </CardContent>
                         </Card>
@@ -129,12 +244,10 @@ export default function ProgramStudiShow({ programStudi }: Props) {
     );
 }
 
-ProgramStudiShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
+ProgramStudiShow.layout = (page: React.ReactNode) => ({
+    breadcrumbs: [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Program Studi', href: '/admin/program-studi' },
         { title: 'Detail', href: '#' },
-    ]}>
-        {page}
-    </AppLayout>
-);
+    ],
+});

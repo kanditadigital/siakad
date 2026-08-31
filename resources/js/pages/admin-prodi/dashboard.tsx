@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { GraduationCap, Users, BookOpen, TrendingUp } from 'lucide-react';
+import { GraduationCap, Users, BookOpen, ClipboardList } from 'lucide-react';
 
 interface ProgramStudi {
     id: number;
@@ -24,79 +24,73 @@ export default function AdminProdiDashboard({ stats, programStudi }: Props) {
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                    <h1 className="text-2xl font-bold text-green-800">
                         Dashboard Admin Prodi
                     </h1>
-                    <p className="text-siak-sage">
+                    <p className="text-gray-600">
                         Ringkasan data program studi {programStudi.nama_prodi}
                     </p>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-3">
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Total Mahasiswa
                             </CardTitle>
-                            <GraduationCap className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-600">
+                                <GraduationCap className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                            <div className="text-3xl font-bold text-gray-900">
                                 {stats.mahasiswa}
                             </div>
-                            <div className="mt-1 flex items-center gap-1 text-xs text-siak-sage">
-                                <TrendingUp className="h-3 w-3" />
-                                <span>Mahasiswa aktif</span>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">Mahasiswa aktif</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Total Dosen
                             </CardTitle>
-                            <Users className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-700">
+                                <Users className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                            <div className="text-3xl font-bold text-gray-900">
                                 {stats.dosen}
                             </div>
-                            <div className="mt-1 flex items-center gap-1 text-xs text-siak-sage">
-                                <TrendingUp className="h-3 w-3" />
-                                <span>Dosen aktif</span>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">Dosen aktif</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="relative overflow-hidden border-siak-moss/60">
-                        <div className="absolute top-0 left-0 h-full w-1 bg-siak-pine" />
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-siak-sage">
+                            <CardTitle className="text-sm font-medium text-gray-600">
                                 Total Penjadwalan
                             </CardTitle>
-                            <BookOpen className="h-4 w-4 text-siak-sage/60" />
+                            <div className="p-2 rounded-lg bg-green-800">
+                                <ClipboardList className="h-4 w-4 text-white" />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tracking-tight text-siak-pine dark:text-siak-fern">
+                            <div className="text-3xl font-bold text-gray-900">
                                 {stats.penjadwalan}
                             </div>
-                            <div className="mt-1 flex items-center gap-1 text-xs text-siak-sage">
-                                <TrendingUp className="h-3 w-3" />
-                                <span>Jadwal aktif</span>
-                            </div>
+                            <p className="text-xs text-gray-500 mt-1">Jadwal aktif</p>
                         </CardContent>
                     </Card>
                 </div>
 
-                <Card className="border-siak-moss/60">
+                <Card className="border border-gray-200 shadow-sm">
                     <CardHeader>
-                        <CardTitle className="text-siak-pine">Aktivitas Terbaru</CardTitle>
+                        <CardTitle className="text-gray-900">Aktivitas Terbaru</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-sm text-siak-sage">
+                        <p className="text-sm text-gray-600">
                             Belum ada aktivitas terbaru untuk ditampilkan.
                         </p>
                     </CardContent>
