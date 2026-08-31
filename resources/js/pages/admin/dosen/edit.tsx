@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, User, Upload, X } from 'lucide-react';
+import { ArrowLeft, Upload, User, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -75,6 +75,10 @@ const STATUS_OPTIONS = [
     { value: 'pensiun', label: 'Pensiun' },
 ];
 
+function Required() {
+    return <span className="text-destructive"> *</span>;
+}
+
 export default function DosenEdit({ dosen, programStudis }: Props) {
     const { data, setData, put, processing, errors } = useForm({
         nidn: dosen.nidn,
@@ -132,13 +136,20 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
             <Head title={`Edit Dosen - ${dosen.nama}`} />
 
             <div className="space-y-6">
-                <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
-                        Edit Dosen
-                    </h1>
-                    <p className="text-gray-600">
-                        Perbarui data dosen {dosen.nama}
-                    </p>
+                <div className="flex items-center gap-4">
+                    <Link href="/admin/dosen">
+                        <Button variant="ghost" size="icon">
+                            <ArrowLeft className="h-4 w-4" />
+                        </Button>
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Edit Dosen
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Perbarui data dosen {dosen.nama}
+                        </p>
+                    </div>
                 </div>
 
                 <form
@@ -147,12 +158,9 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                     encType="multipart/form-data"
                 >
                     {/* Photo Upload */}
-                    <Card className="border border-gray-200 shadow-sm">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-gray-900">
-                                <User className="h-5 w-5 text-green-700" />
-                                Foto Profil
-                            </CardTitle>
+                            <CardTitle>Foto Profil</CardTitle>
                             <CardDescription>
                                 Upload foto dosen (opsional)
                             </CardDescription>
@@ -170,13 +178,13 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             <button
                                                 type="button"
                                                 onClick={removePhoto}
-                                                className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+                                                className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-white hover:bg-destructive/90"
                                             >
                                                 <X className="h-4 w-4" />
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-green-200 bg-green-100">
+                                        <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-green-200 bg-green-50">
                                             <User className="h-16 w-16 text-green-400" />
                                         </div>
                                     )}
@@ -201,11 +209,11 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             ? 'Ganti Foto'
                                             : 'Pilih Foto'}
                                     </Button>
-                                    <p className="mt-2 text-xs text-gray-500">
+                                    <p className="mt-2 text-xs text-muted-foreground">
                                         JPG, JPEG, atau PNG. Maks 2MB.
                                     </p>
                                     {errors.photo && (
-                                        <p className="mt-1 text-sm text-red-500">
+                                        <p className="mt-1 text-sm text-destructive">
                                             {errors.photo}
                                         </p>
                                     )}
@@ -215,23 +223,19 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                     </Card>
 
                     {/* Identitas Diri */}
-                    <Card className="border border-gray-200 shadow-sm">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="text-gray-900">
-                                Identitas Diri
-                            </CardTitle>
+                            <CardTitle>Identitas Diri</CardTitle>
                             <CardDescription>
                                 Data pribadi dan identitas dosen
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="nidn"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="nidn">
                                         NIDN
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nidn"
@@ -240,20 +244,18 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('nidn', e.target.value)
                                         }
                                         placeholder="0012345678"
-                                        className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                        aria-invalid={!!errors.nidn}
                                     />
                                     {errors.nidn && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nidn}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="nuptk"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="nuptk">
                                         NUPTK
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nuptk"
@@ -262,23 +264,21 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('nuptk', e.target.value)
                                         }
                                         placeholder="1234567890123456"
-                                        className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                        aria-invalid={!!errors.nuptk}
                                     />
                                     {errors.nuptk && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nuptk}
                                         </p>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="nama"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="nama">
                                         Nama Lengkap
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="nama"
@@ -287,20 +287,18 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('nama', e.target.value)
                                         }
                                         placeholder="Dr. Ahmad Fauzi, M.Pd"
-                                        className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                        aria-invalid={!!errors.nama}
                                     />
                                     {errors.nama && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.nama}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="jenis_kelamin"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="jenis_kelamin">
                                         Jenis Kelamin
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.jenis_kelamin}
@@ -308,7 +306,12 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('jenis_kelamin', value)
                                         }
                                     >
-                                        <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                        <SelectTrigger
+                                            id="jenis_kelamin"
+                                            aria-invalid={
+                                                !!errors.jenis_kelamin
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Jenis Kelamin" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -323,7 +326,7 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.jenis_kelamin && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.jenis_kelamin}
                                         </p>
                                     )}
@@ -333,23 +336,19 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                     </Card>
 
                     {/* Kontak & Kepegawaian */}
-                    <Card className="border border-gray-200 shadow-sm">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="text-gray-900">
-                                Kontak & Kepegawaian
-                            </CardTitle>
+                            <CardTitle>Kontak & Kepegawaian</CardTitle>
                             <CardDescription>
                                 Informasi kontak dan status kepegawaian
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="email"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="email">
                                         Email
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="email"
@@ -359,20 +358,18 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('email', e.target.value)
                                         }
                                         placeholder="ahmad@stit-daras.ac.id"
-                                        className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                        aria-invalid={!!errors.email}
                                     />
                                     {errors.email && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.email}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="no_telepon"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="no_telepon">
                                         No. Telepon
+                                        <Required />
                                     </Label>
                                     <Input
                                         id="no_telepon"
@@ -384,23 +381,21 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             )
                                         }
                                         placeholder="081234567890"
-                                        className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                        aria-invalid={!!errors.no_telepon}
                                     />
                                     {errors.no_telepon && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.no_telepon}
                                         </p>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="program_studi_id"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="program_studi_id">
                                         Program Studi
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.program_studi_id}
@@ -408,7 +403,12 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('program_studi_id', value)
                                         }
                                     >
-                                        <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                        <SelectTrigger
+                                            id="program_studi_id"
+                                            aria-invalid={
+                                                !!errors.program_studi_id
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Program Studi" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -423,17 +423,15 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.program_studi_id && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.program_studi_id}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="status"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="status">
                                         Status
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.status}
@@ -441,7 +439,10 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('status', value)
                                         }
                                     >
-                                        <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                        <SelectTrigger
+                                            id="status"
+                                            aria-invalid={!!errors.status}
+                                        >
                                             <SelectValue placeholder="Pilih Status" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -456,20 +457,18 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.status && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.status}
                                         </p>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="pangkat_golongan"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="pangkat_golongan">
                                         Pangkat / Golongan
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.pangkat_golongan}
@@ -477,7 +476,12 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             setData('pangkat_golongan', value)
                                         }
                                     >
-                                        <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                        <SelectTrigger
+                                            id="pangkat_golongan"
+                                            aria-invalid={
+                                                !!errors.pangkat_golongan
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Pangkat" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -492,17 +496,15 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.pangkat_golongan && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.pangkat_golongan}
                                         </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label
-                                        htmlFor="pendidikan_terakhir"
-                                        className="text-gray-700"
-                                    >
+                                    <Label htmlFor="pendidikan_terakhir">
                                         Pendidikan Terakhir
+                                        <Required />
                                     </Label>
                                     <Select
                                         value={data.pendidikan_terakhir}
@@ -513,7 +515,12 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             )
                                         }
                                     >
-                                        <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                        <SelectTrigger
+                                            id="pendidikan_terakhir"
+                                            aria-invalid={
+                                                !!errors.pendidikan_terakhir
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Pendidikan" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -530,7 +537,7 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                         </SelectContent>
                                     </Select>
                                     {errors.pendidikan_terakhir && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-sm text-destructive">
                                             {errors.pendidikan_terakhir}
                                         </p>
                                     )}
@@ -538,11 +545,9 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label
-                                    htmlFor="alamat"
-                                    className="text-gray-700"
-                                >
+                                <Label htmlFor="alamat">
                                     Alamat
+                                    <Required />
                                 </Label>
                                 <Textarea
                                     id="alamat"
@@ -552,10 +557,10 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                     }
                                     placeholder="Jl. Merdeka No. 10"
                                     rows={3}
-                                    className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                    aria-invalid={!!errors.alamat}
                                 />
                                 {errors.alamat && (
-                                    <p className="text-sm text-red-500">
+                                    <p className="text-sm text-destructive">
                                         {errors.alamat}
                                     </p>
                                 )}
@@ -563,20 +568,15 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                         </CardContent>
                     </Card>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-4">
-                        <Button
-                            type="submit"
-                            disabled={processing}
-                            className="bg-green-700 hover:bg-green-800"
-                        >
-                            {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
-                        </Button>
+                    <div className="flex items-center justify-end gap-3">
                         <Link href="/admin/dosen">
                             <Button type="button" variant="outline">
                                 Batal
                             </Button>
                         </Link>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                        </Button>
                     </div>
                 </form>
             </div>
@@ -584,10 +584,14 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
     );
 }
 
-DosenEdit.layout = (page: React.ReactNode) => ({
-    breadcrumbs: [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Dosen', href: '/admin/dosen' },
-        { title: 'Edit', href: '#' },
-    ],
-});
+DosenEdit.layout = (page: React.ReactNode) => (
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Dosen', href: '/admin/dosen' },
+            { title: 'Edit', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
+);

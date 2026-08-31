@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, GraduationCap, X } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -164,7 +164,7 @@ export default function DosenIndex({ dosens, programStudis, filters }: Props) {
                 </div>
 
                 {/* Filters */}
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="relative max-w-sm min-w-[200px] flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -177,6 +177,9 @@ export default function DosenIndex({ dosens, programStudis, filters }: Props) {
                             className="pl-9"
                         />
                     </div>
+                    <Button variant="outline" onClick={handleSearch}>
+                        Cari
+                    </Button>
                     <Select
                         value={prodiFilter}
                         onValueChange={handleProdiChange}
@@ -212,6 +215,23 @@ export default function DosenIndex({ dosens, programStudis, filters }: Props) {
                             <SelectItem value="pensiun">Pensiun</SelectItem>
                         </SelectContent>
                     </Select>
+                    {(filters.search ||
+                        filters.status ||
+                        filters.program_studi_id) && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                                setSearch('');
+                                setStatusFilter('all');
+                                setProdiFilter('all');
+                                router.get('/admin/dosen');
+                            }}
+                        >
+                            <X className="mr-1 h-3.5 w-3.5" />
+                            Reset
+                        </Button>
+                    )}
                 </div>
 
                 {/* Table */}
@@ -236,9 +256,38 @@ export default function DosenIndex({ dosens, programStudis, filters }: Props) {
                                     <TableRow>
                                         <TableCell
                                             colSpan={7}
-                                            className="py-8 text-center"
+                                            className="py-12 text-center"
                                         >
-                                            Tidak ada data dosen
+                                            <div className="flex flex-col items-center gap-2">
+                                                <GraduationCap className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-foreground">
+                                                    {filters.search ||
+                                                    filters.status ||
+                                                    filters.program_studi_id
+                                                        ? 'Tidak ada dosen yang cocok'
+                                                        : 'Belum ada data dosen'}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {filters.search ||
+                                                    filters.status ||
+                                                    filters.program_studi_id
+                                                        ? 'Coba ubah kata kunci atau filter'
+                                                        : 'Mulai dengan menambahkan dosen pertama'}
+                                                </p>
+                                                {!filters.search &&
+                                                    !filters.status &&
+                                                    !filters.program_studi_id && (
+                                                        <Link
+                                                            href="/admin/dosen/create"
+                                                            className="mt-2"
+                                                        >
+                                                            <Button size="sm">
+                                                                <Plus className="mr-2 h-4 w-4" />
+                                                                Tambah Dosen
+                                                            </Button>
+                                                        </Link>
+                                                    )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (

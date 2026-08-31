@@ -1,22 +1,20 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
+    ArrowLeft,
     Edit,
     User,
     GraduationCap,
     MapPin,
     Hash,
-    Calendar,
     Clock,
     Phone,
     Mail,
     Award,
-    BookOpen,
     Trash2,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import AppLayout from '@/layouts/app-layout';
 
 type ProgramStudi = {
     id: number;
@@ -83,11 +81,25 @@ export default function DosenShow({ dosen }: Props) {
         });
     };
 
+    const handleDelete = () => {
+        if (confirm('Apakah Anda yakin ingin menghapus dosen ini?')) {
+            router.delete(`/admin/dosen/${dosen.uuid}`);
+        }
+    };
+
     return (
         <>
             <Head title={`Dosen - ${dosen.nama}`} />
 
             <div className="space-y-6">
+                <Link
+                    href="/admin/dosen"
+                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Kembali ke Daftar Dosen
+                </Link>
+
                 {/* Header Card */}
                 <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
@@ -147,6 +159,13 @@ export default function DosenShow({ dosen }: Props) {
                                             Edit
                                         </Button>
                                     </Link>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleDelete}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Hapus
+                                    </Button>
                                 </div>
                             </div>
                         </div>
