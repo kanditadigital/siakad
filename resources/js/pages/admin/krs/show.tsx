@@ -1,13 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 
 type Mahasiswa = {
@@ -55,7 +50,10 @@ type Krs = {
     academic_year_semester: AcademicYearSemester;
 };
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     pending: 'outline',
     disetujui: 'default',
     ditolak: 'destructive',
@@ -84,8 +82,12 @@ export default function KrsShow({ krs }: { krs: Krs }) {
                         </Button>
                     </Link>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Detail KRS</h1>
-                        <p className="text-muted-foreground">Informasi lengkap Kartu Rencana Studi</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Detail KRS
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Informasi lengkap Kartu Rencana Studi
+                        </p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Link href={`/admin/krs/${krs.uuid}/edit`}>
@@ -101,23 +103,35 @@ export default function KrsShow({ krs }: { krs: Krs }) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>Mahasiswa</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">NIM</p>
-                                <p className="font-mono font-medium">{krs.mahasiswa?.nim}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    NIM
+                                </p>
+                                <p className="font-mono font-medium">
+                                    {krs.mahasiswa?.nim}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Nama</p>
-                                <p className="font-medium">{krs.mahasiswa?.nama}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Nama
+                                </p>
+                                <p className="font-medium">
+                                    {krs.mahasiswa?.nama}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Program Studi</p>
-                                <p>{krs.mahasiswa?.program_studi?.nama_prodi}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Program Studi
+                                </p>
+                                <p>
+                                    {krs.mahasiswa?.program_studi?.nama_prodi}
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -128,25 +142,57 @@ export default function KrsShow({ krs }: { krs: Krs }) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Mata Kuliah</p>
-                                <p className="font-medium">{krs.kelas?.mata_kuliah?.nama_mk}</p>
-                                <p className="text-sm text-muted-foreground">{krs.kelas?.mata_kuliah?.kode_mk} • {krs.kelas?.mata_kuliah?.sks} SKS</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Mata Kuliah
+                                </p>
+                                <p className="font-medium">
+                                    {krs.kelas?.mata_kuliah?.nama_mk}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                    {krs.kelas?.mata_kuliah?.kode_mk} •{' '}
+                                    {krs.kelas?.mata_kuliah?.sks} SKS
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Kode Kelas</p>
-                                <p className="font-mono font-medium">{krs.kelas?.kode_kelas}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Kode Kelas
+                                </p>
+                                <p className="font-mono font-medium">
+                                    {krs.kelas?.kode_kelas}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Dosen Pengampu</p>
-                                <p className="font-medium">{krs.kelas?.dosen?.nama || '-'}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Dosen Pengampu
+                                </p>
+                                <p className="font-medium">
+                                    {krs.kelas?.dosen?.nama || '-'}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Tahun Akademik</p>
-                                <p>{krs.academic_year_semester?.nama_tahun_akademik} - Semester {krs.academic_year_semester?.semester}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Tahun Akademik
+                                </p>
+                                <p>
+                                    {
+                                        krs.academic_year_semester
+                                            ?.nama_tahun_akademik
+                                    }{' '}
+                                    - Semester{' '}
+                                    {krs.academic_year_semester?.semester}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Status</p>
-                                <Badge variant={STATUS_VARIANTS[krs.status] || 'outline'}>{STATUS_LABELS[krs.status] || krs.status}</Badge>
+                                <p className="text-sm text-muted-foreground">
+                                    Status
+                                </p>
+                                <Badge
+                                    variant={
+                                        STATUS_VARIANTS[krs.status] || 'outline'
+                                    }
+                                >
+                                    {STATUS_LABELS[krs.status] || krs.status}
+                                </Badge>
                             </div>
                         </CardContent>
                     </Card>
@@ -157,9 +203,13 @@ export default function KrsShow({ krs }: { krs: Krs }) {
 }
 
 KrsShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'KRS', href: '/admin/krs' },
-        { title: 'Detail', href: '#' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'KRS', href: '/admin/krs' },
+            { title: 'Detail', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

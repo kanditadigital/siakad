@@ -1,23 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -29,7 +12,24 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 
 type AcademicYear = {
@@ -65,22 +65,30 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
     const [status, setStatus] = useState(filters.status || 'all');
 
     const handleSearch = () => {
-        router.get('/admin/data-akademik', {
-            search,
-            status: status === 'all' ? '' : status,
-        }, {
-            preserveState: true,
-        });
+        router.get(
+            '/admin/data-akademik',
+            {
+                search,
+                status: status === 'all' ? '' : status,
+            },
+            {
+                preserveState: true,
+            },
+        );
     };
 
     const handleStatusChange = (value: string) => {
         setStatus(value);
-        router.get('/admin/data-akademik', {
-            search,
-            status: value === 'all' ? '' : value,
-        }, {
-            preserveState: true,
-        });
+        router.get(
+            '/admin/data-akademik',
+            {
+                search,
+                status: value === 'all' ? '' : value,
+            },
+            {
+                preserveState: true,
+            },
+        );
     };
 
     const handleDelete = (uuid: string) => {
@@ -94,11 +102,21 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'aktif':
-                return <Badge className="bg-green-100 text-green-800">Aktif</Badge>;
+                return (
+                    <Badge className="bg-green-100 text-green-800">Aktif</Badge>
+                );
             case 'nonaktif':
-                return <Badge className="bg-gray-100 text-gray-800">Nonaktif</Badge>;
+                return (
+                    <Badge className="bg-gray-100 text-gray-800">
+                        Nonaktif
+                    </Badge>
+                );
             case 'arsip':
-                return <Badge className="bg-yellow-100 text-yellow-800">Arsip</Badge>;
+                return (
+                    <Badge className="bg-yellow-100 text-yellow-800">
+                        Arsip
+                    </Badge>
+                );
             default:
                 return <Badge>{status}</Badge>;
         }
@@ -111,7 +129,9 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Data Akademik</h1>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Data Akademik
+                        </h1>
                         <p className="text-muted-foreground">
                             Kelola tahun akademik dan semester
                         </p>
@@ -126,13 +146,15 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
 
                 {/* Filters */}
                 <div className="flex items-center gap-4">
-                    <div className="relative flex-1 max-w-sm">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Cari tahun akademik..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            onKeyDown={(e) =>
+                                e.key === 'Enter' && handleSearch()
+                            }
                             className="pl-9"
                         />
                     </div>
@@ -150,115 +172,173 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
                 </div>
 
                 {/* Table */}
-                <div className="border rounded-lg">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Tahun Akademik</TableHead>
-                                <TableHead>Semester</TableHead>
-                                <TableHead>Tanggal Mulai</TableHead>
-                                <TableHead>Tanggal Selesai</TableHead>
-                                <TableHead>Periode KRS</TableHead>
-                                <TableHead>Periode Input Nilai</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Aksi</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {academicYears.data.length === 0 ? (
+                <div className="rounded-lg border">
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell colSpan={8} className="text-center py-8">
-                                        Tidak ada data tahun akademik
-                                    </TableCell>
+                                    <TableHead>Tahun Akademik</TableHead>
+                                    <TableHead>Semester</TableHead>
+                                    <TableHead>Tanggal Mulai</TableHead>
+                                    <TableHead>Tanggal Selesai</TableHead>
+                                    <TableHead>Periode KRS</TableHead>
+                                    <TableHead>Periode Input Nilai</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">
+                                        Aksi
+                                    </TableHead>
                                 </TableRow>
-                            ) : (
-                                academicYears.data.map((year) => (
-                                    <TableRow key={year.id}>
-                                        <TableCell className="font-medium">
-                                            {year.nama_tahun_akademik}
-                                        </TableCell>
-                                        <TableCell>{year.semester}</TableCell>
-                                        <TableCell>
-                                            {new Date(year.tanggal_mulai).toLocaleDateString('id-ID')}
-                                        </TableCell>
-                                        <TableCell>
-                                            {new Date(year.tanggal_selesai).toLocaleDateString('id-ID')}
-                                        </TableCell>
-                                        <TableCell>{year.periode_krs || '-'}</TableCell>
-                                        <TableCell>{year.periode_input_nilai || '-'}</TableCell>
-                                        <TableCell>{getStatusBadge(year.status)}</TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <Link href={`/admin/data-akademik/${year.uuid}`}>
-                                                    <Button variant="ghost" size="icon">
-                                                        <Eye className="h-4 w-4" />
-                                                    </Button>
-                                                </Link>
-                                                <Link href={`/admin/data-akademik/${year.uuid}/edit`}>
-                                                    <Button variant="ghost" size="icon">
-                                                        <Edit className="h-4 w-4" />
-                                                    </Button>
-                                                </Link>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button variant="ghost" size="icon">
-                                                            <Trash2 className="h-4 w-4 text-red-500" />
-                                                        </Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle>
-                                                                Hapus Tahun Akademik
-                                                            </AlertDialogTitle>
-                                                            <AlertDialogDescription>
-                                                                Apakah anda yakin ingin menghapus tahun akademik{' '}
-                                                                {year.nama_tahun_akademik} {year.semester}?
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>Batal</AlertDialogCancel>
-                                                            <AlertDialogAction
-                                                                onClick={() => handleDelete(year.uuid)}
-                                                                className="bg-red-600 hover:bg-red-700"
-                                                            >
-                                                                Hapus
-                                                            </AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
-                                            </div>
+                            </TableHeader>
+                            <TableBody>
+                                {academicYears.data.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={8}
+                                            className="py-8 text-center"
+                                        >
+                                            Tidak ada data tahun akademik
                                         </TableCell>
                                     </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
+                                ) : (
+                                    academicYears.data.map((year) => (
+                                        <TableRow key={year.id}>
+                                            <TableCell className="font-medium">
+                                                {year.nama_tahun_akademik}
+                                            </TableCell>
+                                            <TableCell>
+                                                {year.semester}
+                                            </TableCell>
+                                            <TableCell>
+                                                {new Date(
+                                                    year.tanggal_mulai,
+                                                ).toLocaleDateString('id-ID')}
+                                            </TableCell>
+                                            <TableCell>
+                                                {new Date(
+                                                    year.tanggal_selesai,
+                                                ).toLocaleDateString('id-ID')}
+                                            </TableCell>
+                                            <TableCell>
+                                                {year.periode_krs || '-'}
+                                            </TableCell>
+                                            <TableCell>
+                                                {year.periode_input_nilai ||
+                                                    '-'}
+                                            </TableCell>
+                                            <TableCell>
+                                                {getStatusBadge(year.status)}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Link
+                                                        href={`/admin/data-akademik/${year.uuid}`}
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                    <Link
+                                                        href={`/admin/data-akademik/${year.uuid}/edit`}
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                        >
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger
+                                                            asChild
+                                                        >
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                            >
+                                                                <Trash2 className="h-4 w-4 text-red-500" />
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>
+                                                                    Hapus Tahun
+                                                                    Akademik
+                                                                </AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Apakah anda
+                                                                    yakin ingin
+                                                                    menghapus
+                                                                    tahun
+                                                                    akademik{' '}
+                                                                    {
+                                                                        year.nama_tahun_akademik
+                                                                    }{' '}
+                                                                    {
+                                                                        year.semester
+                                                                    }
+                                                                    ?
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>
+                                                                    Batal
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            year.uuid,
+                                                                        )
+                                                                    }
+                                                                    className="bg-red-600 hover:bg-red-700"
+                                                                >
+                                                                    Hapus
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </div>
 
                 {/* Pagination */}
                 {academicYears.last_page > 1 && (
                     <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">
-                            Menampilkan {academicYears.data.length} dari {academicYears.total} data
+                            Menampilkan {academicYears.data.length} dari{' '}
+                            {academicYears.total} data
                         </p>
                         <div className="flex items-center gap-2">
-                            {Array.from({ length: academicYears.last_page }, (_, i) => i + 1).map(
-                                (page) => (
-                                    <Button
-                                        key={page}
-                                        variant={page === academicYears.current_page ? 'default' : 'outline'}
-                                        size="sm"
-                                        onClick={() =>
-                                            router.get('/admin/data-akademik', {
-                                                ...filters,
-                                                page,
-                                            })
-                                        }
-                                    >
-                                        {page}
-                                    </Button>
-                                )
-                            )}
+                            {Array.from(
+                                { length: academicYears.last_page },
+                                (_, i) => i + 1,
+                            ).map((page) => (
+                                <Button
+                                    key={page}
+                                    variant={
+                                        page === academicYears.current_page
+                                            ? 'default'
+                                            : 'outline'
+                                    }
+                                    size="sm"
+                                    onClick={() =>
+                                        router.get('/admin/data-akademik', {
+                                            ...filters,
+                                            page,
+                                        })
+                                    }
+                                >
+                                    {page}
+                                </Button>
+                            ))}
                         </div>
                     </div>
                 )}
@@ -268,10 +348,12 @@ export default function DataAkademikIndex({ academicYears, filters }: Props) {
 }
 
 DataAkademikIndex.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Data Akademik', href: '/admin/data-akademik' },
-    ]}>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Data Akademik', href: '/admin/data-akademik' },
+        ]}
+    >
         {page}
     </AppLayout>
 );

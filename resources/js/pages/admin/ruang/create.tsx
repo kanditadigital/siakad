@@ -1,7 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Card,
     CardContent,
@@ -9,7 +8,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 
 export default function RuangCreate() {
@@ -38,8 +38,12 @@ export default function RuangCreate() {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold">Tambah Ruang</h1>
-                        <p className="text-muted-foreground">Tambahkan data ruang baru</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Tambah Ruang
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Tambahkan data ruang baru
+                        </p>
                     </div>
                 </div>
 
@@ -50,27 +54,49 @@ export default function RuangCreate() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="kode_ruang">Kode Ruang</Label>
+                                    <Label htmlFor="kode_ruang">
+                                        Kode Ruang
+                                    </Label>
                                     <Input
                                         id="kode_ruang"
                                         value={data.kode_ruang}
-                                        onChange={(e) => setData('kode_ruang', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'kode_ruang',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="R-001"
                                     />
-                                    {errors.kode_ruang && <p className="text-sm text-red-500">{errors.kode_ruang}</p>}
+                                    {errors.kode_ruang && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.kode_ruang}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="nama_ruang">Nama Ruang</Label>
+                                    <Label htmlFor="nama_ruang">
+                                        Nama Ruang
+                                    </Label>
                                     <Input
                                         id="nama_ruang"
                                         value={data.nama_ruang}
-                                        onChange={(e) => setData('nama_ruang', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'nama_ruang',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="Ruang Kelas A"
                                     />
-                                    {errors.nama_ruang && <p className="text-sm text-red-500">{errors.nama_ruang}</p>}
+                                    {errors.nama_ruang && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.nama_ruang}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -80,10 +106,16 @@ export default function RuangCreate() {
                                         type="number"
                                         min="1"
                                         value={data.kapasitas}
-                                        onChange={(e) => setData('kapasitas', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('kapasitas', e.target.value)
+                                        }
                                         placeholder="40"
                                     />
-                                    {errors.kapasitas && <p className="text-sm text-red-500">{errors.kapasitas}</p>}
+                                    {errors.kapasitas && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.kapasitas}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -91,10 +123,16 @@ export default function RuangCreate() {
                                     <Input
                                         id="lantai"
                                         value={data.lantai}
-                                        onChange={(e) => setData('lantai', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('lantai', e.target.value)
+                                        }
                                         placeholder="1"
                                     />
-                                    {errors.lantai && <p className="text-sm text-red-500">{errors.lantai}</p>}
+                                    {errors.lantai && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.lantai}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -102,10 +140,16 @@ export default function RuangCreate() {
                                     <Input
                                         id="gedung"
                                         value={data.gedung}
-                                        onChange={(e) => setData('gedung', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('gedung', e.target.value)
+                                        }
                                         placeholder="Gedung A"
                                     />
-                                    {errors.gedung && <p className="text-sm text-red-500">{errors.gedung}</p>}
+                                    {errors.gedung && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.gedung}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -114,7 +158,9 @@ export default function RuangCreate() {
                                     {processing ? 'Menyimpan...' : 'Simpan'}
                                 </Button>
                                 <Link href="/admin/ruang">
-                                    <Button type="button" variant="outline">Batal</Button>
+                                    <Button type="button" variant="outline">
+                                        Batal
+                                    </Button>
                                 </Link>
                             </div>
                         </form>
@@ -126,9 +172,13 @@ export default function RuangCreate() {
 }
 
 RuangCreate.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Ruang', href: '/admin/ruang' },
-        { title: 'Tambah', href: '/admin/ruang/create' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Ruang', href: '/admin/ruang' },
+            { title: 'Tambah', href: '/admin/ruang/create' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

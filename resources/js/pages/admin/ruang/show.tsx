@@ -1,12 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 
 type Ruang = {
@@ -36,8 +31,12 @@ export default function RuangShow({ ruang }: { ruang: Ruang }) {
                         </Button>
                     </Link>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Detail Ruang</h1>
-                        <p className="text-muted-foreground">Informasi lengkap ruang {ruang.nama_ruang}</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Detail Ruang
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Informasi lengkap ruang {ruang.nama_ruang}
+                        </p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Link href={`/admin/ruang/${ruang.uuid}/edit`}>
@@ -60,24 +59,40 @@ export default function RuangShow({ ruang }: { ruang: Ruang }) {
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Kode Ruang</p>
-                                <p className="font-mono font-medium text-lg">{ruang.kode_ruang}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Kode Ruang
+                                </p>
+                                <p className="font-mono text-lg font-medium">
+                                    {ruang.kode_ruang}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Nama Ruang</p>
-                                <p className="font-medium text-lg">{ruang.nama_ruang}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Nama Ruang
+                                </p>
+                                <p className="text-lg font-medium">
+                                    {ruang.nama_ruang}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Gedung</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Gedung
+                                </p>
                                 <p className="font-medium">{ruang.gedung}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Lantai</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Lantai
+                                </p>
                                 <p className="font-medium">{ruang.lantai}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Kapasitas</p>
-                                <p className="font-medium">{ruang.kapasitas} orang</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Kapasitas
+                                </p>
+                                <p className="font-medium">
+                                    {ruang.kapasitas} orang
+                                </p>
                             </div>
                         </div>
                     </CardContent>
@@ -88,9 +103,13 @@ export default function RuangShow({ ruang }: { ruang: Ruang }) {
 }
 
 RuangShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Ruang', href: '/admin/ruang' },
-        { title: 'Detail', href: '#' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Ruang', href: '/admin/ruang' },
+            { title: 'Detail', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

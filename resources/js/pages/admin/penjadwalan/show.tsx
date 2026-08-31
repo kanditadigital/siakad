@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -8,7 +9,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type MataKuliah = {
@@ -47,7 +47,10 @@ type Kelas = {
     ruang: Ruang | null;
 };
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     Aktif: 'default',
     'Tidak Aktif': 'secondary',
     Selesai: 'outline',
@@ -70,8 +73,12 @@ export default function PenjadwalanShow({ kelas }: { kelas: Kelas }) {
                         </Button>
                     </Link>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Detail Kelas</h1>
-                        <p className="text-muted-foreground">Informasi lengkap kelas {kelas.nama_kelas}</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Detail Kelas
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Informasi lengkap kelas {kelas.nama_kelas}
+                        </p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Link href={`/admin/penjadwalan/${kelas.uuid}/edit`}>
@@ -87,35 +94,58 @@ export default function PenjadwalanShow({ kelas }: { kelas: Kelas }) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>Informasi Kelas</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Kode Kelas</p>
-                                <p className="font-mono font-medium">{kelas.kode_kelas}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Kode Kelas
+                                </p>
+                                <p className="font-mono font-medium">
+                                    {kelas.kode_kelas}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Nama Kelas</p>
-                                <p className="font-medium">{kelas.nama_kelas}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Nama Kelas
+                                </p>
+                                <p className="font-medium">
+                                    {kelas.nama_kelas}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Kapasitas</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Kapasitas
+                                </p>
                                 <p>{kelas.kapasitas} mahasiswa</p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Semester</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Semester
+                                </p>
                                 <p>Semester {kelas.semester}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Tahun Akademik</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Tahun Akademik
+                                </p>
                                 <p>{kelas.tahun_akademik}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Status</p>
-                                <Badge variant={STATUS_VARIANTS[kelas.status] || 'outline'}>{kelas.status}</Badge>
+                                <p className="text-sm text-muted-foreground">
+                                    Status
+                                </p>
+                                <Badge
+                                    variant={
+                                        STATUS_VARIANTS[kelas.status] ||
+                                        'outline'
+                                    }
+                                >
+                                    {kelas.status}
+                                </Badge>
                             </div>
                         </CardContent>
                     </Card>
@@ -126,21 +156,42 @@ export default function PenjadwalanShow({ kelas }: { kelas: Kelas }) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Mata Kuliah</p>
-                                <p className="font-medium">{kelas.mata_kuliah?.nama_mk}</p>
-                                <p className="text-sm text-muted-foreground">{kelas.mata_kuliah?.kode_mk} • {kelas.mata_kuliah?.sks} SKS</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Mata Kuliah
+                                </p>
+                                <p className="font-medium">
+                                    {kelas.mata_kuliah?.nama_mk}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                    {kelas.mata_kuliah?.kode_mk} •{' '}
+                                    {kelas.mata_kuliah?.sks} SKS
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Dosen Pengampu</p>
-                                <p className="font-medium">{kelas.dosen?.nama || '-'}</p>
-                                {kelas.dosen && <p className="text-sm text-muted-foreground">NIDN: {kelas.dosen.nidn}</p>}
+                                <p className="text-sm text-muted-foreground">
+                                    Dosen Pengampu
+                                </p>
+                                <p className="font-medium">
+                                    {kelas.dosen?.nama || '-'}
+                                </p>
+                                {kelas.dosen && (
+                                    <p className="text-sm text-muted-foreground">
+                                        NIDN: {kelas.dosen.nidn}
+                                    </p>
+                                )}
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Ruang</p>
-                                <p className="font-medium">{kelas.ruang?.kode_ruang || '-'}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Ruang
+                                </p>
+                                <p className="font-medium">
+                                    {kelas.ruang?.kode_ruang || '-'}
+                                </p>
                                 {kelas.ruang && (
                                     <p className="text-sm text-muted-foreground">
-                                        {kelas.ruang.nama_ruang} • Lantai {kelas.ruang.lantai} • {kelas.ruang.gedung}
+                                        {kelas.ruang.nama_ruang} • Lantai{' '}
+                                        {kelas.ruang.lantai} •{' '}
+                                        {kelas.ruang.gedung}
                                     </p>
                                 )}
                             </div>
@@ -153,9 +204,13 @@ export default function PenjadwalanShow({ kelas }: { kelas: Kelas }) {
 }
 
 PenjadwalanShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Penjadwalan', href: '/admin/penjadwalan' },
-        { title: 'Detail', href: '#' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Penjadwalan', href: '/admin/penjadwalan' },
+            { title: 'Detail', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

@@ -1,13 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 
 type UktScheme = {
@@ -20,7 +15,11 @@ type UktScheme = {
 };
 
 const formatRupiah = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+    }).format(amount);
 };
 
 export default function UktSchemeShow({ uktScheme }: { uktScheme: UktScheme }) {
@@ -40,8 +39,12 @@ export default function UktSchemeShow({ uktScheme }: { uktScheme: UktScheme }) {
                         </Button>
                     </Link>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Detail Skema UKT</h1>
-                        <p className="text-muted-foreground">Informasi lengkap skema UKT</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Detail Skema UKT
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Informasi lengkap skema UKT
+                        </p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Link href={`/admin/ukt-scheme/${uktScheme.uuid}/edit`}>
@@ -64,21 +67,39 @@ export default function UktSchemeShow({ uktScheme }: { uktScheme: UktScheme }) {
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Nama Skema</p>
-                                <p className="font-medium text-lg">{uktScheme.nama}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Nama Skema
+                                </p>
+                                <p className="text-lg font-medium">
+                                    {uktScheme.nama}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Jumlah</p>
-                                <p className="font-bold text-2xl">{formatRupiah(uktScheme.jumlah)}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Jumlah
+                                </p>
+                                <p className="text-2xl font-bold">
+                                    {formatRupiah(uktScheme.jumlah)}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Status</p>
-                                <Badge variant={uktScheme.aktif ? 'default' : 'secondary'}>
+                                <p className="text-sm text-muted-foreground">
+                                    Status
+                                </p>
+                                <Badge
+                                    variant={
+                                        uktScheme.aktif
+                                            ? 'default'
+                                            : 'secondary'
+                                    }
+                                >
                                     {uktScheme.aktif ? 'Aktif' : 'Nonaktif'}
                                 </Badge>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Keterangan</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Keterangan
+                                </p>
                                 <p>{uktScheme.keterangan || '-'}</p>
                             </div>
                         </div>
@@ -90,9 +111,13 @@ export default function UktSchemeShow({ uktScheme }: { uktScheme: UktScheme }) {
 }
 
 UktSchemeShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Skema UKT', href: '/admin/ukt-scheme' },
-        { title: 'Detail', href: '#' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Skema UKT', href: '/admin/ukt-scheme' },
+            { title: 'Detail', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

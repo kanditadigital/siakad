@@ -1,9 +1,16 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft, User, Upload, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
     Select,
     SelectContent,
@@ -11,8 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, User, Upload, X } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 
 type ProgramStudi = {
@@ -87,13 +93,14 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
 
     const existingPhoto = dosen.user?.photo;
     const [photoPreview, setPhotoPreview] = useState<string | null>(
-        existingPhoto ? `/storage/${existingPhoto}` : null
+        existingPhoto ? `/storage/${existingPhoto}` : null,
     );
     const [removeExistingPhoto, setRemoveExistingPhoto] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (file) {
             setData('photo', file);
             setRemoveExistingPhoto(false);
@@ -109,6 +116,7 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
         setData('photo', null);
         setPhotoPreview(null);
         setRemoveExistingPhoto(true);
+
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
@@ -125,19 +133,29 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-green-800">Edit Dosen</h1>
-                    <p className="text-gray-600">Perbarui data dosen {dosen.nama}</p>
+                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                        Edit Dosen
+                    </h1>
+                    <p className="text-gray-600">
+                        Perbarui data dosen {dosen.nama}
+                    </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+                <form
+                    onSubmit={handleSubmit}
+                    className="space-y-6"
+                    encType="multipart/form-data"
+                >
                     {/* Photo Upload */}
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900 flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-gray-900">
                                 <User className="h-5 w-5 text-green-700" />
                                 Foto Profil
                             </CardTitle>
-                            <CardDescription>Upload foto dosen (opsional)</CardDescription>
+                            <CardDescription>
+                                Upload foto dosen (opsional)
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-col items-center gap-4">
@@ -147,18 +165,18 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                             <img
                                                 src={photoPreview}
                                                 alt="Preview"
-                                                className="h-32 w-32 rounded-full object-cover border-4 border-green-200"
+                                                className="h-32 w-32 rounded-full border-4 border-green-200 object-cover"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={removePhoto}
-                                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600"
+                                                className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
                                             >
                                                 <X className="h-4 w-4" />
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="h-32 w-32 rounded-full bg-green-100 flex items-center justify-center border-4 border-green-200">
+                                        <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-green-200 bg-green-100">
                                             <User className="h-16 w-16 text-green-400" />
                                         </div>
                                     )}
@@ -174,16 +192,22 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onClick={() =>
+                                            fileInputRef.current?.click()
+                                        }
                                     >
                                         <Upload className="mr-2 h-4 w-4" />
-                                        {existingPhoto && !removeExistingPhoto ? 'Ganti Foto' : 'Pilih Foto'}
+                                        {existingPhoto && !removeExistingPhoto
+                                            ? 'Ganti Foto'
+                                            : 'Pilih Foto'}
                                     </Button>
-                                    <p className="text-xs text-gray-500 mt-2">
+                                    <p className="mt-2 text-xs text-gray-500">
                                         JPG, JPEG, atau PNG. Maks 2MB.
                                     </p>
                                     {errors.photo && (
-                                        <p className="text-sm text-red-500 mt-1">{errors.photo}</p>
+                                        <p className="mt-1 text-sm text-red-500">
+                                            {errors.photo}
+                                        </p>
                                     )}
                                 </div>
                             </div>
@@ -193,65 +217,116 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                     {/* Identitas Diri */}
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900">Identitas Diri</CardTitle>
-                            <CardDescription>Data pribadi dan identitas dosen</CardDescription>
+                            <CardTitle className="text-gray-900">
+                                Identitas Diri
+                            </CardTitle>
+                            <CardDescription>
+                                Data pribadi dan identitas dosen
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="nidn" className="text-gray-700">NIDN</Label>
+                                    <Label
+                                        htmlFor="nidn"
+                                        className="text-gray-700"
+                                    >
+                                        NIDN
+                                    </Label>
                                     <Input
                                         id="nidn"
                                         value={data.nidn}
-                                        onChange={(e) => setData('nidn', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('nidn', e.target.value)
+                                        }
                                         placeholder="0012345678"
                                         className="border-gray-300 focus:border-green-500 focus:ring-green-500"
                                     />
-                                    {errors.nidn && <p className="text-sm text-red-500">{errors.nidn}</p>}
+                                    {errors.nidn && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.nidn}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="nuptk" className="text-gray-700">NUPTK</Label>
+                                    <Label
+                                        htmlFor="nuptk"
+                                        className="text-gray-700"
+                                    >
+                                        NUPTK
+                                    </Label>
                                     <Input
                                         id="nuptk"
                                         value={data.nuptk}
-                                        onChange={(e) => setData('nuptk', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('nuptk', e.target.value)
+                                        }
                                         placeholder="1234567890123456"
                                         className="border-gray-300 focus:border-green-500 focus:ring-green-500"
                                     />
-                                    {errors.nuptk && <p className="text-sm text-red-500">{errors.nuptk}</p>}
+                                    {errors.nuptk && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.nuptk}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="nama" className="text-gray-700">Nama Lengkap</Label>
+                                    <Label
+                                        htmlFor="nama"
+                                        className="text-gray-700"
+                                    >
+                                        Nama Lengkap
+                                    </Label>
                                     <Input
                                         id="nama"
                                         value={data.nama}
-                                        onChange={(e) => setData('nama', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('nama', e.target.value)
+                                        }
                                         placeholder="Dr. Ahmad Fauzi, M.Pd"
                                         className="border-gray-300 focus:border-green-500 focus:ring-green-500"
                                     />
-                                    {errors.nama && <p className="text-sm text-red-500">{errors.nama}</p>}
+                                    {errors.nama && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.nama}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="jenis_kelamin" className="text-gray-700">Jenis Kelamin</Label>
+                                    <Label
+                                        htmlFor="jenis_kelamin"
+                                        className="text-gray-700"
+                                    >
+                                        Jenis Kelamin
+                                    </Label>
                                     <Select
                                         value={data.jenis_kelamin}
-                                        onValueChange={(value) => setData('jenis_kelamin', value)}
+                                        onValueChange={(value) =>
+                                            setData('jenis_kelamin', value)
+                                        }
                                     >
                                         <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
                                             <SelectValue placeholder="Pilih Jenis Kelamin" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {JENIS_KELAMIN_OPTIONS.map((jk) => (
-                                                <SelectItem key={jk.value} value={jk.value}>
+                                                <SelectItem
+                                                    key={jk.value}
+                                                    value={jk.value}
+                                                >
                                                     {jk.label}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.jenis_kelamin && <p className="text-sm text-red-500">{errors.jenis_kelamin}</p>}
+                                    {errors.jenis_kelamin && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.jenis_kelamin}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </CardContent>
@@ -260,136 +335,241 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                     {/* Kontak & Kepegawaian */}
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900">Kontak & Kepegawaian</CardTitle>
-                            <CardDescription>Informasi kontak dan status kepegawaian</CardDescription>
+                            <CardTitle className="text-gray-900">
+                                Kontak & Kepegawaian
+                            </CardTitle>
+                            <CardDescription>
+                                Informasi kontak dan status kepegawaian
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="email" className="text-gray-700">Email</Label>
+                                    <Label
+                                        htmlFor="email"
+                                        className="text-gray-700"
+                                    >
+                                        Email
+                                    </Label>
                                     <Input
                                         id="email"
                                         type="email"
                                         value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('email', e.target.value)
+                                        }
                                         placeholder="ahmad@stit-daras.ac.id"
                                         className="border-gray-300 focus:border-green-500 focus:ring-green-500"
                                     />
-                                    {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                                    {errors.email && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="no_telepon" className="text-gray-700">No. Telepon</Label>
+                                    <Label
+                                        htmlFor="no_telepon"
+                                        className="text-gray-700"
+                                    >
+                                        No. Telepon
+                                    </Label>
                                     <Input
                                         id="no_telepon"
                                         value={data.no_telepon}
-                                        onChange={(e) => setData('no_telepon', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'no_telepon',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="081234567890"
                                         className="border-gray-300 focus:border-green-500 focus:ring-green-500"
                                     />
-                                    {errors.no_telepon && <p className="text-sm text-red-500">{errors.no_telepon}</p>}
+                                    {errors.no_telepon && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.no_telepon}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="program_studi_id" className="text-gray-700">Program Studi</Label>
+                                    <Label
+                                        htmlFor="program_studi_id"
+                                        className="text-gray-700"
+                                    >
+                                        Program Studi
+                                    </Label>
                                     <Select
                                         value={data.program_studi_id}
-                                        onValueChange={(value) => setData('program_studi_id', value)}
+                                        onValueChange={(value) =>
+                                            setData('program_studi_id', value)
+                                        }
                                     >
                                         <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
                                             <SelectValue placeholder="Pilih Program Studi" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {programStudis.map((prodi) => (
-                                                <SelectItem key={prodi.id} value={prodi.id.toString()}>
+                                                <SelectItem
+                                                    key={prodi.id}
+                                                    value={prodi.id.toString()}
+                                                >
                                                     {prodi.nama_prodi}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.program_studi_id && <p className="text-sm text-red-500">{errors.program_studi_id}</p>}
+                                    {errors.program_studi_id && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.program_studi_id}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="status" className="text-gray-700">Status</Label>
+                                    <Label
+                                        htmlFor="status"
+                                        className="text-gray-700"
+                                    >
+                                        Status
+                                    </Label>
                                     <Select
                                         value={data.status}
-                                        onValueChange={(value) => setData('status', value)}
+                                        onValueChange={(value) =>
+                                            setData('status', value)
+                                        }
                                     >
                                         <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
                                             <SelectValue placeholder="Pilih Status" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {STATUS_OPTIONS.map((status) => (
-                                                <SelectItem key={status.value} value={status.value}>
+                                                <SelectItem
+                                                    key={status.value}
+                                                    value={status.value}
+                                                >
                                                     {status.label}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.status && <p className="text-sm text-red-500">{errors.status}</p>}
+                                    {errors.status && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.status}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="pangkat_golongan" className="text-gray-700">Pangkat / Golongan</Label>
+                                    <Label
+                                        htmlFor="pangkat_golongan"
+                                        className="text-gray-700"
+                                    >
+                                        Pangkat / Golongan
+                                    </Label>
                                     <Select
                                         value={data.pangkat_golongan}
-                                        onValueChange={(value) => setData('pangkat_golongan', value)}
+                                        onValueChange={(value) =>
+                                            setData('pangkat_golongan', value)
+                                        }
                                     >
                                         <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
                                             <SelectValue placeholder="Pilih Pangkat" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {PANGKAT_OPTIONS.map((pangkat) => (
-                                                <SelectItem key={pangkat} value={pangkat}>
+                                                <SelectItem
+                                                    key={pangkat}
+                                                    value={pangkat}
+                                                >
                                                     {pangkat}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.pangkat_golongan && <p className="text-sm text-red-500">{errors.pangkat_golongan}</p>}
+                                    {errors.pangkat_golongan && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.pangkat_golongan}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="pendidikan_terakhir" className="text-gray-700">Pendidikan Terakhir</Label>
+                                    <Label
+                                        htmlFor="pendidikan_terakhir"
+                                        className="text-gray-700"
+                                    >
+                                        Pendidikan Terakhir
+                                    </Label>
                                     <Select
                                         value={data.pendidikan_terakhir}
-                                        onValueChange={(value) => setData('pendidikan_terakhir', value)}
+                                        onValueChange={(value) =>
+                                            setData(
+                                                'pendidikan_terakhir',
+                                                value,
+                                            )
+                                        }
                                     >
                                         <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
                                             <SelectValue placeholder="Pilih Pendidikan" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {PENDIDIKAN_OPTIONS.map((pendidikan) => (
-                                                <SelectItem key={pendidikan} value={pendidikan}>
-                                                    {pendidikan}
-                                                </SelectItem>
-                                            ))}
+                                            {PENDIDIKAN_OPTIONS.map(
+                                                (pendidikan) => (
+                                                    <SelectItem
+                                                        key={pendidikan}
+                                                        value={pendidikan}
+                                                    >
+                                                        {pendidikan}
+                                                    </SelectItem>
+                                                ),
+                                            )}
                                         </SelectContent>
                                     </Select>
-                                    {errors.pendidikan_terakhir && <p className="text-sm text-red-500">{errors.pendidikan_terakhir}</p>}
+                                    {errors.pendidikan_terakhir && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.pendidikan_terakhir}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="alamat" className="text-gray-700">Alamat</Label>
+                                <Label
+                                    htmlFor="alamat"
+                                    className="text-gray-700"
+                                >
+                                    Alamat
+                                </Label>
                                 <Textarea
                                     id="alamat"
                                     value={data.alamat}
-                                    onChange={(e) => setData('alamat', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('alamat', e.target.value)
+                                    }
                                     placeholder="Jl. Merdeka No. 10"
                                     rows={3}
                                     className="border-gray-300 focus:border-green-500 focus:ring-green-500"
                                 />
-                                {errors.alamat && <p className="text-sm text-red-500">{errors.alamat}</p>}
+                                {errors.alamat && (
+                                    <p className="text-sm text-red-500">
+                                        {errors.alamat}
+                                    </p>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Actions */}
                     <div className="flex items-center gap-4">
-                        <Button type="submit" disabled={processing} className="bg-green-700 hover:bg-green-800">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-green-700 hover:bg-green-800"
+                        >
                             {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
                         </Button>
                         <Link href="/admin/dosen">

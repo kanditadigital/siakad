@@ -1,9 +1,10 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { User, Upload, X } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Select,
     SelectContent,
@@ -11,7 +12,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { User, Upload, X } from 'lucide-react';
 
 type ProgramStudi = {
     id: number;
@@ -38,6 +38,7 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (file) {
             setPhoto(file);
             const reader = new FileReader();
@@ -51,6 +52,7 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
     const removePhoto = () => {
         setPhoto(null);
         setPhotoPreview(null);
+
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
@@ -66,9 +68,11 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
         formData.append('role', role);
         formData.append('password', password);
         formData.append('password_confirmation', passwordConfirmation);
+
         if (programStudiId) {
             formData.append('program_studi_id', programStudiId);
         }
+
         if (photo) {
             formData.append('photo', photo);
         }
@@ -85,7 +89,9 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-green-800">Tambah User</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                        Tambah User
+                    </h1>
                     <p className="text-gray-600">Buat akun pengguna baru</p>
                 </div>
 
@@ -94,7 +100,7 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
                         {/* Photo Upload */}
                         <Card className="border border-gray-200 shadow-sm">
                             <CardHeader>
-                                <CardTitle className="text-gray-900 flex items-center gap-2">
+                                <CardTitle className="flex items-center gap-2 text-gray-900">
                                     <User className="h-5 w-5 text-green-700" />
                                     Foto Profil
                                 </CardTitle>
@@ -107,18 +113,18 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
                                                 <img
                                                     src={photoPreview}
                                                     alt="Preview"
-                                                    className="h-32 w-32 rounded-full object-cover border-4 border-green-200"
+                                                    className="h-32 w-32 rounded-full border-4 border-green-200 object-cover"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={removePhoto}
-                                                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600"
+                                                    className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </button>
                                             </div>
                                         ) : (
-                                            <div className="h-32 w-32 rounded-full bg-green-100 flex items-center justify-center border-4 border-green-200">
+                                            <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-green-200 bg-green-100">
                                                 <User className="h-16 w-16 text-green-400" />
                                             </div>
                                         )}
@@ -134,16 +140,20 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            onClick={() => fileInputRef.current?.click()}
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
                                         >
                                             <Upload className="mr-2 h-4 w-4" />
                                             Pilih Foto
                                         </Button>
-                                        <p className="text-xs text-gray-500 mt-2">
+                                        <p className="mt-2 text-xs text-gray-500">
                                             JPG, JPEG, atau PNG. Maks 2MB.
                                         </p>
                                         {errors.photo && (
-                                            <p className="text-sm text-red-500 mt-1">{errors.photo}</p>
+                                            <p className="mt-1 text-sm text-red-500">
+                                                {errors.photo}
+                                            </p>
                                         )}
                                     </div>
                                 </div>
@@ -153,56 +163,114 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
                         {/* Form Fields */}
                         <Card className="border border-gray-200 shadow-sm">
                             <CardHeader>
-                                <CardTitle className="text-gray-900">Data User</CardTitle>
+                                <CardTitle className="text-gray-900">
+                                    Data User
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="name" className="text-gray-700">Nama Lengkap</Label>
+                                    <Label
+                                        htmlFor="name"
+                                        className="text-gray-700"
+                                    >
+                                        Nama Lengkap
+                                    </Label>
                                     <Input
                                         id="name"
                                         value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        onChange={(e) =>
+                                            setName(e.target.value)
+                                        }
                                         placeholder="Nama lengkap"
                                         className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.name ? 'border-red-500' : ''}`}
                                     />
-                                    {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+                                    {errors.name && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.name}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="email" className="text-gray-700">Email</Label>
+                                    <Label
+                                        htmlFor="email"
+                                        className="text-gray-700"
+                                    >
+                                        Email
+                                    </Label>
                                     <Input
                                         id="email"
                                         type="email"
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={(e) =>
+                                            setEmail(e.target.value)
+                                        }
                                         placeholder="email@sitiddarurrahmah.ac.id"
                                         className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.email ? 'border-red-500' : ''}`}
                                     />
-                                    {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                                    {errors.email && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="role" className="text-gray-700">Role</Label>
-                                    <Select value={role} onValueChange={setRole}>
-                                        <SelectTrigger className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.role ? 'border-red-500' : ''}`}>
+                                    <Label
+                                        htmlFor="role"
+                                        className="text-gray-700"
+                                    >
+                                        Role
+                                    </Label>
+                                    <Select
+                                        value={role}
+                                        onValueChange={setRole}
+                                    >
+                                        <SelectTrigger
+                                            className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.role ? 'border-red-500' : ''}`}
+                                        >
                                             <SelectValue placeholder="Pilih role" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="admin">Administrator</SelectItem>
-                                            <SelectItem value="admin_prodi">Admin Program Studi</SelectItem>
-                                            <SelectItem value="dosen">Dosen</SelectItem>
-                                            <SelectItem value="mahasiswa">Mahasiswa</SelectItem>
-                                            <SelectItem value="pimpinan">Pimpinan</SelectItem>
+                                            <SelectItem value="admin">
+                                                Administrator
+                                            </SelectItem>
+                                            <SelectItem value="admin_prodi">
+                                                Admin Program Studi
+                                            </SelectItem>
+                                            <SelectItem value="dosen">
+                                                Dosen
+                                            </SelectItem>
+                                            <SelectItem value="mahasiswa">
+                                                Mahasiswa
+                                            </SelectItem>
+                                            <SelectItem value="pimpinan">
+                                                Pimpinan
+                                            </SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    {errors.role && <p className="text-sm text-red-500">{errors.role}</p>}
+                                    {errors.role && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.role}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {role === 'admin_prodi' && (
                                     <div className="space-y-2">
-                                        <Label htmlFor="program_studi_id" className="text-gray-700">Program Studi</Label>
-                                        <Select value={programStudiId} onValueChange={setProgramStudiId}>
-                                            <SelectTrigger className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.program_studi_id ? 'border-red-500' : ''}`}>
+                                        <Label
+                                            htmlFor="program_studi_id"
+                                            className="text-gray-700"
+                                        >
+                                            Program Studi
+                                        </Label>
+                                        <Select
+                                            value={programStudiId}
+                                            onValueChange={setProgramStudiId}
+                                        >
+                                            <SelectTrigger
+                                                className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.program_studi_id ? 'border-red-500' : ''}`}
+                                            >
                                                 <SelectValue placeholder="Pilih program studi" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -210,38 +278,70 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
                                                     <SelectItem
                                                         key={prodi.id}
                                                         value={String(prodi.id)}
-                                                        disabled={!!adminProdiCounts[prodi.id]}
+                                                        disabled={
+                                                            !!adminProdiCounts[
+                                                                prodi.id
+                                                            ]
+                                                        }
                                                     >
                                                         {prodi.nama_prodi}
-                                                        {adminProdiCounts[prodi.id] ? ' (Sudah ada admin)' : ''}
+                                                        {adminProdiCounts[
+                                                            prodi.id
+                                                        ]
+                                                            ? ' (Sudah ada admin)'
+                                                            : ''}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.program_studi_id && <p className="text-sm text-red-500">{errors.program_studi_id}</p>}
+                                        {errors.program_studi_id && (
+                                            <p className="text-sm text-red-500">
+                                                {errors.program_studi_id}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="password" className="text-gray-700">Password</Label>
+                                    <Label
+                                        htmlFor="password"
+                                        className="text-gray-700"
+                                    >
+                                        Password
+                                    </Label>
                                     <Input
                                         id="password"
                                         type="password"
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
                                         placeholder="Minimal 8 karakter"
                                         className={`border-gray-300 focus:border-green-500 focus:ring-green-500 ${errors.password ? 'border-red-500' : ''}`}
                                     />
-                                    {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+                                    {errors.password && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.password}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="password_confirmation" className="text-gray-700">Konfirmasi Password</Label>
+                                    <Label
+                                        htmlFor="password_confirmation"
+                                        className="text-gray-700"
+                                    >
+                                        Konfirmasi Password
+                                    </Label>
                                     <Input
                                         id="password_confirmation"
                                         type="password"
                                         value={passwordConfirmation}
-                                        onChange={(e) => setPasswordConfirmation(e.target.value)}
+                                        onChange={(e) =>
+                                            setPasswordConfirmation(
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="Ulangi password"
                                         className="border-gray-300 focus:border-green-500 focus:ring-green-500"
                                     />
@@ -250,11 +350,17 @@ export default function UserCreate({ programStudis, adminProdiCounts }: Props) {
                         </Card>
                     </div>
 
-                    <div className="flex justify-end gap-4 mt-6">
+                    <div className="mt-6 flex justify-end gap-4">
                         <Link href="/admin/user">
-                            <Button variant="outline" type="button">Batal</Button>
+                            <Button variant="outline" type="button">
+                                Batal
+                            </Button>
                         </Link>
-                        <Button type="submit" disabled={processing} className="bg-green-700 hover:bg-green-800">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-green-700 hover:bg-green-800"
+                        >
                             {processing ? 'Menyimpan...' : 'Simpan'}
                         </Button>
                     </div>

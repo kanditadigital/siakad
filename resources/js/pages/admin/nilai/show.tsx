@@ -1,13 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 
 type Mahasiswa = {
@@ -63,7 +58,10 @@ type Nilai = {
     krs: Krs;
 };
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     belum: 'outline',
     tercatat: 'default',
 };
@@ -98,8 +96,12 @@ export default function NilaiShow({ nilai }: { nilai: Nilai }) {
                         </Button>
                     </Link>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Detail Nilai</h1>
-                        <p className="text-muted-foreground">Informasi lengkap nilai mahasiswa</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Detail Nilai
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Informasi lengkap nilai mahasiswa
+                        </p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Link href={`/admin/nilai/${nilai.uuid}/edit`}>
@@ -115,23 +117,38 @@ export default function NilaiShow({ nilai }: { nilai: Nilai }) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>Mahasiswa</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">NIM</p>
-                                <p className="font-mono font-medium">{nilai.krs?.mahasiswa?.nim}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    NIM
+                                </p>
+                                <p className="font-mono font-medium">
+                                    {nilai.krs?.mahasiswa?.nim}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Nama</p>
-                                <p className="font-medium">{nilai.krs?.mahasiswa?.nama}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Nama
+                                </p>
+                                <p className="font-medium">
+                                    {nilai.krs?.mahasiswa?.nama}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Program Studi</p>
-                                <p>{nilai.krs?.mahasiswa?.program_studi?.nama_prodi}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Program Studi
+                                </p>
+                                <p>
+                                    {
+                                        nilai.krs?.mahasiswa?.program_studi
+                                            ?.nama_prodi
+                                    }
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -142,21 +159,48 @@ export default function NilaiShow({ nilai }: { nilai: Nilai }) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Mata Kuliah</p>
-                                <p className="font-medium">{nilai.krs?.kelas?.mata_kuliah?.nama_mk}</p>
-                                <p className="text-sm text-muted-foreground">{nilai.krs?.kelas?.mata_kuliah?.kode_mk} • {nilai.krs?.kelas?.mata_kuliah?.sks} SKS</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Mata Kuliah
+                                </p>
+                                <p className="font-medium">
+                                    {nilai.krs?.kelas?.mata_kuliah?.nama_mk}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                    {nilai.krs?.kelas?.mata_kuliah?.kode_mk} •{' '}
+                                    {nilai.krs?.kelas?.mata_kuliah?.sks} SKS
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Kode Kelas</p>
-                                <p className="font-mono font-medium">{nilai.krs?.kelas?.kode_kelas}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Kode Kelas
+                                </p>
+                                <p className="font-mono font-medium">
+                                    {nilai.krs?.kelas?.kode_kelas}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Dosen Pengampu</p>
-                                <p className="font-medium">{nilai.krs?.kelas?.dosen?.nama || '-'}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Dosen Pengampu
+                                </p>
+                                <p className="font-medium">
+                                    {nilai.krs?.kelas?.dosen?.nama || '-'}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Tahun Akademik</p>
-                                <p>{nilai.krs?.academic_year_semester?.nama_tahun_akademik} - Semester {nilai.krs?.academic_year_semester?.semester}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Tahun Akademik
+                                </p>
+                                <p>
+                                    {
+                                        nilai.krs?.academic_year_semester
+                                            ?.nama_tahun_akademik
+                                    }{' '}
+                                    - Semester{' '}
+                                    {
+                                        nilai.krs?.academic_year_semester
+                                            ?.semester
+                                    }
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -166,25 +210,47 @@ export default function NilaiShow({ nilai }: { nilai: Nilai }) {
                             <CardTitle>Nilai</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Nilai</p>
-                                    <p className="text-2xl font-bold">{nilai.nilai ?? '-'}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Nilai
+                                    </p>
+                                    <p className="text-2xl font-bold tabular-nums">
+                                        {nilai.nilai ?? '-'}
+                                    </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Grade</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Grade
+                                    </p>
                                     {nilai.grade ? (
-                                        <span className={`px-3 py-1 rounded text-sm font-medium ${GRADE_COLORS[nilai.grade] || ''}`}>
+                                        <span
+                                            className={`rounded px-3 py-1 text-sm font-medium ${GRADE_COLORS[nilai.grade] || ''}`}
+                                        >
                                             {nilai.grade}
                                         </span>
-                                    ) : '-'}
+                                    ) : (
+                                        '-'
+                                    )}
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Status</p>
-                                    <Badge variant={STATUS_VARIANTS[nilai.status] || 'outline'}>{STATUS_LABELS[nilai.status] || nilai.status}</Badge>
+                                    <p className="text-sm text-muted-foreground">
+                                        Status
+                                    </p>
+                                    <Badge
+                                        variant={
+                                            STATUS_VARIANTS[nilai.status] ||
+                                            'outline'
+                                        }
+                                    >
+                                        {STATUS_LABELS[nilai.status] ||
+                                            nilai.status}
+                                    </Badge>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Keterangan</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Keterangan
+                                    </p>
                                     <p>{nilai.keterangan || '-'}</p>
                                 </div>
                             </div>
@@ -197,9 +263,13 @@ export default function NilaiShow({ nilai }: { nilai: Nilai }) {
 }
 
 NilaiShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Data Nilai', href: '/admin/nilai' },
-        { title: 'Detail', href: '#' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Data Nilai', href: '/admin/nilai' },
+            { title: 'Detail', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

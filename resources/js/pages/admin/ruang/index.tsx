@@ -1,22 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -28,7 +12,23 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 
 type Ruang = {
@@ -64,12 +64,16 @@ export default function RuangIndex({ ruangs, filters }: Props) {
     const [lantaiFilter, setLantaiFilter] = useState(filters.lantai || 'all');
 
     const applyFilters = (overrides: Record<string, string>) => {
-        router.get('/admin/ruang', {
-            search,
-            gedung: gedungFilter === 'all' ? '' : gedungFilter,
-            lantai: lantaiFilter === 'all' ? '' : lantaiFilter,
-            ...overrides,
-        }, { preserveState: true });
+        router.get(
+            '/admin/ruang',
+            {
+                search,
+                gedung: gedungFilter === 'all' ? '' : gedungFilter,
+                lantai: lantaiFilter === 'all' ? '' : lantaiFilter,
+                ...overrides,
+            },
+            { preserveState: true },
+        );
     };
 
     const handleDelete = (uuid: string) => {
@@ -85,8 +89,12 @@ export default function RuangIndex({ ruangs, filters }: Props) {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Data Ruang</h1>
-                        <p className="text-muted-foreground">Kelola data ruang kelas</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Data Ruang
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Kelola data ruang kelas
+                        </p>
                     </div>
                     <Link href="/admin/ruang/create">
                         <Button>
@@ -97,99 +105,203 @@ export default function RuangIndex({ ruangs, filters }: Props) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
-                    <div className="relative flex-1 min-w-[200px] max-w-sm">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <div className="relative max-w-sm min-w-[200px] flex-1">
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             placeholder="Cari kode atau nama ruang..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && applyFilters({ search })}
+                            onKeyDown={(e) =>
+                                e.key === 'Enter' && applyFilters({ search })
+                            }
                             className="pl-9"
                         />
                     </div>
-                    <Select value={gedungFilter} onValueChange={(v) => applyFilters({ gedung: v === 'all' ? '' : v })}>
-                        <SelectTrigger className="w-[180px]"><SelectValue placeholder="Semua Gedung" /></SelectTrigger>
+                    <Select
+                        value={gedungFilter}
+                        onValueChange={(v) =>
+                            applyFilters({ gedung: v === 'all' ? '' : v })
+                        }
+                    >
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Semua Gedung" />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Semua Gedung</SelectItem>
                             {gedungList.map((g) => (
-                                <SelectItem key={g} value={g}>{g}</SelectItem>
+                                <SelectItem key={g} value={g}>
+                                    {g}
+                                </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
-                    <Select value={lantaiFilter} onValueChange={(v) => applyFilters({ lantai: v === 'all' ? '' : v })}>
-                        <SelectTrigger className="w-[150px]"><SelectValue placeholder="Semua Lantai" /></SelectTrigger>
+                    <Select
+                        value={lantaiFilter}
+                        onValueChange={(v) =>
+                            applyFilters({ lantai: v === 'all' ? '' : v })
+                        }
+                    >
+                        <SelectTrigger className="w-[150px]">
+                            <SelectValue placeholder="Semua Lantai" />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Semua Lantai</SelectItem>
                             {[1, 2, 3, 4, 5].map((l) => (
-                                <SelectItem key={l} value={l.toString()}>Lantai {l}</SelectItem>
+                                <SelectItem key={l} value={l.toString()}>
+                                    Lantai {l}
+                                </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                 </div>
 
-                <div className="border rounded-lg">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Kode Ruang</TableHead>
-                                <TableHead>Nama Ruang</TableHead>
-                                <TableHead>Gedung</TableHead>
-                                <TableHead>Lantai</TableHead>
-                                <TableHead>Kapasitas</TableHead>
-                                <TableHead className="text-right">Aksi</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {ruangs.data.length === 0 ? (
+                <div className="rounded-lg border">
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center py-8">
-                                        Tidak ada data ruang
-                                    </TableCell>
+                                    <TableHead>Kode Ruang</TableHead>
+                                    <TableHead>Nama Ruang</TableHead>
+                                    <TableHead>Gedung</TableHead>
+                                    <TableHead>Lantai</TableHead>
+                                    <TableHead>Kapasitas</TableHead>
+                                    <TableHead className="text-right">
+                                        Aksi
+                                    </TableHead>
                                 </TableRow>
-                            ) : (
-                                ruangs.data.map((ruang) => (
-                                    <TableRow key={ruang.id}>
-                                        <TableCell className="font-mono font-medium">{ruang.kode_ruang}</TableCell>
-                                        <TableCell>{ruang.nama_ruang}</TableCell>
-                                        <TableCell>{ruang.gedung}</TableCell>
-                                        <TableCell>{ruang.lantai}</TableCell>
-                                        <TableCell>{ruang.kapasitas}</TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <Link href={`/admin/ruang/${ruang.uuid}`}><Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button></Link>
-                                                <Link href={`/admin/ruang/${ruang.uuid}/edit`}><Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button></Link>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-red-500" /></Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle>Hapus Ruang</AlertDialogTitle>
-                                                            <AlertDialogDescription>
-                                                                Apakah anda yakin ingin menghapus ruang {ruang.nama_ruang}?
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>Batal</AlertDialogCancel>
-                                                            <AlertDialogAction onClick={() => handleDelete(ruang.uuid)} className="bg-red-600 hover:bg-red-700">Hapus</AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
-                                            </div>
+                            </TableHeader>
+                            <TableBody>
+                                {ruangs.data.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={6}
+                                            className="py-8 text-center"
+                                        >
+                                            Tidak ada data ruang
                                         </TableCell>
                                     </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
+                                ) : (
+                                    ruangs.data.map((ruang) => (
+                                        <TableRow key={ruang.id}>
+                                            <TableCell className="font-mono font-medium">
+                                                {ruang.kode_ruang}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ruang.nama_ruang}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ruang.gedung}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ruang.lantai}
+                                            </TableCell>
+                                            <TableCell>
+                                                {ruang.kapasitas}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Link
+                                                        href={`/admin/ruang/${ruang.uuid}`}
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                    <Link
+                                                        href={`/admin/ruang/${ruang.uuid}/edit`}
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                        >
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger
+                                                            asChild
+                                                        >
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                            >
+                                                                <Trash2 className="h-4 w-4 text-red-500" />
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>
+                                                                    Hapus Ruang
+                                                                </AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Apakah anda
+                                                                    yakin ingin
+                                                                    menghapus
+                                                                    ruang{' '}
+                                                                    {
+                                                                        ruang.nama_ruang
+                                                                    }
+                                                                    ?
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>
+                                                                    Batal
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            ruang.uuid,
+                                                                        )
+                                                                    }
+                                                                    className="bg-red-600 hover:bg-red-700"
+                                                                >
+                                                                    Hapus
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </div>
 
                 {ruangs.last_page > 1 && (
                     <div className="flex items-center justify-between">
-                        <p className="text-sm text-muted-foreground">Menampilkan {ruangs.data.length} dari {ruangs.total} data</p>
+                        <p className="text-sm text-muted-foreground">
+                            Menampilkan {ruangs.data.length} dari {ruangs.total}{' '}
+                            data
+                        </p>
                         <div className="flex items-center gap-2">
-                            {Array.from({ length: ruangs.last_page }, (_, i) => i + 1).map((page) => (
-                                <Button key={page} variant={page === ruangs.current_page ? 'default' : 'outline'} size="sm" onClick={() => router.get('/admin/ruang', { ...filters, page })}>{page}</Button>
+                            {Array.from(
+                                { length: ruangs.last_page },
+                                (_, i) => i + 1,
+                            ).map((page) => (
+                                <Button
+                                    key={page}
+                                    variant={
+                                        page === ruangs.current_page
+                                            ? 'default'
+                                            : 'outline'
+                                    }
+                                    size="sm"
+                                    onClick={() =>
+                                        router.get('/admin/ruang', {
+                                            ...filters,
+                                            page,
+                                        })
+                                    }
+                                >
+                                    {page}
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -200,8 +312,12 @@ export default function RuangIndex({ ruangs, filters }: Props) {
 }
 
 RuangIndex.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Ruang', href: '/admin/ruang' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Ruang', href: '/admin/ruang' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

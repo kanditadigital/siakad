@@ -1,7 +1,4 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import {
     AlertDialog,
@@ -14,6 +11,9 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 
 type AcademicYear = {
@@ -44,11 +44,21 @@ export default function DataAkademikShow({ academicYear }: Props) {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'aktif':
-                return <Badge className="bg-green-100 text-green-800">Aktif</Badge>;
+                return (
+                    <Badge className="bg-green-100 text-green-800">Aktif</Badge>
+                );
             case 'nonaktif':
-                return <Badge className="bg-gray-100 text-gray-800">Nonaktif</Badge>;
+                return (
+                    <Badge className="bg-gray-100 text-gray-800">
+                        Nonaktif
+                    </Badge>
+                );
             case 'arsip':
-                return <Badge className="bg-yellow-100 text-yellow-800">Arsip</Badge>;
+                return (
+                    <Badge className="bg-yellow-100 text-yellow-800">
+                        Arsip
+                    </Badge>
+                );
             default:
                 return <Badge>{status}</Badge>;
         }
@@ -56,7 +66,9 @@ export default function DataAkademikShow({ academicYear }: Props) {
 
     return (
         <>
-            <Head title={`${academicYear.nama_tahun_akademik} ${academicYear.semester}`} />
+            <Head
+                title={`${academicYear.nama_tahun_akademik} ${academicYear.semester}`}
+            />
 
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
@@ -66,15 +78,18 @@ export default function DataAkademikShow({ academicYear }: Props) {
                         </Button>
                     </Link>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">
-                            {academicYear.nama_tahun_akademik} {academicYear.semester}
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            {academicYear.nama_tahun_akademik}{' '}
+                            {academicYear.semester}
                         </h1>
                         <p className="text-muted-foreground">
                             Detail tahun akademik
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Link href={`/admin/data-akademik/${academicYear.uuid}/edit`}>
+                        <Link
+                            href={`/admin/data-akademik/${academicYear.uuid}/edit`}
+                        >
                             <Button variant="outline">
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit
@@ -89,11 +104,15 @@ export default function DataAkademikShow({ academicYear }: Props) {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
-                                    <AlertDialogTitle>Hapus Tahun Akademik</AlertDialogTitle>
+                                    <AlertDialogTitle>
+                                        Hapus Tahun Akademik
+                                    </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        Apakah anda yakin ingin menghapus tahun akademik{' '}
-                                        {academicYear.nama_tahun_akademik} {academicYear.semester}?
-                                        Tindakan ini tidak dapat dibatalkan.
+                                        Apakah anda yakin ingin menghapus tahun
+                                        akademik{' '}
+                                        {academicYear.nama_tahun_akademik}{' '}
+                                        {academicYear.semester}? Tindakan ini
+                                        tidak dapat dibatalkan.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
@@ -110,22 +129,32 @@ export default function DataAkademikShow({ academicYear }: Props) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>Informasi Umum</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Tahun Akademik</p>
-                                <p className="font-medium">{academicYear.nama_tahun_akademik}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Tahun Akademik
+                                </p>
+                                <p className="font-medium">
+                                    {academicYear.nama_tahun_akademik}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Semester</p>
-                                <p className="font-medium">{academicYear.semester}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Semester
+                                </p>
+                                <p className="font-medium">
+                                    {academicYear.semester}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Status</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Status
+                                </p>
                                 {getStatusBadge(academicYear.status)}
                             </div>
                         </CardContent>
@@ -137,9 +166,13 @@ export default function DataAkademikShow({ academicYear }: Props) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Tanggal Mulai</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Tanggal Mulai
+                                </p>
                                 <p className="font-medium">
-                                    {new Date(academicYear.tanggal_mulai).toLocaleDateString('id-ID', {
+                                    {new Date(
+                                        academicYear.tanggal_mulai,
+                                    ).toLocaleDateString('id-ID', {
                                         weekday: 'long',
                                         year: 'numeric',
                                         month: 'long',
@@ -148,9 +181,13 @@ export default function DataAkademikShow({ academicYear }: Props) {
                                 </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Tanggal Selesai</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Tanggal Selesai
+                                </p>
                                 <p className="font-medium">
-                                    {new Date(academicYear.tanggal_selesai).toLocaleDateString('id-ID', {
+                                    {new Date(
+                                        academicYear.tanggal_selesai,
+                                    ).toLocaleDateString('id-ID', {
                                         weekday: 'long',
                                         year: 'numeric',
                                         month: 'long',
@@ -167,12 +204,20 @@ export default function DataAkademikShow({ academicYear }: Props) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">Periode KRS</p>
-                                <p className="font-medium">{academicYear.periode_krs || '-'}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Periode KRS
+                                </p>
+                                <p className="font-medium">
+                                    {academicYear.periode_krs || '-'}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Periode Input Nilai</p>
-                                <p className="font-medium">{academicYear.periode_input_nilai || '-'}</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Periode Input Nilai
+                                </p>
+                                <p className="font-medium">
+                                    {academicYear.periode_input_nilai || '-'}
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -183,11 +228,13 @@ export default function DataAkademikShow({ academicYear }: Props) {
 }
 
 DataAkademikShow.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Data Akademik', href: '/admin/data-akademik' },
-        { title: 'Detail', href: '/admin/data-akademik/show' },
-    ]}>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Data Akademik', href: '/admin/data-akademik' },
+            { title: 'Detail', href: '/admin/data-akademik/show' },
+        ]}
+    >
         {page}
     </AppLayout>
 );

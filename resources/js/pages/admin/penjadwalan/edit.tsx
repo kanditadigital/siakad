@@ -1,5 +1,13 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -9,14 +17,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type MataKuliah = {
@@ -65,9 +65,15 @@ type Props = {
     academicYearSemesters: AcademicYearSemester[];
 };
 
-export default function PenjadwalanEdit({ kelas, mataKuliahs, dosens, ruangs, academicYearSemesters }: Props) {
+export default function PenjadwalanEdit({
+    kelas,
+    mataKuliahs,
+    dosens,
+    ruangs,
+    academicYearSemesters,
+}: Props) {
     const matchedAYS = academicYearSemesters.find(
-        (ays) => ays.nama_tahun_akademik === kelas.tahun_akademik
+        (ays) => ays.nama_tahun_akademik === kelas.tahun_akademik,
     );
 
     const { data, setData, put, processing, errors } = useForm({
@@ -99,88 +105,154 @@ export default function PenjadwalanEdit({ kelas, mataKuliahs, dosens, ruangs, ac
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold">Edit Kelas</h1>
-                        <p className="text-muted-foreground">Perbarui data kelas {kelas.nama_kelas}</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Edit Kelas
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Perbarui data kelas {kelas.nama_kelas}
+                        </p>
                     </div>
                 </div>
 
                 <Card>
                     <CardHeader>
                         <CardTitle>Form Edit Kelas</CardTitle>
-                        <CardDescription>Perbarui data kelas perkuliahan</CardDescription>
+                        <CardDescription>
+                            Perbarui data kelas perkuliahan
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="kode_kelas">Kode Kelas</Label>
+                                    <Label htmlFor="kode_kelas">
+                                        Kode Kelas
+                                    </Label>
                                     <Input
                                         id="kode_kelas"
                                         value={data.kode_kelas}
-                                        onChange={(e) => setData('kode_kelas', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'kode_kelas',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    {errors.kode_kelas && <p className="text-sm text-red-500">{errors.kode_kelas}</p>}
+                                    {errors.kode_kelas && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.kode_kelas}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="nama_kelas">Nama Kelas</Label>
+                                    <Label htmlFor="nama_kelas">
+                                        Nama Kelas
+                                    </Label>
                                     <Input
                                         id="nama_kelas"
                                         value={data.nama_kelas}
-                                        onChange={(e) => setData('nama_kelas', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'nama_kelas',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    {errors.nama_kelas && <p className="text-sm text-red-500">{errors.nama_kelas}</p>}
+                                    {errors.nama_kelas && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.nama_kelas}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>Mata Kuliah</Label>
-                                    <Select value={data.mata_kuliah_id} onValueChange={(v) => setData('mata_kuliah_id', v)}>
+                                    <Select
+                                        value={data.mata_kuliah_id}
+                                        onValueChange={(v) =>
+                                            setData('mata_kuliah_id', v)
+                                        }
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Mata Kuliah" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {mataKuliahs.map((mk) => (
-                                                <SelectItem key={mk.id} value={mk.id.toString()}>
-                                                    {mk.kode_mk} - {mk.nama_mk} ({mk.sks} SKS)
+                                                <SelectItem
+                                                    key={mk.id}
+                                                    value={mk.id.toString()}
+                                                >
+                                                    {mk.kode_mk} - {mk.nama_mk}{' '}
+                                                    ({mk.sks} SKS)
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.mata_kuliah_id && <p className="text-sm text-red-500">{errors.mata_kuliah_id}</p>}
+                                    {errors.mata_kuliah_id && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.mata_kuliah_id}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>Dosen</Label>
-                                    <Select value={data.dosen_id} onValueChange={(v) => setData('dosen_id', v)}>
+                                    <Select
+                                        value={data.dosen_id}
+                                        onValueChange={(v) =>
+                                            setData('dosen_id', v)
+                                        }
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Dosen" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {dosens.map((d) => (
-                                                <SelectItem key={d.id} value={d.id.toString()}>
+                                                <SelectItem
+                                                    key={d.id}
+                                                    value={d.id.toString()}
+                                                >
                                                     {d.nama}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.dosen_id && <p className="text-sm text-red-500">{errors.dosen_id}</p>}
+                                    {errors.dosen_id && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.dosen_id}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>Ruang</Label>
-                                    <Select value={data.ruang_id} onValueChange={(v) => setData('ruang_id', v)}>
+                                    <Select
+                                        value={data.ruang_id}
+                                        onValueChange={(v) =>
+                                            setData('ruang_id', v)
+                                        }
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Ruang" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {ruangs.map((r) => (
-                                                <SelectItem key={r.id} value={r.id.toString()}>
-                                                    {r.kode_ruang} - {r.nama_ruang}
+                                                <SelectItem
+                                                    key={r.id}
+                                                    value={r.id.toString()}
+                                                >
+                                                    {r.kode_ruang} -{' '}
+                                                    {r.nama_ruang}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.ruang_id && <p className="text-sm text-red-500">{errors.ruang_id}</p>}
+                                    {errors.ruang_id && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.ruang_id}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
@@ -189,56 +261,114 @@ export default function PenjadwalanEdit({ kelas, mataKuliahs, dosens, ruangs, ac
                                         id="kapasitas"
                                         type="number"
                                         value={data.kapasitas}
-                                        onChange={(e) => setData('kapasitas', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('kapasitas', e.target.value)
+                                        }
                                     />
-                                    {errors.kapasitas && <p className="text-sm text-red-500">{errors.kapasitas}</p>}
+                                    {errors.kapasitas && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.kapasitas}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>Semester</Label>
-                                    <Select value={data.semester} onValueChange={(v) => setData('semester', v)}>
+                                    <Select
+                                        value={data.semester}
+                                        onValueChange={(v) =>
+                                            setData('semester', v)
+                                        }
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Semester" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {Array.from({ length: 8 }, (_, i) => i + 1).map((s) => (
-                                                <SelectItem key={s} value={s.toString()}>Semester {s}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.semester && <p className="text-sm text-red-500">{errors.semester}</p>}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label>Tahun Akademik</Label>
-                                    <Select value={data.academic_year_semester_id} onValueChange={(v) => setData('academic_year_semester_id', v)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Pilih Tahun Akademik" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {academicYearSemesters.map((ays) => (
-                                                <SelectItem key={ays.id} value={ays.id.toString()}>
-                                                    {ays.nama_tahun_akademik} - {ays.semester}
+                                            {Array.from(
+                                                { length: 8 },
+                                                (_, i) => i + 1,
+                                            ).map((s) => (
+                                                <SelectItem
+                                                    key={s}
+                                                    value={s.toString()}
+                                                >
+                                                    Semester {s}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.academic_year_semester_id && <p className="text-sm text-red-500">{errors.academic_year_semester_id}</p>}
+                                    {errors.semester && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.semester}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Tahun Akademik</Label>
+                                    <Select
+                                        value={data.academic_year_semester_id}
+                                        onValueChange={(v) =>
+                                            setData(
+                                                'academic_year_semester_id',
+                                                v,
+                                            )
+                                        }
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih Tahun Akademik" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {academicYearSemesters.map(
+                                                (ays) => (
+                                                    <SelectItem
+                                                        key={ays.id}
+                                                        value={ays.id.toString()}
+                                                    >
+                                                        {
+                                                            ays.nama_tahun_akademik
+                                                        }{' '}
+                                                        - {ays.semester}
+                                                    </SelectItem>
+                                                ),
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.academic_year_semester_id && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.academic_year_semester_id}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label>Status</Label>
-                                    <Select value={data.status} onValueChange={(v) => setData('status', v)}>
+                                    <Select
+                                        value={data.status}
+                                        onValueChange={(v) =>
+                                            setData('status', v)
+                                        }
+                                    >
                                         <SelectTrigger>
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Aktif">Aktif</SelectItem>
-                                            <SelectItem value="Tidak Aktif">Tidak Aktif</SelectItem>
-                                            <SelectItem value="Selesai">Selesai</SelectItem>
+                                            <SelectItem value="Aktif">
+                                                Aktif
+                                            </SelectItem>
+                                            <SelectItem value="Tidak Aktif">
+                                                Tidak Aktif
+                                            </SelectItem>
+                                            <SelectItem value="Selesai">
+                                                Selesai
+                                            </SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    {errors.status && <p className="text-sm text-red-500">{errors.status}</p>}
+                                    {errors.status && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.status}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -247,7 +377,9 @@ export default function PenjadwalanEdit({ kelas, mataKuliahs, dosens, ruangs, ac
                                     {processing ? 'Menyimpan...' : 'Perbarui'}
                                 </Button>
                                 <Link href="/admin/penjadwalan">
-                                    <Button type="button" variant="outline">Batal</Button>
+                                    <Button type="button" variant="outline">
+                                        Batal
+                                    </Button>
                                 </Link>
                             </div>
                         </form>
@@ -259,9 +391,13 @@ export default function PenjadwalanEdit({ kelas, mataKuliahs, dosens, ruangs, ac
 }
 
 PenjadwalanEdit.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Penjadwalan', href: '/admin/penjadwalan' },
-        { title: 'Edit', href: '#' },
-    ]}>{page}</AppLayout>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Penjadwalan', href: '/admin/penjadwalan' },
+            { title: 'Edit', href: '#' },
+        ]}
+    >
+        {page}
+    </AppLayout>
 );

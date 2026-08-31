@@ -68,7 +68,9 @@ export default function DosenCreate({ programStudis }: Props) {
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold">Tambah Dosen</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                        Tambah Dosen
+                    </h1>
                     <p className="text-muted-foreground">
                         Isi form berikut untuk menambahkan dosen baru
                     </p>
@@ -82,11 +84,15 @@ export default function DosenCreate({ programStudis }: Props) {
                                 <Input
                                     id="nidn"
                                     value={data.nidn}
-                                    onChange={(e) => setData('nidn', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('nidn', e.target.value)
+                                    }
                                     placeholder="Contoh: 0012345678"
                                 />
                                 {errors.nidn && (
-                                    <p className="text-sm text-red-500">{errors.nidn}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.nidn}
+                                    </p>
                                 )}
                             </div>
                             <div className="space-y-2">
@@ -94,35 +100,48 @@ export default function DosenCreate({ programStudis }: Props) {
                                 <Input
                                     id="nuptk"
                                     value={data.nuptk}
-                                    onChange={(e) => setData('nuptk', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('nuptk', e.target.value)
+                                    }
                                     placeholder="Contoh: 1234567890123456"
                                 />
                                 {errors.nuptk && (
-                                    <p className="text-sm text-red-500">{errors.nuptk}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.nuptk}
+                                    </p>
                                 )}
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="program_studi_id">Program Studi</Label>
+                                <Label htmlFor="program_studi_id">
+                                    Program Studi
+                                </Label>
                                 <Select
                                     value={data.program_studi_id}
-                                    onValueChange={(value) => setData('program_studi_id', value)}
+                                    onValueChange={(value) =>
+                                        setData('program_studi_id', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih Program Studi" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {programStudis.map((prodi) => (
-                                            <SelectItem key={prodi.id} value={prodi.id.toString()}>
+                                            <SelectItem
+                                                key={prodi.id}
+                                                value={prodi.id.toString()}
+                                            >
                                                 {prodi.nama_prodi}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
                                 {errors.program_studi_id && (
-                                    <p className="text-sm text-red-500">{errors.program_studi_id}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.program_studi_id}
+                                    </p>
                                 )}
                             </div>
                         </div>
@@ -133,11 +152,15 @@ export default function DosenCreate({ programStudis }: Props) {
                                 <Input
                                     id="nama"
                                     value={data.nama}
-                                    onChange={(e) => setData('nama', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('nama', e.target.value)
+                                    }
                                     placeholder="Contoh: Dr. Ahmad Fauzi, M.Pd"
                                 />
                                 {errors.nama && (
-                                    <p className="text-sm text-red-500">{errors.nama}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.nama}
+                                    </p>
                                 )}
                             </div>
                             <div className="space-y-2">
@@ -146,35 +169,48 @@ export default function DosenCreate({ programStudis }: Props) {
                                     id="email"
                                     type="email"
                                     value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('email', e.target.value)
+                                    }
                                     placeholder="Contoh: ahmad@stit-daras.ac.id"
                                 />
                                 {errors.email && (
-                                    <p className="text-sm text-red-500">{errors.email}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.email}
+                                    </p>
                                 )}
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
+                                <Label htmlFor="jenis_kelamin">
+                                    Jenis Kelamin
+                                </Label>
                                 <Select
                                     value={data.jenis_kelamin}
-                                    onValueChange={(value) => setData('jenis_kelamin', value)}
+                                    onValueChange={(value) =>
+                                        setData('jenis_kelamin', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih Jenis Kelamin" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {JENIS_KELAMIN_OPTIONS.map((jk) => (
-                                            <SelectItem key={jk.value} value={jk.value}>
+                                            <SelectItem
+                                                key={jk.value}
+                                                value={jk.value}
+                                            >
                                                 {jk.label}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
                                 {errors.jenis_kelamin && (
-                                    <p className="text-sm text-red-500">{errors.jenis_kelamin}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.jenis_kelamin}
+                                    </p>
                                 )}
                             </div>
                             <div className="space-y-2">
@@ -182,56 +218,80 @@ export default function DosenCreate({ programStudis }: Props) {
                                 <Input
                                     id="no_telepon"
                                     value={data.no_telepon}
-                                    onChange={(e) => setData('no_telepon', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('no_telepon', e.target.value)
+                                    }
                                     placeholder="Contoh: 081234567890"
                                 />
                                 {errors.no_telepon && (
-                                    <p className="text-sm text-red-500">{errors.no_telepon}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.no_telepon}
+                                    </p>
                                 )}
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="pangkat_golongan">Pangkat / Golongan</Label>
+                                <Label htmlFor="pangkat_golongan">
+                                    Pangkat / Golongan
+                                </Label>
                                 <Select
                                     value={data.pangkat_golongan}
-                                    onValueChange={(value) => setData('pangkat_golongan', value)}
+                                    onValueChange={(value) =>
+                                        setData('pangkat_golongan', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih Pangkat" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {PANGKAT_OPTIONS.map((pangkat) => (
-                                            <SelectItem key={pangkat} value={pangkat}>
+                                            <SelectItem
+                                                key={pangkat}
+                                                value={pangkat}
+                                            >
                                                 {pangkat}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
                                 {errors.pangkat_golongan && (
-                                    <p className="text-sm text-red-500">{errors.pangkat_golongan}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.pangkat_golongan}
+                                    </p>
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="pendidikan_terakhir">Pendidikan Terakhir</Label>
+                                <Label htmlFor="pendidikan_terakhir">
+                                    Pendidikan Terakhir
+                                </Label>
                                 <Select
                                     value={data.pendidikan_terakhir}
-                                    onValueChange={(value) => setData('pendidikan_terakhir', value)}
+                                    onValueChange={(value) =>
+                                        setData('pendidikan_terakhir', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih Pendidikan" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {PENDIDIKAN_OPTIONS.map((pendidikan) => (
-                                            <SelectItem key={pendidikan} value={pendidikan}>
-                                                {pendidikan}
-                                            </SelectItem>
-                                        ))}
+                                        {PENDIDIKAN_OPTIONS.map(
+                                            (pendidikan) => (
+                                                <SelectItem
+                                                    key={pendidikan}
+                                                    value={pendidikan}
+                                                >
+                                                    {pendidikan}
+                                                </SelectItem>
+                                            ),
+                                        )}
                                     </SelectContent>
                                 </Select>
                                 {errors.pendidikan_terakhir && (
-                                    <p className="text-sm text-red-500">{errors.pendidikan_terakhir}</p>
+                                    <p className="text-sm text-red-500">
+                                        {errors.pendidikan_terakhir}
+                                    </p>
                                 )}
                             </div>
                         </div>
@@ -241,11 +301,15 @@ export default function DosenCreate({ programStudis }: Props) {
                             <Input
                                 id="alamat"
                                 value={data.alamat}
-                                onChange={(e) => setData('alamat', e.target.value)}
+                                onChange={(e) =>
+                                    setData('alamat', e.target.value)
+                                }
                                 placeholder="Contoh: Jl. Merdeka No. 10"
                             />
                             {errors.alamat && (
-                                <p className="text-sm text-red-500">{errors.alamat}</p>
+                                <p className="text-sm text-red-500">
+                                    {errors.alamat}
+                                </p>
                             )}
                         </div>
 
@@ -253,21 +317,28 @@ export default function DosenCreate({ programStudis }: Props) {
                             <Label htmlFor="status">Status</Label>
                             <Select
                                 value={data.status}
-                                onValueChange={(value) => setData('status', value)}
+                                onValueChange={(value) =>
+                                    setData('status', value)
+                                }
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Pilih Status" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {STATUS_OPTIONS.map((status) => (
-                                        <SelectItem key={status.value} value={status.value}>
+                                        <SelectItem
+                                            key={status.value}
+                                            value={status.value}
+                                        >
                                             {status.label}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
                             {errors.status && (
-                                <p className="text-sm text-red-500">{errors.status}</p>
+                                <p className="text-sm text-red-500">
+                                    {errors.status}
+                                </p>
                             )}
                         </div>
 
@@ -289,11 +360,13 @@ export default function DosenCreate({ programStudis }: Props) {
 }
 
 DosenCreate.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Dosen', href: '/admin/dosen' },
-        { title: 'Tambah', href: '#' },
-    ]}>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Dosen', href: '/admin/dosen' },
+            { title: 'Tambah', href: '#' },
+        ]}
+    >
         {page}
     </AppLayout>
 );

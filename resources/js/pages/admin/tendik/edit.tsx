@@ -1,5 +1,13 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -9,14 +17,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 
 type Tendik = {
@@ -104,7 +104,9 @@ export default function TendikEdit({ tendik }: Props) {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold">Edit Tendik</h1>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Edit Tendik
+                        </h1>
                         <p className="text-muted-foreground">
                             Edit data tendik {tendik.nama}
                         </p>
@@ -115,21 +117,29 @@ export default function TendikEdit({ tendik }: Props) {
                     <Card>
                         <CardHeader>
                             <CardTitle>Data Pribadi</CardTitle>
-                            <CardDescription>Informasi identitas dan kontak</CardDescription>
+                            <CardDescription>
+                                Informasi identitas dan kontak
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="nip">NIP</Label>
                                     <Input
                                         id="nip"
                                         value={data.nip}
-                                        onChange={(e) => setData('nip', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('nip', e.target.value)
+                                        }
                                         placeholder="198501012010011001"
-                                        className={errors.nip ? 'border-red-500' : ''}
+                                        className={
+                                            errors.nip ? 'border-red-500' : ''
+                                        }
                                     />
                                     {errors.nip && (
-                                        <p className="text-sm text-red-500">{errors.nip}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.nip}
+                                        </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
@@ -137,12 +147,18 @@ export default function TendikEdit({ tendik }: Props) {
                                     <Input
                                         id="nama"
                                         value={data.nama}
-                                        onChange={(e) => setData('nama', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('nama', e.target.value)
+                                        }
                                         placeholder="Siti Aminah"
-                                        className={errors.nama ? 'border-red-500' : ''}
+                                        className={
+                                            errors.nama ? 'border-red-500' : ''
+                                        }
                                     />
                                     {errors.nama && (
-                                        <p className="text-sm text-red-500">{errors.nama}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.nama}
+                                        </p>
                                     )}
                                 </div>
 
@@ -152,47 +168,81 @@ export default function TendikEdit({ tendik }: Props) {
                                         id="email"
                                         type="email"
                                         value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('email', e.target.value)
+                                        }
                                         placeholder="siti@stit-daras.ac.id"
-                                        className={errors.email ? 'border-red-500' : ''}
+                                        className={
+                                            errors.email ? 'border-red-500' : ''
+                                        }
                                     />
                                     {errors.email && (
-                                        <p className="text-sm text-red-500">{errors.email}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.email}
+                                        </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="no_telepon">No. Telepon</Label>
+                                    <Label htmlFor="no_telepon">
+                                        No. Telepon
+                                    </Label>
                                     <Input
                                         id="no_telepon"
                                         value={data.no_telepon}
-                                        onChange={(e) => setData('no_telepon', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'no_telepon',
+                                                e.target.value,
+                                            )
+                                        }
                                         placeholder="081234567890"
-                                        className={errors.no_telepon ? 'border-red-500' : ''}
+                                        className={
+                                            errors.no_telepon
+                                                ? 'border-red-500'
+                                                : ''
+                                        }
                                     />
                                     {errors.no_telepon && (
-                                        <p className="text-sm text-red-500">{errors.no_telepon}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.no_telepon}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="jenis_kelamin">Jenis Kelamin</Label>
+                                    <Label htmlFor="jenis_kelamin">
+                                        Jenis Kelamin
+                                    </Label>
                                     <Select
                                         value={data.jenis_kelamin}
-                                        onValueChange={(value) => setData('jenis_kelamin', value)}
+                                        onValueChange={(value) =>
+                                            setData('jenis_kelamin', value)
+                                        }
                                     >
-                                        <SelectTrigger className={errors.jenis_kelamin ? 'border-red-500' : ''}>
+                                        <SelectTrigger
+                                            className={
+                                                errors.jenis_kelamin
+                                                    ? 'border-red-500'
+                                                    : ''
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Jenis Kelamin" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {JENIS_KELAMIN_OPTIONS.map((jk) => (
-                                                <SelectItem key={jk.value} value={jk.value}>
+                                                <SelectItem
+                                                    key={jk.value}
+                                                    value={jk.value}
+                                                >
                                                     {jk.label}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                     {errors.jenis_kelamin && (
-                                        <p className="text-sm text-red-500">{errors.jenis_kelamin}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.jenis_kelamin}
+                                        </p>
                                     )}
                                 </div>
 
@@ -200,21 +250,34 @@ export default function TendikEdit({ tendik }: Props) {
                                     <Label htmlFor="jabatan">Jabatan</Label>
                                     <Select
                                         value={data.jabatan}
-                                        onValueChange={(value) => setData('jabatan', value)}
+                                        onValueChange={(value) =>
+                                            setData('jabatan', value)
+                                        }
                                     >
-                                        <SelectTrigger className={errors.jabatan ? 'border-red-500' : ''}>
+                                        <SelectTrigger
+                                            className={
+                                                errors.jabatan
+                                                    ? 'border-red-500'
+                                                    : ''
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Jabatan" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {JABATAN_OPTIONS.map((jabatan) => (
-                                                <SelectItem key={jabatan} value={jabatan}>
+                                                <SelectItem
+                                                    key={jabatan}
+                                                    value={jabatan}
+                                                >
                                                     {jabatan}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                     {errors.jabatan && (
-                                        <p className="text-sm text-red-500">{errors.jabatan}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.jabatan}
+                                        </p>
                                     )}
                                 </div>
                             </div>
@@ -224,50 +287,87 @@ export default function TendikEdit({ tendik }: Props) {
                     <Card>
                         <CardHeader>
                             <CardTitle>Kepegawaian</CardTitle>
-                            <CardDescription>Informasi unit kerja dan pendidikan</CardDescription>
+                            <CardDescription>
+                                Informasi unit kerja dan pendidikan
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="unit_kerja">Unit Kerja</Label>
+                                    <Label htmlFor="unit_kerja">
+                                        Unit Kerja
+                                    </Label>
                                     <Select
                                         value={data.unit_kerja}
-                                        onValueChange={(value) => setData('unit_kerja', value)}
+                                        onValueChange={(value) =>
+                                            setData('unit_kerja', value)
+                                        }
                                     >
-                                        <SelectTrigger className={errors.unit_kerja ? 'border-red-500' : ''}>
+                                        <SelectTrigger
+                                            className={
+                                                errors.unit_kerja
+                                                    ? 'border-red-500'
+                                                    : ''
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Unit Kerja" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {UNIT_KERJA_OPTIONS.map((unit) => (
-                                                <SelectItem key={unit} value={unit}>
+                                                <SelectItem
+                                                    key={unit}
+                                                    value={unit}
+                                                >
                                                     {unit}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                     {errors.unit_kerja && (
-                                        <p className="text-sm text-red-500">{errors.unit_kerja}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.unit_kerja}
+                                        </p>
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="pendidikan_terakhir">Pendidikan Terakhir</Label>
+                                    <Label htmlFor="pendidikan_terakhir">
+                                        Pendidikan Terakhir
+                                    </Label>
                                     <Select
                                         value={data.pendidikan_terakhir}
-                                        onValueChange={(value) => setData('pendidikan_terakhir', value)}
+                                        onValueChange={(value) =>
+                                            setData(
+                                                'pendidikan_terakhir',
+                                                value,
+                                            )
+                                        }
                                     >
-                                        <SelectTrigger className={errors.pendidikan_terakhir ? 'border-red-500' : ''}>
+                                        <SelectTrigger
+                                            className={
+                                                errors.pendidikan_terakhir
+                                                    ? 'border-red-500'
+                                                    : ''
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Pendidikan" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {PENDIDIKAN_OPTIONS.map((pendidikan) => (
-                                                <SelectItem key={pendidikan} value={pendidikan}>
-                                                    {pendidikan}
-                                                </SelectItem>
-                                            ))}
+                                            {PENDIDIKAN_OPTIONS.map(
+                                                (pendidikan) => (
+                                                    <SelectItem
+                                                        key={pendidikan}
+                                                        value={pendidikan}
+                                                    >
+                                                        {pendidikan}
+                                                    </SelectItem>
+                                                ),
+                                            )}
                                         </SelectContent>
                                     </Select>
                                     {errors.pendidikan_terakhir && (
-                                        <p className="text-sm text-red-500">{errors.pendidikan_terakhir}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.pendidikan_terakhir}
+                                        </p>
                                     )}
                                 </div>
 
@@ -276,12 +376,20 @@ export default function TendikEdit({ tendik }: Props) {
                                     <Input
                                         id="alamat"
                                         value={data.alamat}
-                                        onChange={(e) => setData('alamat', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('alamat', e.target.value)
+                                        }
                                         placeholder="Jl. Merdeka No. 10"
-                                        className={errors.alamat ? 'border-red-500' : ''}
+                                        className={
+                                            errors.alamat
+                                                ? 'border-red-500'
+                                                : ''
+                                        }
                                     />
                                     {errors.alamat && (
-                                        <p className="text-sm text-red-500">{errors.alamat}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.alamat}
+                                        </p>
                                     )}
                                 </div>
 
@@ -289,21 +397,34 @@ export default function TendikEdit({ tendik }: Props) {
                                     <Label htmlFor="status">Status</Label>
                                     <Select
                                         value={data.status}
-                                        onValueChange={(value) => setData('status', value)}
+                                        onValueChange={(value) =>
+                                            setData('status', value)
+                                        }
                                     >
-                                        <SelectTrigger className={errors.status ? 'border-red-500' : ''}>
+                                        <SelectTrigger
+                                            className={
+                                                errors.status
+                                                    ? 'border-red-500'
+                                                    : ''
+                                            }
+                                        >
                                             <SelectValue placeholder="Pilih Status" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {STATUS_OPTIONS.map((status) => (
-                                                <SelectItem key={status.value} value={status.value}>
+                                                <SelectItem
+                                                    key={status.value}
+                                                    value={status.value}
+                                                >
                                                     {status.label}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                     {errors.status && (
-                                        <p className="text-sm text-red-500">{errors.status}</p>
+                                        <p className="text-sm text-red-500">
+                                            {errors.status}
+                                        </p>
                                     )}
                                 </div>
                             </div>
@@ -327,11 +448,13 @@ export default function TendikEdit({ tendik }: Props) {
 }
 
 TendikEdit.layout = (page: React.ReactNode) => (
-    <AppLayout breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Tendik', href: '/admin/tendik' },
-        { title: 'Edit', href: '#' },
-    ]}>
+    <AppLayout
+        breadcrumbs={[
+            { title: 'Dashboard', href: '/dashboard' },
+            { title: 'Tendik', href: '/admin/tendik' },
+            { title: 'Edit', href: '#' },
+        ]}
+    >
         {page}
     </AppLayout>
 );

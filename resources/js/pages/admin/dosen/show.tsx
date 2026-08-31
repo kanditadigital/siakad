@@ -1,7 +1,4 @@
 import { Head, Link } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
     Edit,
     User,
@@ -16,6 +13,9 @@ import {
     BookOpen,
     Trash2,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 
 type ProgramStudi = {
@@ -61,7 +61,10 @@ function getInitials(name: string) {
         .slice(0, 2);
 }
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     aktif: 'default',
     cuti: 'secondary',
     pensiun: 'outline',
@@ -75,7 +78,9 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default function DosenShow({ dosen }: Props) {
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('id-ID', { dateStyle: 'full' });
+        return new Date(date).toLocaleDateString('id-ID', {
+            dateStyle: 'full',
+        });
     };
 
     return (
@@ -86,9 +91,9 @@ export default function DosenShow({ dosen }: Props) {
                 {/* Header Card */}
                 <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
-                        <div className="flex items-center justify-center bg-green-700 p-8 md:w-64 md:min-h-[280px]">
+                        <div className="flex items-center justify-center bg-green-700 p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="h-32 w-32 rounded-full bg-white/20 flex items-center justify-center border-4 border-white/30 overflow-hidden">
+                                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white/30 bg-white/20">
                                     {dosen.user?.photo ? (
                                         <img
                                             src={`/storage/${dosen.user.photo}`}
@@ -103,26 +108,40 @@ export default function DosenShow({ dosen }: Props) {
                                 </div>
                                 <div className="text-center text-white">
                                     <p className="text-sm opacity-80">NIDN</p>
-                                    <p className="font-mono text-lg font-semibold">{dosen.nidn}</p>
+                                    <p className="font-mono text-lg font-semibold">
+                                        {dosen.nidn}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                         <div className="flex-1 p-6 md:p-8">
                             <div className="space-y-4">
                                 <div>
-                                    <h1 className="text-2xl font-bold text-gray-900">{dosen.nama}</h1>
-                                    <p className="text-gray-600">{dosen.program_studi?.nama_prodi}</p>
+                                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                                        {dosen.nama}
+                                    </h1>
+                                    <p className="text-gray-600">
+                                        {dosen.program_studi?.nama_prodi}
+                                    </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Badge variant={STATUS_VARIANTS[dosen.status] || 'outline'}>
-                                        {STATUS_LABELS[dosen.status] || dosen.status}
+                                    <Badge
+                                        variant={
+                                            STATUS_VARIANTS[dosen.status] ||
+                                            'outline'
+                                        }
+                                    >
+                                        {STATUS_LABELS[dosen.status] ||
+                                            dosen.status}
                                     </Badge>
                                     <span className="text-sm text-gray-500">
                                         • {dosen.jenis_kelamin}
                                     </span>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Link href={`/admin/dosen/${dosen.uuid}/edit`}>
+                                    <Link
+                                        href={`/admin/dosen/${dosen.uuid}/edit`}
+                                    >
                                         <Button className="bg-green-700 hover:bg-green-800">
                                             <Edit className="mr-2 h-4 w-4" />
                                             Edit
@@ -138,7 +157,7 @@ export default function DosenShow({ dosen }: Props) {
                     {/* Biodata */}
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900 flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-gray-900">
                                 <User className="h-5 w-5 text-green-700" />
                                 Biodata Diri
                             </CardTitle>
@@ -149,8 +168,12 @@ export default function DosenShow({ dosen }: Props) {
                                     <Hash className="h-5 w-5 text-green-700" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500">NIDN</p>
-                                    <p className="font-mono font-medium text-gray-900">{dosen.nidn}</p>
+                                    <p className="text-xs text-gray-500">
+                                        NIDN
+                                    </p>
+                                    <p className="font-mono font-medium text-gray-900">
+                                        {dosen.nidn}
+                                    </p>
                                 </div>
                             </div>
 
@@ -159,8 +182,12 @@ export default function DosenShow({ dosen }: Props) {
                                     <Hash className="h-5 w-5 text-green-700" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500">NUPTK</p>
-                                    <p className="font-mono font-medium text-gray-900">{dosen.nuptk || '-'}</p>
+                                    <p className="text-xs text-gray-500">
+                                        NUPTK
+                                    </p>
+                                    <p className="font-mono font-medium text-gray-900">
+                                        {dosen.nuptk || '-'}
+                                    </p>
                                 </div>
                             </div>
 
@@ -169,8 +196,12 @@ export default function DosenShow({ dosen }: Props) {
                                     <User className="h-5 w-5 text-green-700" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500">Jenis Kelamin</p>
-                                    <p className="font-medium text-gray-900">{dosen.jenis_kelamin}</p>
+                                    <p className="text-xs text-gray-500">
+                                        Jenis Kelamin
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {dosen.jenis_kelamin}
+                                    </p>
                                 </div>
                             </div>
 
@@ -179,8 +210,12 @@ export default function DosenShow({ dosen }: Props) {
                                     <Award className="h-5 w-5 text-green-700" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500">Pangkat / Golongan</p>
-                                    <p className="font-medium text-gray-900">{dosen.pangkat_golongan || '-'}</p>
+                                    <p className="text-xs text-gray-500">
+                                        Pangkat / Golongan
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {dosen.pangkat_golongan || '-'}
+                                    </p>
                                 </div>
                             </div>
 
@@ -189,8 +224,12 @@ export default function DosenShow({ dosen }: Props) {
                                     <GraduationCap className="h-5 w-5 text-green-700" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500">Pendidikan Terakhir</p>
-                                    <p className="font-medium text-gray-900">{dosen.pendidikan_terakhir || '-'}</p>
+                                    <p className="text-xs text-gray-500">
+                                        Pendidikan Terakhir
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {dosen.pendidikan_terakhir || '-'}
+                                    </p>
                                 </div>
                             </div>
                         </CardContent>
@@ -200,7 +239,7 @@ export default function DosenShow({ dosen }: Props) {
                         {/* Kontak */}
                         <Card className="border border-gray-200 shadow-sm">
                             <CardHeader>
-                                <CardTitle className="text-gray-900 flex items-center gap-2">
+                                <CardTitle className="flex items-center gap-2 text-gray-900">
                                     <Phone className="h-5 w-5 text-green-700" />
                                     Kontak
                                 </CardTitle>
@@ -211,8 +250,12 @@ export default function DosenShow({ dosen }: Props) {
                                         <Mail className="h-5 w-5 text-green-700" />
                                     </div>
                                     <div>
-                                        <p className="text-xs text-gray-500">Email</p>
-                                        <p className="font-medium text-gray-900 truncate">{dosen.email}</p>
+                                        <p className="text-xs text-gray-500">
+                                            Email
+                                        </p>
+                                        <p className="truncate font-medium text-gray-900">
+                                            {dosen.email}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -221,8 +264,12 @@ export default function DosenShow({ dosen }: Props) {
                                         <Phone className="h-5 w-5 text-green-700" />
                                     </div>
                                     <div>
-                                        <p className="text-xs text-gray-500">No. Telepon</p>
-                                        <p className="font-medium text-gray-900">{dosen.no_telepon || '-'}</p>
+                                        <p className="text-xs text-gray-500">
+                                            No. Telepon
+                                        </p>
+                                        <p className="font-medium text-gray-900">
+                                            {dosen.no_telepon || '-'}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -231,8 +278,12 @@ export default function DosenShow({ dosen }: Props) {
                                         <MapPin className="h-5 w-5 text-green-700" />
                                     </div>
                                     <div>
-                                        <p className="text-xs text-gray-500">Alamat</p>
-                                        <p className="font-medium text-gray-900">{dosen.alamat || '-'}</p>
+                                        <p className="text-xs text-gray-500">
+                                            Alamat
+                                        </p>
+                                        <p className="font-medium text-gray-900">
+                                            {dosen.alamat || '-'}
+                                        </p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -241,20 +292,24 @@ export default function DosenShow({ dosen }: Props) {
                         {/* Informasi Sistem */}
                         <Card className="border border-gray-200 shadow-sm">
                             <CardHeader>
-                                <CardTitle className="text-gray-900 flex items-center gap-2">
+                                <CardTitle className="flex items-center gap-2 text-gray-900">
                                     <Clock className="h-5 w-5 text-green-700" />
                                     Informasi Sistem
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex justify-between">
-                                    <span className="text-sm text-gray-500">Dibuat Pada</span>
+                                    <span className="text-sm text-gray-500">
+                                        Dibuat Pada
+                                    </span>
                                     <span className="text-sm text-gray-900">
                                         {formatDate(dosen.created_at)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-sm text-gray-500">Terakhir Diperbarui</span>
+                                    <span className="text-sm text-gray-500">
+                                        Terakhir Diperbarui
+                                    </span>
                                     <span className="text-sm text-gray-900">
                                         {formatDate(dosen.updated_at)}
                                     </span>
