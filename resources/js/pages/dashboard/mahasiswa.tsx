@@ -1,12 +1,7 @@
 import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GraduationCap, ClipboardList, Receipt, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-    GraduationCap,
-    ClipboardList,
-    Receipt,
-    BookOpen,
-} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type Mahasiswa = {
     id: number;
@@ -58,7 +53,10 @@ type Props = {
     recent_nilai?: Nilai[];
 };
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     pending: 'outline',
     disetujui: 'default',
     ditolak: 'destructive',
@@ -78,14 +76,19 @@ const GRADE_COLORS: Record<string, string> = {
     E: 'bg-red-100 text-red-800',
 };
 
-export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recent_nilai }: Props) {
+export default function MahasiswaDashboard({
+    mahasiswa,
+    stats,
+    recent_krs,
+    recent_nilai,
+}: Props) {
     if (!mahasiswa || !stats) {
         return (
             <>
                 <Head title="Mahasiswa Dashboard" />
                 <div className="space-y-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-green-800">
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
                             Dashboard Mahasiswa
                         </h1>
                         <p className="text-gray-600">Memuat data...</p>
@@ -101,7 +104,7 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-green-800">
+                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
                         Dashboard Mahasiswa
                     </h1>
                     <p className="text-gray-600">
@@ -109,21 +112,23 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                     </p>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium text-gray-600">
                                 Total KRS
                             </CardTitle>
-                            <div className="p-2 rounded-lg bg-green-600">
+                            <div className="rounded-lg bg-green-600 p-2">
                                 <ClipboardList className="h-4 w-4 text-white" />
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {stats.krs_count}
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">{stats.krs_active} disetujui</p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {stats.krs_active} disetujui
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -132,15 +137,17 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                             <CardTitle className="text-sm font-medium text-gray-600">
                                 Tagihan UKT
                             </CardTitle>
-                            <div className="p-2 rounded-lg bg-green-700">
+                            <div className="rounded-lg bg-green-700 p-2">
                                 <Receipt className="h-4 w-4 text-white" />
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {stats.tagihan_count}
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">belum lunas</p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                belum lunas
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -149,15 +156,17 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                             <CardTitle className="text-sm font-medium text-gray-600">
                                 Mata Kuliah
                             </CardTitle>
-                            <div className="p-2 rounded-lg bg-green-800">
+                            <div className="rounded-lg bg-green-800 p-2">
                                 <BookOpen className="h-4 w-4 text-white" />
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {stats.nilai_count}
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">sudah ada nilai</p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                sudah ada nilai
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -166,7 +175,7 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                             <CardTitle className="text-sm font-medium text-gray-600">
                                 Status
                             </CardTitle>
-                            <div className="p-2 rounded-lg bg-green-500">
+                            <div className="rounded-lg bg-green-500 p-2">
                                 <GraduationCap className="h-4 w-4 text-white" />
                             </div>
                         </CardHeader>
@@ -174,35 +183,56 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
                             <div className="text-2xl font-bold text-gray-900 capitalize">
                                 {mahasiswa.status}
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">{mahasiswa.program_studi?.nama_prodi}</p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {mahasiswa.program_studi?.nama_prodi}
+                            </p>
                         </CardContent>
                     </Card>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900">KRS Terbaru</CardTitle>
+                            <CardTitle className="text-gray-900">
+                                KRS Terbaru
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {recent_krs && recent_krs.length > 0 ? (
                                 <div className="space-y-3">
                                     {recent_krs.map((krs) => (
-                                        <div key={krs.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                                        <div
+                                            key={krs.id}
+                                            className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                                        >
                                             <div className="space-y-1">
-                                                <p className="font-medium text-sm text-gray-900">{krs.kelas?.mata_kuliah?.nama_mk}</p>
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {
+                                                        krs.kelas?.mata_kuliah
+                                                            ?.nama_mk
+                                                    }
+                                                </p>
                                                 <p className="text-xs text-gray-500">
-                                                    {krs.kelas?.nama_kelas} • {krs.kelas?.dosen?.nama || '-'}
+                                                    {krs.kelas?.nama_kelas} •{' '}
+                                                    {krs.kelas?.dosen?.nama ||
+                                                        '-'}
                                                 </p>
                                             </div>
-                                            <Badge variant={STATUS_VARIANTS[krs.status] || 'outline'}>
-                                                {STATUS_LABELS[krs.status] || krs.status}
+                                            <Badge
+                                                variant={
+                                                    STATUS_VARIANTS[
+                                                        krs.status
+                                                    ] || 'outline'
+                                                }
+                                            >
+                                                {STATUS_LABELS[krs.status] ||
+                                                    krs.status}
                                             </Badge>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-gray-500 text-center py-4">
+                                <p className="py-4 text-center text-sm text-gray-500">
                                     Belum ada data KRS
                                 </p>
                             )}
@@ -211,31 +241,46 @@ export default function MahasiswaDashboard({ mahasiswa, stats, recent_krs, recen
 
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900">Nilai Terbaru</CardTitle>
+                            <CardTitle className="text-gray-900">
+                                Nilai Terbaru
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {recent_nilai && recent_nilai.length > 0 ? (
                                 <div className="space-y-3">
                                     {recent_nilai.map((nilai) => (
-                                        <div key={nilai.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                                        <div
+                                            key={nilai.id}
+                                            className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                                        >
                                             <div className="space-y-1">
-                                                <p className="font-medium text-sm text-gray-900">{nilai.krs?.kelas?.mata_kuliah?.nama_mk}</p>
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {
+                                                        nilai.krs?.kelas
+                                                            ?.mata_kuliah
+                                                            ?.nama_mk
+                                                    }
+                                                </p>
                                                 <p className="text-xs text-gray-500">
                                                     Nilai: {nilai.nilai ?? '-'}
                                                 </p>
                                             </div>
                                             {nilai.grade ? (
-                                                <span className={`px-2 py-1 rounded text-xs font-medium ${GRADE_COLORS[nilai.grade] || ''}`}>
+                                                <span
+                                                    className={`rounded px-2 py-1 text-xs font-medium ${GRADE_COLORS[nilai.grade] || ''}`}
+                                                >
                                                     {nilai.grade}
                                                 </span>
                                             ) : (
-                                                <Badge variant="outline">Belum</Badge>
+                                                <Badge variant="outline">
+                                                    Belum
+                                                </Badge>
                                             )}
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-sm text-gray-500 text-center py-4">
+                                <p className="py-4 text-center text-sm text-gray-500">
                                     Belum ada data nilai
                                 </p>
                             )}

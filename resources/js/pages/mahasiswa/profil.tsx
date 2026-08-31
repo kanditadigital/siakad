@@ -1,15 +1,7 @@
 import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { User, Hash, GraduationCap, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-    User,
-    Hash,
-    GraduationCap,
-    MapPin,
-    Calendar,
-    Mail,
-    Phone,
-} from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 type ProgramStudi = {
     id: number;
@@ -44,7 +36,10 @@ function getInitials(name: string) {
         .slice(0, 2);
 }
 
-const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANTS: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+> = {
     aktif: 'default',
     cuti: 'secondary',
     nonaktif: 'destructive',
@@ -60,7 +55,9 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default function ProfilMahasiswa({ mahasiswa }: Props) {
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('id-ID', { dateStyle: 'full' });
+        return new Date(date).toLocaleDateString('id-ID', {
+            dateStyle: 'full',
+        });
     };
 
     return (
@@ -69,7 +66,7 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-green-800">
+                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
                         Profil Mahasiswa
                     </h1>
                     <p className="text-gray-600">Data profil Anda</p>
@@ -79,16 +76,18 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                 <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
                         {/* Photo Section */}
-                        <div className="flex items-center justify-center bg-green-700 p-8 md:w-64 md:min-h-[280px]">
+                        <div className="flex items-center justify-center bg-green-700 p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="h-32 w-32 rounded-full bg-white/20 flex items-center justify-center border-4 border-white/30">
+                                <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white/30 bg-white/20">
                                     <span className="text-4xl font-bold text-white">
                                         {getInitials(mahasiswa.nama)}
                                     </span>
                                 </div>
                                 <div className="text-center text-white">
                                     <p className="text-sm opacity-80">NIM</p>
-                                    <p className="font-mono text-lg font-semibold">{mahasiswa.nim}</p>
+                                    <p className="font-mono text-lg font-semibold">
+                                        {mahasiswa.nim}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -97,18 +96,26 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                         <div className="flex-1 p-6 md:p-8">
                             <div className="space-y-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">{mahasiswa.nama}</h2>
-                                    <p className="text-gray-600">{mahasiswa.program_studi?.nama_prodi}</p>
+                                    <h2 className="text-2xl font-bold text-gray-900">
+                                        {mahasiswa.nama}
+                                    </h2>
+                                    <p className="text-gray-600">
+                                        {mahasiswa.program_studi?.nama_prodi}
+                                    </p>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
                                             <Hash className="h-5 w-5 text-green-700" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-500">NIM</p>
-                                            <p className="font-mono font-medium text-gray-900">{mahasiswa.nim}</p>
+                                            <p className="text-xs text-gray-500">
+                                                NIM
+                                            </p>
+                                            <p className="font-mono font-medium text-gray-900">
+                                                {mahasiswa.nim}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -117,8 +124,12 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                                             <User className="h-5 w-5 text-green-700" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-500">Jenis Kelamin</p>
-                                            <p className="font-medium text-gray-900">{mahasiswa.jenis_kelamin}</p>
+                                            <p className="text-xs text-gray-500">
+                                                Jenis Kelamin
+                                            </p>
+                                            <p className="font-medium text-gray-900">
+                                                {mahasiswa.jenis_kelamin}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -127,8 +138,15 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                                             <GraduationCap className="h-5 w-5 text-green-700" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-500">Tempat, Tanggal Lahir</p>
-                                            <p className="font-medium text-gray-900">{mahasiswa.tempat_lahir}, {formatDate(mahasiswa.tanggal_lahir)}</p>
+                                            <p className="text-xs text-gray-500">
+                                                Tempat, Tanggal Lahir
+                                            </p>
+                                            <p className="font-medium text-gray-900">
+                                                {mahasiswa.tempat_lahir},{' '}
+                                                {formatDate(
+                                                    mahasiswa.tanggal_lahir,
+                                                )}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -137,8 +155,12 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                                             <MapPin className="h-5 w-5 text-green-700" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-500">Kode Domisili</p>
-                                            <p className="font-medium text-gray-900">{mahasiswa.kode_domisili}</p>
+                                            <p className="text-xs text-gray-500">
+                                                Kode Domisili
+                                            </p>
+                                            <p className="font-medium text-gray-900">
+                                                {mahasiswa.kode_domisili}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -147,15 +169,25 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                                             <MapPin className="h-5 w-5 text-green-700" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-gray-500">Alamat</p>
-                                            <p className="font-medium text-gray-900">{mahasiswa.alamat}</p>
+                                            <p className="text-xs text-gray-500">
+                                                Alamat
+                                            </p>
+                                            <p className="font-medium text-gray-900">
+                                                {mahasiswa.alamat}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Badge variant={STATUS_VARIANTS[mahasiswa.status] || 'outline'}>
-                                        {STATUS_LABELS[mahasiswa.status] || mahasiswa.status}
+                                    <Badge
+                                        variant={
+                                            STATUS_VARIANTS[mahasiswa.status] ||
+                                            'outline'
+                                        }
+                                    >
+                                        {STATUS_LABELS[mahasiswa.status] ||
+                                            mahasiswa.status}
                                     </Badge>
                                     <span className="text-sm text-gray-500">
                                         • {mahasiswa.program_studi?.nama_prodi}
@@ -170,7 +202,7 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
     );
 }
 
-ProfilMahasiswa.layout = (page: React.ReactNode) => ({
+ProfilMahasiswa.layout = () => ({
     breadcrumbs: [
         { title: 'Dashboard', href: '/dashboard' },
         { title: 'Profil', href: '/mahasiswa/profil' },

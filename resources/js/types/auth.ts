@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'dosen' | 'mahasiswa' | 'pimpinan';
+export type UserRole = 'admin' | 'admin_prodi' | 'dosen' | 'mahasiswa' | 'pimpinan';
 
 export type User = {
     id: number;

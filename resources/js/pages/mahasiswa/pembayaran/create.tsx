@@ -1,6 +1,14 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft, Upload, X, Receipt } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -10,8 +18,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Upload, X, Receipt } from 'lucide-react';
 
 type TagihanUkt = {
     id: number;
@@ -30,7 +36,9 @@ type Props = {
 
 export default function PembayaranCreate({ tagihanUkt }: Props) {
     const { data, setData, post, processing, errors } = useForm({
-        jumlah_bayar: String(tagihanUkt.jumlah_tagihan - tagihanUkt.jumlah_bayar),
+        jumlah_bayar: String(
+            tagihanUkt.jumlah_tagihan - tagihanUkt.jumlah_bayar,
+        ),
         tanggal_bayar: new Date().toISOString().slice(0, 10),
         metode_pembayaran: 'transfer',
         bukti_pembayaran: null as File | null,
@@ -40,10 +48,15 @@ export default function PembayaranCreate({ tagihanUkt }: Props) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const formatCurrency = (amount: number) =>
-        new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+        }).format(amount);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (file) {
             setData('bukti_pembayaran', file);
             setFileName(file.name);
@@ -53,7 +66,10 @@ export default function PembayaranCreate({ tagihanUkt }: Props) {
     const removeFile = () => {
         setData('bukti_pembayaran', null);
         setFileName(null);
-        if (fileInputRef.current) fileInputRef.current.value = '';
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -70,8 +86,12 @@ export default function PembayaranCreate({ tagihanUkt }: Props) {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">Bayar Tagihan UKT</h1>
-                        <p className="text-gray-600">Unggah bukti transfer untuk diverifikasi admin</p>
+                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                            Bayar Tagihan UKT
+                        </h1>
+                        <p className="text-gray-600">
+                            Unggah bukti transfer untuk diverifikasi admin
+                        </p>
                     </div>
                     <Button variant="outline" asChild>
                         <Link href="/mahasiswa/tagihan-ukt">
@@ -88,17 +108,29 @@ export default function PembayaranCreate({ tagihanUkt }: Props) {
                             Info Tagihan
                         </CardTitle>
                         <CardDescription>
-                            {tagihanUkt.academic_year_semester?.nama_tahun_akademik} - {tagihanUkt.academic_year_semester?.semester}
+                            {
+                                tagihanUkt.academic_year_semester
+                                    ?.nama_tahun_akademik
+                            }{' '}
+                            - {tagihanUkt.academic_year_semester?.semester}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <p className="text-xs text-gray-500">Jumlah Tagihan</p>
-                            <p className="font-medium text-gray-900">{formatCurrency(tagihanUkt.jumlah_tagihan)}</p>
+                            <p className="text-xs text-gray-500">
+                                Jumlah Tagihan
+                            </p>
+                            <p className="font-medium text-gray-900">
+                                {formatCurrency(tagihanUkt.jumlah_tagihan)}
+                            </p>
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500">Sisa Tagihan</p>
-                            <p className="font-medium text-red-600">{formatCurrency(sisaTagihan)}</p>
+                            <p className="text-xs text-gray-500">
+                                Sisa Tagihan
+                            </p>
+                            <p className="font-medium text-red-600">
+                                {formatCurrency(sisaTagihan)}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -106,72 +138,128 @@ export default function PembayaranCreate({ tagihanUkt }: Props) {
                 <form onSubmit={handleSubmit}>
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-gray-900">Detail Pembayaran</CardTitle>
+                            <CardTitle className="text-gray-900">
+                                Detail Pembayaran
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="jumlah_bayar">
-                                        Jumlah Bayar <span className="text-destructive">*</span>
+                                        Jumlah Bayar{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="jumlah_bayar"
                                         type="number"
                                         min={1}
                                         value={data.jumlah_bayar}
-                                        onChange={(e) => setData('jumlah_bayar', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'jumlah_bayar',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    {errors.jumlah_bayar && <p className="text-sm text-destructive">{errors.jumlah_bayar}</p>}
+                                    {errors.jumlah_bayar && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.jumlah_bayar}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_bayar">
-                                        Tanggal Bayar <span className="text-destructive">*</span>
+                                        Tanggal Bayar{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         id="tanggal_bayar"
                                         type="date"
                                         value={data.tanggal_bayar}
-                                        onChange={(e) => setData('tanggal_bayar', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'tanggal_bayar',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
-                                    {errors.tanggal_bayar && <p className="text-sm text-destructive">{errors.tanggal_bayar}</p>}
+                                    {errors.tanggal_bayar && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.tanggal_bayar}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="metode_pembayaran">
-                                    Metode Pembayaran <span className="text-destructive">*</span>
+                                    Metode Pembayaran{' '}
+                                    <span className="text-destructive">*</span>
                                 </Label>
-                                <Select value={data.metode_pembayaran} onValueChange={(value) => setData('metode_pembayaran', value)}>
+                                <Select
+                                    value={data.metode_pembayaran}
+                                    onValueChange={(value) =>
+                                        setData('metode_pembayaran', value)
+                                    }
+                                >
                                     <SelectTrigger id="metode_pembayaran">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="transfer">Transfer Bank</SelectItem>
-                                        <SelectItem value="cash">Tunai</SelectItem>
+                                        <SelectItem value="transfer">
+                                            Transfer Bank
+                                        </SelectItem>
+                                        <SelectItem value="cash">
+                                            Tunai
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {errors.metode_pembayaran && <p className="text-sm text-destructive">{errors.metode_pembayaran}</p>}
+                                {errors.metode_pembayaran && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.metode_pembayaran}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="bukti_pembayaran">
-                                    Bukti Transfer <span className="text-destructive">*</span>
+                                    Bukti Transfer{' '}
+                                    <span className="text-destructive">*</span>
                                 </Label>
                                 {fileName ? (
                                     <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
-                                        <span className="text-sm text-gray-900">{fileName}</span>
-                                        <Button type="button" variant="ghost" size="sm" onClick={removeFile}>
+                                        <span className="text-sm text-gray-900">
+                                            {fileName}
+                                        </span>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={removeFile}
+                                        >
                                             <X className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-3">
-                                        <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
+                                        >
                                             <Upload className="mr-2 h-4 w-4" />
                                             Pilih File
                                         </Button>
-                                        <span className="text-xs text-gray-500">JPG, PNG, atau PDF — maks. 2MB</span>
+                                        <span className="text-xs text-gray-500">
+                                            JPG, PNG, atau PDF — maks. 2MB
+                                        </span>
                                     </div>
                                 )}
                                 <input
@@ -182,7 +270,11 @@ export default function PembayaranCreate({ tagihanUkt }: Props) {
                                     className="hidden"
                                     onChange={handleFileChange}
                                 />
-                                {errors.bukti_pembayaran && <p className="text-sm text-destructive">{errors.bukti_pembayaran}</p>}
+                                {errors.bukti_pembayaran && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.bukti_pembayaran}
+                                    </p>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -191,8 +283,14 @@ export default function PembayaranCreate({ tagihanUkt }: Props) {
                         <Button type="button" variant="outline" asChild>
                             <Link href="/mahasiswa/tagihan-ukt">Batal</Link>
                         </Button>
-                        <Button type="submit" disabled={processing} className="bg-green-700 hover:bg-green-800">
-                            {processing ? 'Mengunggah...' : 'Kirim Bukti Pembayaran'}
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-green-700 hover:bg-green-800"
+                        >
+                            {processing
+                                ? 'Mengunggah...'
+                                : 'Kirim Bukti Pembayaran'}
                         </Button>
                     </div>
                 </form>

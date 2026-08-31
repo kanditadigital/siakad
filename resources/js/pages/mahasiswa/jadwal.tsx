@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+import { Calendar, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Table,
@@ -8,7 +9,6 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Calendar, BookOpen } from 'lucide-react';
 
 type Krs = {
     id: number;
@@ -42,7 +42,10 @@ type Props = {
 };
 
 export default function JadwalPerkuliahan({ krss, mahasiswa }: Props) {
-    const totalSks = krss.reduce((sum, k) => sum + (k.kelas?.mata_kuliah?.sks || 0), 0);
+    const totalSks = krss.reduce(
+        (sum, k) => sum + (k.kelas?.mata_kuliah?.sks || 0),
+        0,
+    );
 
     return (
         <>
@@ -54,7 +57,8 @@ export default function JadwalPerkuliahan({ krss, mahasiswa }: Props) {
                         Jadwal Perkuliahan
                     </h1>
                     <p className="text-gray-600">
-                        {mahasiswa.nama} ({mahasiswa.nim}) — kelas yang sedang diikuti pada periode berjalan
+                        {mahasiswa.nama} ({mahasiswa.nim}) — kelas yang sedang
+                        diikuti pada periode berjalan
                     </p>
                 </div>
 
@@ -69,7 +73,7 @@ export default function JadwalPerkuliahan({ krss, mahasiswa }: Props) {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {krss.length}
                             </div>
                         </CardContent>
@@ -85,7 +89,7 @@ export default function JadwalPerkuliahan({ krss, mahasiswa }: Props) {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                            <div className="text-3xl font-bold text-gray-900 tabular-nums">
                                 {totalSks}
                             </div>
                         </CardContent>
@@ -94,44 +98,93 @@ export default function JadwalPerkuliahan({ krss, mahasiswa }: Props) {
 
                 <Card className="border border-gray-200 shadow-sm">
                     <CardHeader>
-                        <CardTitle className="text-gray-900">Daftar Kelas</CardTitle>
+                        <CardTitle className="text-gray-900">
+                            Daftar Kelas
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="text-gray-600">Kode MK</TableHead>
-                                        <TableHead className="text-gray-600">Mata Kuliah</TableHead>
-                                        <TableHead className="text-right text-gray-600">SKS</TableHead>
-                                        <TableHead className="text-gray-600">Kelas</TableHead>
-                                        <TableHead className="text-gray-600">Dosen</TableHead>
-                                        <TableHead className="text-gray-600">Ruang</TableHead>
-                                        <TableHead className="text-gray-600">Periode</TableHead>
+                                        <TableHead className="text-gray-600">
+                                            Kode MK
+                                        </TableHead>
+                                        <TableHead className="text-gray-600">
+                                            Mata Kuliah
+                                        </TableHead>
+                                        <TableHead className="text-right text-gray-600">
+                                            SKS
+                                        </TableHead>
+                                        <TableHead className="text-gray-600">
+                                            Kelas
+                                        </TableHead>
+                                        <TableHead className="text-gray-600">
+                                            Dosen
+                                        </TableHead>
+                                        <TableHead className="text-gray-600">
+                                            Ruang
+                                        </TableHead>
+                                        <TableHead className="text-gray-600">
+                                            Periode
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {krss.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={7} className="py-8 text-center text-gray-500">
-                                                Belum ada jadwal perkuliahan pada periode ini
+                                            <TableCell
+                                                colSpan={7}
+                                                className="py-8 text-center text-gray-500"
+                                            >
+                                                Belum ada jadwal perkuliahan
+                                                pada periode ini
                                             </TableCell>
                                         </TableRow>
                                     ) : (
                                         krss.map((krs) => (
                                             <TableRow key={krs.id}>
                                                 <TableCell className="font-mono font-medium text-gray-900">
-                                                    {krs.kelas?.mata_kuliah?.kode_mk}
+                                                    {
+                                                        krs.kelas?.mata_kuliah
+                                                            ?.kode_mk
+                                                    }
                                                 </TableCell>
-                                                <TableCell className="text-gray-900">{krs.kelas?.mata_kuliah?.nama_mk}</TableCell>
-                                                <TableCell className="text-right tabular-nums text-gray-900">
-                                                    {krs.kelas?.mata_kuliah?.sks}
-                                                </TableCell>
-                                                <TableCell className="text-gray-900">{krs.kelas?.nama_kelas}</TableCell>
-                                                <TableCell className="text-gray-900">{krs.kelas?.dosen?.nama || '-'}</TableCell>
-                                                <TableCell className="text-gray-900">{krs.kelas?.ruang?.kode_ruang || '-'}</TableCell>
                                                 <TableCell className="text-gray-900">
-                                                    {krs.academic_year_semester?.nama_tahun_akademik} - {krs.academic_year_semester?.semester}
+                                                    {
+                                                        krs.kelas?.mata_kuliah
+                                                            ?.nama_mk
+                                                    }
+                                                </TableCell>
+                                                <TableCell className="text-right text-gray-900 tabular-nums">
+                                                    {
+                                                        krs.kelas?.mata_kuliah
+                                                            ?.sks
+                                                    }
+                                                </TableCell>
+                                                <TableCell className="text-gray-900">
+                                                    {krs.kelas?.nama_kelas}
+                                                </TableCell>
+                                                <TableCell className="text-gray-900">
+                                                    {krs.kelas?.dosen?.nama ||
+                                                        '-'}
+                                                </TableCell>
+                                                <TableCell className="text-gray-900">
+                                                    {krs.kelas?.ruang
+                                                        ?.kode_ruang || '-'}
+                                                </TableCell>
+                                                <TableCell className="text-gray-900">
+                                                    {
+                                                        krs
+                                                            .academic_year_semester
+                                                            ?.nama_tahun_akademik
+                                                    }{' '}
+                                                    -{' '}
+                                                    {
+                                                        krs
+                                                            .academic_year_semester
+                                                            ?.semester
+                                                    }
                                                 </TableCell>
                                             </TableRow>
                                         ))
