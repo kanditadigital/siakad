@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -8,17 +9,26 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn } from '@/lib/utils';
 import type { NavItem } from '@/types';
 
-export function NavMain({ items = [] }: { items: NavItem[] }) {
+export function NavMain({
+    items = [],
+    label,
+}: {
+    items: NavItem[];
+    label?: string;
+}) {
     const { isCurrentUrl } = useCurrentUrl();
 
     return (
         <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+            {label ? (
+                <SidebarGroupLabel className="text-[11px] font-semibold tracking-wide text-white/50 uppercase">
+                    {label}
+                </SidebarGroupLabel>
+            ) : null}
             <SidebarMenu>
                 {items.map((item) => (
                     item.children ? (
@@ -34,6 +44,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
 
 function SimpleItem({ item, isCurrentUrl }: { item: NavItem; isCurrentUrl: (href: string) => boolean }) {
     const isActive = isCurrentUrl(item.href as string);
+
     return (
         <SidebarMenuItem>
             <SidebarMenuButton
@@ -100,9 +111,10 @@ function CollapsibleItem({ item, isCurrentUrl }: { item: NavItem; isCurrentUrl: 
                     </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                    <SidebarMenu className="ml-4">
+                    <SidebarMenu className="my-0.5 ml-[1.15rem] gap-0.5 border-l border-white/15 pl-2 group-data-[collapsible=icon]:hidden">
                         {item.children?.map((child) => {
                             const isActive = isCurrentUrl(child.href as string);
+
                             return (
                                 <SidebarMenuItem key={child.title}>
                                     <SidebarMenuButton

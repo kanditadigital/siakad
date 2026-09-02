@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Eye, Users, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, Users, X, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -14,6 +14,15 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -36,6 +45,7 @@ type ProgramStudi = {
     id: number;
     kode_prodi: string;
     nama_prodi: string;
+    lama_studi: number;
 };
 
 type Mahasiswa = {
@@ -46,6 +56,8 @@ type Mahasiswa = {
     jenis_kelamin: string;
     alamat: string;
     status: string;
+    semester_saat_ini: number;
+    batas_semester_normal: number;
     program_studi_id: number;
     program_studi: ProgramStudi;
 };
@@ -65,6 +77,7 @@ type Props = {
         search?: string;
         status?: string;
         program_studi_id?: string;
+        semester?: string;
     };
 };
 
@@ -95,14 +108,27 @@ export default function MahasiswaIndex({
     const [prodiFilter, setProdiFilter] = useState(
         filters.program_studi_id || 'all',
     );
+    const [semesterFilter, setSemesterFilter] = useState(
+        filters.semester || 'all',
+    );
 
-    const handleSearch = () => {
+    // Highest semester count across all jenjang (S1 = 8, D3 = 6, …) — the
+    // filter dropdown lists every semester up to whichever prodi runs longest,
+    // since this page spans every program studi at once.
+    const maxSemesterOption = Math.max(
+        8,
+        ...programStudis.map((p) => p.lama_studi * 2),
+    );
+
+    const applyFilters = (overrides: Record<string, string>) => {
         router.get(
             '/admin/mahasiswa',
             {
                 search,
                 status: statusFilter === 'all' ? '' : statusFilter,
                 program_studi_id: prodiFilter === 'all' ? '' : prodiFilter,
+                semester: semesterFilter === 'all' ? '' : semesterFilter,
+                ...overrides,
             },
             {
                 preserveState: true,
@@ -110,38 +136,49 @@ export default function MahasiswaIndex({
         );
     };
 
+    const handleSearch = () => applyFilters({});
+
     const handleStatusChange = (value: string) => {
         setStatusFilter(value);
-        router.get(
-            '/admin/mahasiswa',
-            {
-                search,
-                status: value === 'all' ? '' : value,
-                program_studi_id: prodiFilter === 'all' ? '' : prodiFilter,
-            },
-            {
-                preserveState: true,
-            },
-        );
+        applyFilters({ status: value === 'all' ? '' : value });
     };
 
     const handleProdiChange = (value: string) => {
         setProdiFilter(value);
-        router.get(
-            '/admin/mahasiswa',
-            {
-                search,
-                status: statusFilter === 'all' ? '' : statusFilter,
-                program_studi_id: value === 'all' ? '' : value,
-            },
-            {
-                preserveState: true,
-            },
-        );
+        applyFilters({ program_studi_id: value === 'all' ? '' : value });
+    };
+
+    const handleSemesterChange = (value: string) => {
+        setSemesterFilter(value);
+        applyFilters({ semester: value === 'all' ? '' : value });
     };
 
     const handleDelete = (uuid: string) => {
         router.delete(`/admin/mahasiswa/${uuid}`);
+    };
+
+    const [promoteOpen, setPromoteOpen] = useState(false);
+    const [promoteProdiId, setPromoteProdiId] = useState('');
+    const [promoting, setPromoting] = useState(false);
+
+    const handlePromote = () => {
+        if (!promoteProdiId) {
+            return;
+        }
+
+        setPromoting(true);
+        router.post(
+            '/admin/mahasiswa/naikkan-semester',
+            { program_studi_id: promoteProdiId },
+            {
+                preserveScroll: true,
+                onFinish: () => setPromoting(false),
+                onSuccess: () => {
+                    setPromoteOpen(false);
+                    setPromoteProdiId('');
+                },
+            },
+        );
     };
 
     return (
@@ -158,12 +195,67 @@ export default function MahasiswaIndex({
                             Kelola data mahasiswa
                         </p>
                     </div>
-                    <Link href="/admin/mahasiswa/create">
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" />
-                            Tambah Mahasiswa
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <Dialog open={promoteOpen} onOpenChange={setPromoteOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline">
+                                    <TrendingUp className="mr-2 h-4 w-4" />
+                                    Naikkan Semester
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        Naikkan Semester Mahasiswa
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        Semester seluruh mahasiswa berstatus
+                                        aktif pada program studi terpilih akan
+                                        bertambah satu. Mahasiswa cuti,
+                                        nonaktif, dan lulus tidak terpengaruh.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-2">
+                                    <Select
+                                        value={promoteProdiId}
+                                        onValueChange={setPromoteProdiId}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih program studi" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {programStudis.map((prodi) => (
+                                                <SelectItem
+                                                    key={prodi.id}
+                                                    value={prodi.id.toString()}
+                                                >
+                                                    {prodi.nama_prodi}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <DialogFooter>
+                                    <Button
+                                        onClick={handlePromote}
+                                        disabled={
+                                            !promoteProdiId || promoting
+                                        }
+                                    >
+                                        {promoting
+                                            ? 'Memproses...'
+                                            : 'Naikkan Semester'}
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                        <Link href="/admin/mahasiswa/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Tambah Mahasiswa
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Filters */}
@@ -219,9 +311,37 @@ export default function MahasiswaIndex({
                             <SelectItem value="lulus">Lulus</SelectItem>
                         </SelectContent>
                     </Select>
+                    <Select
+                        value={semesterFilter}
+                        onValueChange={handleSemesterChange}
+                    >
+                        <SelectTrigger className="w-[170px]">
+                            <SelectValue placeholder="Semua Semester" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">
+                                Semua Semester
+                            </SelectItem>
+                            {Array.from(
+                                { length: maxSemesterOption },
+                                (_, i) => i + 1,
+                            ).map((sem) => (
+                                <SelectItem
+                                    key={sem}
+                                    value={sem.toString()}
+                                >
+                                    Semester {sem}
+                                </SelectItem>
+                            ))}
+                            <SelectItem value="over">
+                                Melebihi Masa Studi Normal
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     {(filters.search ||
                         filters.status ||
-                        filters.program_studi_id) && (
+                        filters.program_studi_id ||
+                        filters.semester) && (
                         <Button
                             variant="ghost"
                             size="sm"
@@ -229,6 +349,7 @@ export default function MahasiswaIndex({
                                 setSearch('');
                                 setStatusFilter('all');
                                 setProdiFilter('all');
+                                setSemesterFilter('all');
                                 router.get('/admin/mahasiswa');
                             }}
                         >
@@ -248,6 +369,7 @@ export default function MahasiswaIndex({
                                     <TableHead>Nama</TableHead>
                                     <TableHead>Program Studi</TableHead>
                                     <TableHead>Jenis Kelamin</TableHead>
+                                    <TableHead>Semester</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead className="text-right">
                                         Aksi
@@ -258,7 +380,7 @@ export default function MahasiswaIndex({
                                 {mahasiswas.data.length === 0 ? (
                                     <TableRow>
                                         <TableCell
-                                            colSpan={6}
+                                            colSpan={7}
                                             className="py-12 text-center"
                                         >
                                             <div className="flex flex-col items-center gap-2">
@@ -266,20 +388,23 @@ export default function MahasiswaIndex({
                                                 <p className="text-sm font-medium text-foreground">
                                                     {filters.search ||
                                                     filters.status ||
-                                                    filters.program_studi_id
+                                                    filters.program_studi_id ||
+                                                    filters.semester
                                                         ? 'Tidak ada mahasiswa yang cocok'
                                                         : 'Belum ada data mahasiswa'}
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
                                                     {filters.search ||
                                                     filters.status ||
-                                                    filters.program_studi_id
+                                                    filters.program_studi_id ||
+                                                    filters.semester
                                                         ? 'Coba ubah kata kunci atau filter'
                                                         : 'Mulai dengan menambahkan mahasiswa pertama'}
                                                 </p>
                                                 {!filters.search &&
                                                     !filters.status &&
-                                                    !filters.program_studi_id && (
+                                                    !filters.program_studi_id &&
+                                                    !filters.semester && (
                                                         <Link
                                                             href="/admin/mahasiswa/create"
                                                             className="mt-2"
@@ -306,6 +431,22 @@ export default function MahasiswaIndex({
                                             </TableCell>
                                             <TableCell>
                                                 {mhs.jenis_kelamin}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="tabular-nums">
+                                                        {mhs.semester_saat_ini}
+                                                    </span>
+                                                    {mhs.semester_saat_ini >
+                                                        mhs.batas_semester_normal && (
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="border-amber-300 bg-amber-50 text-[11px] text-amber-700"
+                                                        >
+                                                            Melebihi normal
+                                                        </Badge>
+                                                    )}
+                                                </div>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge

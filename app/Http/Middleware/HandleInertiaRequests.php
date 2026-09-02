@@ -2,11 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Concerns\InteractsWithUploads;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    use InteractsWithUploads;
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -44,6 +48,24 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'kampus' => $this->kampus(),
+        ];
+    }
+
+    /**
+     * Campus identity for the sidebar and other chrome.
+     *
+     * Read from the cached settings collection, so this costs no query per
+     * request. The logo lives in the private uploads bucket, hence a signed URL
+     * rather than a path.
+     *
+     * @return array{nama: string, logo_url: string|null}
+     */
+    private function kampus(): array
+    {
+        return [
+            'nama' => (string) Setting::get('identitas.nama_kampus', config('app.name')),
+            'logo_url' => static::uploadUrl(Setting::get('identitas.logo')),
         ];
     }
 }

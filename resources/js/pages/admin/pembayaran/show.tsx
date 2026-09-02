@@ -21,6 +21,7 @@ type Pembayaran = {
     tanggal_bayar: string;
     metode_pembayaran: string;
     bukti_pembayaran: string | null;
+    bukti_pembayaran_url: string | null;
     status: string;
     keterangan: string | null;
     created_at: string;
@@ -263,9 +264,9 @@ export default function PembayaranShow({ pembayaran }: Props) {
                             <p className="text-gray-900">
                                 {pembayaran.keterangan || '-'}
                             </p>
-                            {pembayaran.bukti_pembayaran && (
+                            {pembayaran.bukti_pembayaran_url && (
                                 <a
-                                    href={`/storage/${pembayaran.bukti_pembayaran}`}
+                                    href={pembayaran.bukti_pembayaran_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1.5 text-sm font-medium text-green-700 hover:underline"

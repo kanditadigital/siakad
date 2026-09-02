@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\ProgramStudi;
 use App\Models\User;
@@ -9,12 +10,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class UserController extends Controller
 {
+    use InteractsWithUploads;
+
     /**
      * Display a listing of the resource.
      */
@@ -101,7 +103,7 @@ class UserController extends Controller
             ];
 
             if ($request->hasFile('photo')) {
-                $data['photo'] = $request->file('photo')->store('photos', 'public');
+                $data['photo'] = static::storeUpload($request->file('photo'), 'photos');
             }
 
             User::create($data);
@@ -185,9 +187,9 @@ class UserController extends Controller
             if ($request->hasFile('photo')) {
                 // Delete old photo
                 if ($user->photo) {
-                    Storage::disk('public')->delete($user->photo);
+                    static::deleteUpload($user->photo);
                 }
-                $data['photo'] = $request->file('photo')->store('photos', 'public');
+                $data['photo'] = static::storeUpload($request->file('photo'), 'photos');
             }
 
             $user->update($data);
@@ -204,7 +206,7 @@ class UserController extends Controller
     {
         // Delete photo
         if ($user->photo) {
-            Storage::disk('public')->delete($user->photo);
+            static::deleteUpload($user->photo);
         }
 
         $user->delete();

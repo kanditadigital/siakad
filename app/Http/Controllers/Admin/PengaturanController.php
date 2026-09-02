@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PengaturanController extends Controller
 {
+    use InteractsWithUploads;
+
     /**
      * Default values used the first time a setting is read before it has ever been saved.
      *
@@ -95,9 +97,9 @@ class PengaturanController extends Controller
         if ($request->hasFile('identitas.logo')) {
             $currentLogo = Setting::get('identitas.logo');
             if ($currentLogo) {
-                Storage::disk('public')->delete($currentLogo);
+                static::deleteUpload($currentLogo);
             }
-            $validated['identitas']['logo'] = $request->file('identitas.logo')->store('logo', 'public');
+            $validated['identitas']['logo'] = static::storeUpload($request->file('identitas.logo'), 'logo');
         } else {
             unset($validated['identitas']['logo']);
         }
@@ -147,6 +149,10 @@ class PengaturanController extends Controller
             [$group, $field] = explode('.', $key, 2);
             $grouped[$group][$field] = $value;
         }
+
+        // The logo lives in the private uploads bucket, so the page needs a
+        // pre-signed URL rather than the stored path.
+        $grouped['identitas']['logo_url'] = static::uploadUrl($grouped['identitas']['logo'] ?? null);
 
         return $grouped;
     }

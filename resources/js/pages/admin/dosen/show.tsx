@@ -25,6 +25,7 @@ type ProgramStudi = {
 type User = {
     id: number;
     photo: string | null;
+    photo_url: string | null;
 };
 
 type Dosen = {
@@ -106,9 +107,9 @@ export default function DosenShow({ dosen }: Props) {
                         <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
                                 <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm">
-                                    {dosen.user?.photo ? (
+                                    {dosen.user?.photo_url ? (
                                         <img
-                                            src={`/storage/${dosen.user.photo}`}
+                                            src={dosen.user.photo_url}
                                             alt={dosen.nama}
                                             className="h-full w-full object-cover"
                                         />

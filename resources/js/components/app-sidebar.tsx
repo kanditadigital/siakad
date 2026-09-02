@@ -19,13 +19,10 @@ import {
     PieChart,
     School,
     Building,
-    ClipboardPlus,
     FileUp,
-    PenLine,
     UserCog,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -38,6 +35,19 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
+
+/**
+ * Section label above the menu. Names the role rather than saying "Platform",
+ * so the sidebar tells the user which hat they are wearing — SIAKAD accounts
+ * differ sharply in what they can reach.
+ */
+const ROLE_NAV_LABELS: Record<string, string> = {
+    admin: 'Administrator',
+    admin_prodi: 'Admin Program Studi',
+    dosen: 'Dosen',
+    mahasiswa: 'Mahasiswa',
+    pimpinan: 'Pimpinan',
+};
 
 export function AppSidebar() {
     const page = usePage();
@@ -191,6 +201,11 @@ export function AppSidebar() {
                         icon: Users,
                     },
                     {
+                        title: 'Review KRS (PA)',
+                        href: '/dosen/krs-pa',
+                        icon: FileCheck,
+                    },
+                    {
                         title: 'Bimbingan Tugas Akhir',
                         href: '/dosen/bimbingan-tugas-akhir',
                         icon: ClipboardCheck,
@@ -250,6 +265,16 @@ export function AppSidebar() {
                         icon: UserCheck,
                     },
                     {
+                        title: 'Dosen PA',
+                        href: '/admin-prodi/dosen-pa',
+                        icon: UserCog,
+                    },
+                    {
+                        title: 'Mata Kuliah',
+                        href: '/admin-prodi/mata-kuliah',
+                        icon: BookOpen,
+                    },
+                    {
                         title: 'Penjadwalan',
                         href: '/admin-prodi/penjadwalan',
                         icon: ClipboardList,
@@ -295,10 +320,14 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+            <SidebarHeader className="gap-0 border-b border-white/10 pb-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton
+                            size="lg"
+                            asChild
+                            className="hover:bg-white/10 active:bg-white/10"
+                        >
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
@@ -307,11 +336,14 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
+            <SidebarContent className="pt-2">
+                <NavMain
+                    items={mainNavItems}
+                    label={role ? ROLE_NAV_LABELS[role] : undefined}
+                />
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-white/10 pt-2">
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

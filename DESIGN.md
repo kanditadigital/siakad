@@ -96,7 +96,11 @@ Tabel adalah komponen paling sering dipakai di SIAKAD (daftar mahasiswa, nilai, 
 
 ### 3.5 Navigasi (Sidebar)
 Sidebar hijau institusi (`--sidebar: #166534`) sudah menjadi identitas kuat — **pertahankan**, jangan diputihkan mengikuti tren "sidebar minimal putih" karena itu justru menghapus identitas kampus yang sudah dibangun.
+- **Header sidebar** menampilkan logo kampus yang diunggah admin di Pengaturan Sistem (dibagikan sebagai prop global `kampus` oleh `HandleInertiaRequests`), nama kampus, dan subjudul "Sistem Informasi Akademik". Logo diletakkan di atas **plate putih** (`bg-white` + `ring-white/25`) — logo institusi dirancang untuk latar terang dan akan hilang bila ditempel langsung ke sidebar hijau. Jika admin belum mengunggah logo, `AppLogoIcon` bawaan dipakai sebagai fallback; jangan hapus fallback itu (instalasi baru selalu mulai tanpa logo).
+- Label grup menu memakai **nama peran** ("Administrator", "Dosen", dst — `ROLE_NAV_LABELS` di `app-sidebar.tsx`), bukan kata generik seperti "Platform". Akun SIAKAD berbeda tajam dalam hak aksesnya, jadi sidebar sebaiknya menyatakan "topi" apa yang sedang dipakai pengguna.
 - Grup menu (Data Master, Akademik, Keuangan, dst — lihat `app-sidebar.tsx`) tetap dipertahankan sebagai collapsible group per peran, bukan flat list — struktur ini mencerminkan model mental pengguna (BAAK berpikir per domain, bukan per halaman).
+- Submenu (anak dari collapsible group) diberi **rail penanda** — garis vertikal `border-l border-white/15` + `pl-2` — bukan sekadar `ml-4` polos, agar kedalaman hierarki terbaca di latar gelap. Rail disembunyikan saat sidebar collapse ke mode ikon.
+- Header dan footer dipisahkan dari daftar menu dengan `border-white/10` tipis, bukan shadow — sidebar sudah solid gelap, shadow tidak terbaca di atasnya.
 - Item aktif: latar `sidebar-accent` + indikator kiri (border atau dot), bukan hanya perubahan warna teks — perlu afordansi kuat karena sidebar berwarna gelap solid.
 - Ikon sidebar (`lucide-react`) selalu dari satu set ikon konsisten (sudah dimulai di `app-sidebar.tsx`) — jangan campur dengan set ikon lain (Heroicons, Font Awesome) di halaman berbeda.
 

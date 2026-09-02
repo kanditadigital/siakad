@@ -4,7 +4,9 @@ export type User = {
     id: number;
     name: string;
     email: string;
-    avatar?: string;
+    photo?: string | null;
+    /** Expiring pre-signed URL for `photo`; the uploads bucket is private. */
+    photo_url?: string | null;
     email_verified_at: string | null;
     role: UserRole;
     nim?: string;

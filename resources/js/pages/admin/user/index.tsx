@@ -43,6 +43,7 @@ type User = {
     email: string;
     role: string;
     photo: string | null;
+    photo_url: string | null;
     program_studi_id: number | null;
     program_studi?: ProgramStudi;
 };
@@ -201,9 +202,9 @@ export default function UserIndex({ users, programStudis, filters }: Props) {
                                     users.data.map((user) => (
                                         <TableRow key={user.id}>
                                             <TableCell>
-                                                {user.photo ? (
+                                                {user.photo_url ? (
                                                     <img
-                                                        src={`/storage/${user.photo}`}
+                                                        src={user.photo_url}
                                                         alt={user.name}
                                                         className="h-10 w-10 rounded-full object-cover"
                                                     />

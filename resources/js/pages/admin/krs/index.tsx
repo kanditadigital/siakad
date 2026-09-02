@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { ClipboardList, Edit, Eye, Plus, Search, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -129,6 +129,17 @@ export default function KrsIndex({
         router.delete(`/admin/krs/${uuid}`);
     };
 
+    const hasActiveFilters = Boolean(
+        filters.search || filters.status || filters.academic_year_semester_id,
+    );
+
+    const resetFilters = () => {
+        setSearch('');
+        setStatusFilter('all');
+        setSemesterFilter('all');
+        router.get('/admin/krs');
+    };
+
     return (
         <>
             <Head title="Data KRS" />
@@ -151,7 +162,8 @@ export default function KrsIndex({
                     </Link>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
+                {/* Filters */}
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="relative max-w-sm min-w-[200px] flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -164,15 +176,23 @@ export default function KrsIndex({
                             className="pl-9"
                         />
                     </div>
+                    <Button
+                        variant="outline"
+                        onClick={() => applyFilters({ search })}
+                    >
+                        Cari
+                    </Button>
                     <Select
                         value={semesterFilter}
-                        onValueChange={(v) =>
+                        onValueChange={(v) => {
+                            setSemesterFilter(v);
                             applyFilters({
-                                academic_year_semester_id: v === 'all' ? '' : v,
-                            })
-                        }
+                                academic_year_semester_id:
+                                    v === 'all' ? '' : v,
+                            });
+                        }}
                     >
-                        <SelectTrigger className="w-[200px]">
+                        <SelectTrigger className="w-[220px]">
                             <SelectValue placeholder="Semua Tahun Akademik" />
                         </SelectTrigger>
                         <SelectContent>
@@ -184,29 +204,44 @@ export default function KrsIndex({
                                     key={ays.id}
                                     value={ays.id.toString()}
                                 >
-                                    {ays.nama_tahun_akademik} - Gasal/Genap
+                                    {ays.nama_tahun_akademik} - Semester{' '}
+                                    {ays.semester}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <Select
                         value={statusFilter}
-                        onValueChange={(v) =>
-                            applyFilters({ status: v === 'all' ? '' : v })
-                        }
+                        onValueChange={(v) => {
+                            setStatusFilter(v);
+                            applyFilters({ status: v === 'all' ? '' : v });
+                        }}
                     >
-                        <SelectTrigger className="w-[150px]">
+                        <SelectTrigger className="w-[160px]">
                             <SelectValue placeholder="Semua Status" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Semua Status</SelectItem>
                             <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="disetujui">Disetujui</SelectItem>
+                            <SelectItem value="disetujui">
+                                Disetujui
+                            </SelectItem>
                             <SelectItem value="ditolak">Ditolak</SelectItem>
                         </SelectContent>
                     </Select>
+                    {hasActiveFilters && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={resetFilters}
+                        >
+                            <X className="mr-1 h-3.5 w-3.5" />
+                            Reset
+                        </Button>
+                    )}
                 </div>
 
+                {/* Table */}
                 <div className="rounded-lg border">
                     <div className="overflow-x-auto">
                         <Table>
@@ -229,9 +264,32 @@ export default function KrsIndex({
                                     <TableRow>
                                         <TableCell
                                             colSpan={8}
-                                            className="py-8 text-center"
+                                            className="py-12 text-center"
                                         >
-                                            Tidak ada data KRS
+                                            <div className="flex flex-col items-center gap-2">
+                                                <ClipboardList className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {hasActiveFilters
+                                                        ? 'Tidak ada KRS yang cocok'
+                                                        : 'Belum ada data KRS'}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {hasActiveFilters
+                                                        ? 'Coba ubah kata kunci atau filter'
+                                                        : 'Mulai dengan menambahkan KRS pertama'}
+                                                </p>
+                                                {!hasActiveFilters && (
+                                                    <Link
+                                                        href="/admin/krs/create"
+                                                        className="mt-2"
+                                                    >
+                                                        <Button size="sm">
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Tambah KRS
+                                                        </Button>
+                                                    </Link>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -316,7 +374,21 @@ export default function KrsIndex({
                                                                     Apakah anda
                                                                     yakin ingin
                                                                     menghapus
-                                                                    KRS ini?
+                                                                    KRS{' '}
+                                                                    {
+                                                                        krs
+                                                                            .mahasiswa
+                                                                            ?.nama
+                                                                    }{' '}
+                                                                    untuk mata
+                                                                    kuliah{' '}
+                                                                    {
+                                                                        krs
+                                                                            .kelas
+                                                                            ?.mata_kuliah
+                                                                            ?.nama_mk
+                                                                    }
+                                                                    ?
                                                                 </AlertDialogDescription>
                                                             </AlertDialogHeader>
                                                             <AlertDialogFooter>
@@ -346,6 +418,7 @@ export default function KrsIndex({
                     </div>
                 </div>
 
+                {/* Pagination */}
                 {krss.last_page > 1 && (
                     <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">

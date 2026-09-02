@@ -38,6 +38,16 @@ class MonitoringAkademikController extends Controller
             ->orderByDesc('total')
             ->get();
 
+        // Only mahasiswa still progressing through their studies — cuti,
+        // nonaktif, and lulus have no meaningful "current semester" and would
+        // otherwise pile up in whatever semester they stopped at.
+        $mahasiswaPerSemester = Mahasiswa::query()
+            ->where('status', 'aktif')
+            ->selectRaw('semester_saat_ini as semester, count(*) as total')
+            ->groupBy('semester_saat_ini')
+            ->orderBy('semester_saat_ini')
+            ->get();
+
         return Inertia::render('pimpinan/monitoring-akademik', [
             'stats' => [
                 'mahasiswa_per_status' => $mahasiswaPerStatus,
@@ -47,6 +57,7 @@ class MonitoringAkademikController extends Controller
                 'persentase_kehadiran' => $presensiTotal > 0 ? round($presensiHadir / $presensiTotal * 100, 1) : 0,
             ],
             'mahasiswaPerProdi' => $mahasiswaPerProdi,
+            'mahasiswaPerSemester' => $mahasiswaPerSemester,
         ]);
     }
 }

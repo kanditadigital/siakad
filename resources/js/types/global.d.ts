@@ -13,6 +13,11 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             sidebarOpen: boolean;
+            kampus: {
+                nama: string;
+                /** Expiring pre-signed URL for the logo uploaded in Pengaturan Sistem. */
+                logo_url: string | null;
+            };
             [key: string]: unknown;
         };
     }

@@ -15,7 +15,10 @@ Route::middleware(['auth', 'verified', 'role:mahasiswa'])->prefix('mahasiswa')->
 
     // KRS
     Route::get('krs', [KrsController::class, 'index'])->name('krs');
+    Route::get('krs/create', [KrsController::class, 'create'])->name('krs.create');
+    Route::post('krs', [KrsController::class, 'store'])->name('krs.store');
     Route::get('krs/export-pdf', [KrsController::class, 'exportPdf'])->name('krs.export-pdf');
+    Route::delete('krs/{krs}', [KrsController::class, 'destroy'])->name('krs.destroy');
 
     // Jadwal Perkuliahan
     Route::get('jadwal', [JadwalController::class, 'index'])->name('jadwal');

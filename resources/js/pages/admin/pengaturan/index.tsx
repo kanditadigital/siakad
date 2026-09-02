@@ -27,6 +27,7 @@ type Settings = {
         alamat: string;
         website: string;
         logo: string | null;
+        logo_url: string | null;
     };
     krs: {
         sks_maks: number;
@@ -60,7 +61,7 @@ export default function PengaturanIndex({ settings }: Props) {
     });
 
     const [logoPreview, setLogoPreview] = useState<string | null>(
-        settings.identitas.logo ? `/storage/${settings.identitas.logo}` : null,
+        settings.identitas.logo_url ?? null,
     );
     const fileInputRef = useRef<HTMLInputElement>(null);
 

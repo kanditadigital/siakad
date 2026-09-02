@@ -14,7 +14,7 @@ class ProfilController extends Controller
      */
     public function index(Request $request): Response
     {
-        $mahasiswa = $request->user()->mahasiswa()->with('programStudi')->first();
+        $mahasiswa = $request->user()->mahasiswa()->with(['programStudi', 'paDosen'])->first();
 
         return Inertia::render('mahasiswa/profil', [
             'mahasiswa' => $mahasiswa,

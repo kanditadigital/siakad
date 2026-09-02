@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\ProgramStudi;
@@ -9,12 +10,14 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DosenController extends Controller
 {
+    use InteractsWithUploads;
+
     /**
      * Display a listing of the resource.
      */
@@ -71,10 +74,10 @@ class DosenController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nidn' => ['required', 'string', 'max:255', 'unique:dosen,nidn'],
+            'nidn' => ['required', 'string', 'max:255', 'unique:dosen,nidn', 'unique:users,nidn'],
             'nuptk' => ['required', 'string', 'max:255', 'unique:dosen,nuptk'],
             'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:dosen,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:dosen,email', 'unique:users,email'],
             'program_studi_id' => ['required', 'integer', 'exists:program_studi,id'],
             'no_telepon' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
@@ -87,7 +90,7 @@ class DosenController extends Controller
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('photos', 'public');
+            $photoPath = static::storeUpload($request->file('photo'), 'photos');
         }
 
         DB::transaction(function () use ($validated, $photoPath): void {
@@ -141,10 +144,18 @@ class DosenController extends Controller
     public function update(Request $request, Dosen $dosen): RedirectResponse
     {
         $validated = $request->validate([
-            'nidn' => ['required', 'string', 'max:255', 'unique:dosen,nidn,'.$dosen->id],
+            'nidn' => [
+                'required', 'string', 'max:255',
+                Rule::unique('dosen', 'nidn')->ignore($dosen->id),
+                Rule::unique('users', 'nidn')->ignore($dosen->user_id),
+            ],
             'nuptk' => ['required', 'string', 'max:255', 'unique:dosen,nuptk,'.$dosen->id],
             'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:dosen,email,'.$dosen->id],
+            'email' => [
+                'required', 'email', 'max:255',
+                Rule::unique('dosen', 'email')->ignore($dosen->id),
+                Rule::unique('users', 'email')->ignore($dosen->user_id),
+            ],
             'program_studi_id' => ['required', 'integer', 'exists:program_studi,id'],
             'no_telepon' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
@@ -158,9 +169,9 @@ class DosenController extends Controller
         $photoPath = null;
         if ($request->hasFile('photo')) {
             if ($dosen->user?->photo) {
-                Storage::disk('public')->delete($dosen->user->photo);
+                static::deleteUpload($dosen->user->photo);
             }
-            $photoPath = $request->file('photo')->store('photos', 'public');
+            $photoPath = static::storeUpload($request->file('photo'), 'photos');
         }
 
         DB::transaction(function () use ($dosen, $validated, $photoPath): void {
@@ -190,7 +201,7 @@ class DosenController extends Controller
     {
         DB::transaction(function () use ($dosen): void {
             if ($dosen->user?->photo) {
-                Storage::disk('public')->delete($dosen->user->photo);
+                static::deleteUpload($dosen->user->photo);
             }
             if ($dosen->user) {
                 $dosen->user->delete();

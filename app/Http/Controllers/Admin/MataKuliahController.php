@@ -7,6 +7,7 @@ use App\Models\MataKuliah;
 use App\Models\ProgramStudi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -65,6 +66,7 @@ class MataKuliahController extends Controller
 
         return Inertia::render('admin/mata-kuliah/create', [
             'programStudis' => $programStudis,
+            'mataKuliahs' => MataKuliah::aktif()->orderBy('nama_mk')->get(['id', 'kode_mk', 'nama_mk', 'program_studi_id']),
         ]);
     }
 
@@ -80,6 +82,7 @@ class MataKuliahController extends Controller
             'jenis' => ['required', 'string', 'in:Wajib,Pilihan'],
             'sks' => ['required', 'integer', 'min:1', 'max:6'],
             'semester' => ['required', 'integer', 'min:1', 'max:8'],
+            'prasyarat_mata_kuliah_id' => ['nullable', 'integer', 'exists:mata_kuliah,id'],
             'status' => ['required', 'string', 'in:aktif,nonaktif'],
         ]);
 
@@ -112,6 +115,10 @@ class MataKuliahController extends Controller
         return Inertia::render('admin/mata-kuliah/edit', [
             'mataKuliah' => $mataKuliah,
             'programStudis' => $programStudis,
+            'mataKuliahs' => MataKuliah::aktif()
+                ->whereKeyNot($mataKuliah->id)
+                ->orderBy('nama_mk')
+                ->get(['id', 'kode_mk', 'nama_mk', 'program_studi_id']),
         ]);
     }
 
@@ -127,6 +134,9 @@ class MataKuliahController extends Controller
             'jenis' => ['required', 'string', 'in:Wajib,Pilihan'],
             'sks' => ['required', 'integer', 'min:1', 'max:6'],
             'semester' => ['required', 'integer', 'min:1', 'max:8'],
+            'prasyarat_mata_kuliah_id' => [
+                'nullable', 'integer', 'exists:mata_kuliah,id', Rule::notIn([$mataKuliah->id]),
+            ],
             'status' => ['required', 'string', 'in:aktif,nonaktif'],
         ]);
 

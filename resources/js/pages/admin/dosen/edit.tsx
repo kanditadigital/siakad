@@ -29,6 +29,7 @@ type ProgramStudi = {
 type User = {
     id: number;
     photo: string | null;
+    photo_url: string | null;
 };
 
 type Dosen = {
@@ -95,9 +96,9 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
         photo: null as File | null,
     });
 
-    const existingPhoto = dosen.user?.photo;
+    const existingPhoto = dosen.user?.photo_url;
     const [photoPreview, setPhotoPreview] = useState<string | null>(
-        existingPhoto ? `/storage/${existingPhoto}` : null,
+        existingPhoto ?? null,
     );
     const [removeExistingPhoto, setRemoveExistingPhoto] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);

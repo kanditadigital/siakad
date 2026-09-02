@@ -67,14 +67,11 @@ export default function KhsMahasiswa({ nilais, mahasiswa, stats }: Props) {
                             {mahasiswa.nama} ({mahasiswa.nim})
                         </p>
                     </div>
-                    <Button
-                        onClick={() =>
-                            (window.location.href = '/mahasiswa/khs/export-pdf')
-                        }
-                        className="bg-green-700 hover:bg-green-800"
-                    >
-                        <Download className="mr-2 h-4 w-4" />
-                        Cetak PDF
+                    <Button className="bg-green-700 hover:bg-green-800" asChild>
+                        <a href="/mahasiswa/khs/export-pdf">
+                            <Download className="mr-2 h-4 w-4" />
+                            Cetak PDF
+                        </a>
                     </Button>
                 </div>
 
@@ -197,109 +194,104 @@ export default function KhsMahasiswa({ nilais, mahasiswa, stats }: Props) {
                 </div>
 
                 {/* Table (desktop/tablet) */}
-                <Card className="hidden border border-gray-200 shadow-sm sm:block">
-                    <CardHeader>
-                        <CardTitle className="text-gray-900">
-                            Daftar Nilai
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
+                <div className="hidden rounded-lg border sm:block">
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Mata Kuliah</TableHead>
+                                    <TableHead className="text-right">
+                                        SKS
+                                    </TableHead>
+                                    <TableHead className="text-right">
+                                        Nilai
+                                    </TableHead>
+                                    <TableHead>Grade</TableHead>
+                                    <TableHead>Periode</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {nilais.length === 0 ? (
                                     <TableRow>
-                                        <TableHead className="text-gray-600">
-                                            Kode MK
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Mata Kuliah
-                                        </TableHead>
-                                        <TableHead className="text-right text-gray-600">
-                                            SKS
-                                        </TableHead>
-                                        <TableHead className="text-right text-gray-600">
-                                            Nilai
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Grade
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Semester
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Tahun Akademik
-                                        </TableHead>
+                                        <TableCell
+                                            colSpan={5}
+                                            className="py-12 text-center"
+                                        >
+                                            <div className="flex flex-col items-center gap-2">
+                                                <Award className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    Belum ada data nilai
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Nilai yang telah dicatat
+                                                    akan muncul di sini
+                                                </p>
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {nilais.length === 0 ? (
-                                        <TableRow>
-                                            <TableCell
-                                                colSpan={7}
-                                                className="py-8 text-center text-gray-500"
-                                            >
-                                                Belum ada data nilai
-                                            </TableCell>
-                                        </TableRow>
-                                    ) : (
-                                        nilais.map((nilai) => (
-                                            <TableRow key={nilai.id}>
-                                                <TableCell className="font-mono font-medium text-gray-900">
-                                                    {
-                                                        nilai.krs?.kelas
-                                                            ?.mata_kuliah
-                                                            ?.kode_mk
-                                                    }
-                                                </TableCell>
-                                                <TableCell className="text-gray-900">
+                                ) : (
+                                    nilais.map((nilai) => (
+                                        <TableRow key={nilai.id}>
+                                            <TableCell>
+                                                <div>
                                                     {
                                                         nilai.krs?.kelas
                                                             ?.mata_kuliah
                                                             ?.nama_mk
                                                     }
-                                                </TableCell>
-                                                <TableCell className="text-right text-gray-900 tabular-nums">
+                                                </div>
+                                                <div className="font-mono text-xs text-muted-foreground">
                                                     {
                                                         nilai.krs?.kelas
-                                                            ?.mata_kuliah?.sks
+                                                            ?.mata_kuliah
+                                                            ?.kode_mk
                                                     }
-                                                </TableCell>
-                                                <TableCell className="text-right font-medium text-gray-900 tabular-nums">
-                                                    {nilai.nilai ?? '-'}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {nilai.grade ? (
-                                                        <span
-                                                            className={`rounded px-2 py-1 text-xs font-medium ${GRADE_COLORS[nilai.grade] || ''}`}
-                                                        >
-                                                            {nilai.grade}
-                                                        </span>
-                                                    ) : (
-                                                        '-'
-                                                    )}
-                                                </TableCell>
-                                                <TableCell className="text-gray-900">
-                                                    {
-                                                        nilai.krs
-                                                            ?.academic_year_semester
-                                                            ?.semester
-                                                    }
-                                                </TableCell>
-                                                <TableCell className="text-gray-900">
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right tabular-nums">
+                                                {
+                                                    nilai.krs?.kelas
+                                                        ?.mata_kuliah?.sks
+                                                }
+                                            </TableCell>
+                                            <TableCell className="text-right font-medium tabular-nums">
+                                                {nilai.nilai ?? '-'}
+                                            </TableCell>
+                                            <TableCell>
+                                                {nilai.grade ? (
+                                                    <span
+                                                        className={`rounded px-2 py-1 text-xs font-medium ${GRADE_COLORS[nilai.grade] || ''}`}
+                                                    >
+                                                        {nilai.grade}
+                                                    </span>
+                                                ) : (
+                                                    '-'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
                                                     {
                                                         nilai.krs
                                                             ?.academic_year_semester
                                                             ?.nama_tahun_akademik
                                                     }
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </CardContent>
-                </Card>
+                                                </div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    Semester{' '}
+                                                    {
+                                                        nilai.krs
+                                                            ?.academic_year_semester
+                                                            ?.semester
+                                                    }
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </div>
             </div>
         </>
     );

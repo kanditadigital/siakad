@@ -7,6 +7,7 @@ use App\Models\AcademicYearSemester;
 use App\Models\Kelas;
 use App\Models\Krs;
 use App\Models\Mahasiswa;
+use App\Models\ProgramStudi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -59,19 +60,23 @@ class KrsController extends Controller
      */
     public function create(): Response
     {
-        $mahasiswas = Mahasiswa::orderBy('nama')->get();
-        $kelases = Kelas::with(['mataKuliah', 'dosen'])
+        $mahasiswas = Mahasiswa::with('programStudi:id,nama_prodi')
+            ->orderBy('nama')
+            ->get();
+        $kelases = Kelas::with(['mataKuliah.programStudi:id,nama_prodi', 'dosen'])
             ->where('status', 'Aktif')
             ->orderBy('nama_kelas')
             ->get();
         $academicYearSemesters = AcademicYearSemester::orderByDesc('nama_tahun_akademik')
             ->orderBy('semester')
             ->get();
+        $programStudis = ProgramStudi::orderBy('nama_prodi')->get(['id', 'nama_prodi']);
 
         return Inertia::render('admin/krs/create', [
             'mahasiswas' => $mahasiswas,
             'kelases' => $kelases,
             'academicYearSemesters' => $academicYearSemesters,
+            'programStudis' => $programStudis,
         ]);
     }
 
@@ -84,7 +89,7 @@ class KrsController extends Controller
             'mahasiswa_id' => ['required', 'integer', 'exists:mahasiswa,id'],
             'kelas_id' => ['required', 'integer', 'exists:kelas,id'],
             'academic_year_semester_id' => ['required', 'integer', 'exists:academic_year_semesters,id'],
-            'status' => ['required', 'string', 'in:pending,disetujui,ditolak'],
+            'status' => ['required', 'string', 'in:pending,disetujui,ditolak,revisi'],
         ]);
 
         if ($validated['status'] === 'disetujui') {
@@ -92,9 +97,9 @@ class KrsController extends Controller
             $totalSks = Krs::totalSksDisetujui($validated['mahasiswa_id'], $validated['academic_year_semester_id'])
                 + ($kelas->mataKuliah->sks ?? 0);
 
-            if ($totalSks > Krs::MAX_SKS) {
+            if ($totalSks > Krs::maxSks()) {
                 return back()->withErrors([
-                    'kelas_id' => "Total SKS akan menjadi {$totalSks}, melebihi batas maksimal ".Krs::MAX_SKS.' SKS per semester.',
+                    'kelas_id' => "Total SKS akan menjadi {$totalSks}, melebihi batas maksimal ".Krs::maxSks().' SKS per semester.',
                 ])->withInput();
             }
         }
@@ -123,20 +128,24 @@ class KrsController extends Controller
     public function edit(Krs $krs): Response
     {
         $krs->load(['mahasiswa', 'kelas', 'academicYearSemester']);
-        $mahasiswas = Mahasiswa::orderBy('nama')->get();
-        $kelases = Kelas::with(['mataKuliah', 'dosen'])
+        $mahasiswas = Mahasiswa::with('programStudi:id,nama_prodi')
+            ->orderBy('nama')
+            ->get();
+        $kelases = Kelas::with(['mataKuliah.programStudi:id,nama_prodi', 'dosen'])
             ->where('status', 'Aktif')
             ->orderBy('nama_kelas')
             ->get();
         $academicYearSemesters = AcademicYearSemester::orderByDesc('nama_tahun_akademik')
             ->orderBy('semester')
             ->get();
+        $programStudis = ProgramStudi::orderBy('nama_prodi')->get(['id', 'nama_prodi']);
 
         return Inertia::render('admin/krs/edit', [
             'krs' => $krs,
             'mahasiswas' => $mahasiswas,
             'kelases' => $kelases,
             'academicYearSemesters' => $academicYearSemesters,
+            'programStudis' => $programStudis,
         ]);
     }
 
@@ -149,7 +158,7 @@ class KrsController extends Controller
             'mahasiswa_id' => ['required', 'integer', 'exists:mahasiswa,id'],
             'kelas_id' => ['required', 'integer', 'exists:kelas,id'],
             'academic_year_semester_id' => ['required', 'integer', 'exists:academic_year_semesters,id'],
-            'status' => ['required', 'string', 'in:pending,disetujui,ditolak'],
+            'status' => ['required', 'string', 'in:pending,disetujui,ditolak,revisi'],
         ]);
 
         if ($validated['status'] === 'disetujui') {
@@ -157,9 +166,9 @@ class KrsController extends Controller
             $totalSks = Krs::totalSksDisetujui($validated['mahasiswa_id'], $validated['academic_year_semester_id'], $krs->id)
                 + ($kelas->mataKuliah->sks ?? 0);
 
-            if ($totalSks > Krs::MAX_SKS) {
+            if ($totalSks > Krs::maxSks()) {
                 return back()->withErrors([
-                    'kelas_id' => "Total SKS akan menjadi {$totalSks}, melebihi batas maksimal ".Krs::MAX_SKS.' SKS per semester.',
+                    'kelas_id' => "Total SKS akan menjadi {$totalSks}, melebihi batas maksimal ".Krs::maxSks().' SKS per semester.',
                 ])->withInput();
             }
         }

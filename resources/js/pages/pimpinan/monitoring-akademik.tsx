@@ -13,6 +13,7 @@ type Props = {
         persentase_kehadiran: number;
     };
     mahasiswaPerProdi: { nama_prodi: string; total: number }[];
+    mahasiswaPerSemester: { semester: number; total: number }[];
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -25,7 +26,7 @@ const STATUS_LABELS: Record<string, string> = {
     ditolak: 'Ditolak',
 };
 
-export default function MonitoringAkademik({ stats, mahasiswaPerProdi }: Props) {
+export default function MonitoringAkademik({ stats, mahasiswaPerProdi, mahasiswaPerSemester }: Props) {
     return (
         <>
             <Head title="Monitoring Akademik" />
@@ -103,39 +104,75 @@ export default function MonitoringAkademik({ stats, mahasiswaPerProdi }: Props) 
                     </Card>
                 </div>
 
-                <Card className="border border-gray-200 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-gray-900">Mahasiswa per Program Studi</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="text-gray-600">Program Studi</TableHead>
-                                        <TableHead className="text-right text-gray-600">Jumlah Mahasiswa</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {mahasiswaPerProdi.length === 0 ? (
+                <div className="grid gap-6 md:grid-cols-2">
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-gray-900">Mahasiswa per Program Studi</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="overflow-x-auto">
+                                <Table>
+                                    <TableHeader>
                                         <TableRow>
-                                            <TableCell colSpan={2} className="py-8 text-center text-gray-500">
-                                                Belum ada data
-                                            </TableCell>
+                                            <TableHead className="text-gray-600">Program Studi</TableHead>
+                                            <TableHead className="text-right text-gray-600">Jumlah Mahasiswa</TableHead>
                                         </TableRow>
-                                    ) : (
-                                        mahasiswaPerProdi.map((row) => (
-                                            <TableRow key={row.nama_prodi}>
-                                                <TableCell className="text-gray-900">{row.nama_prodi}</TableCell>
-                                                <TableCell className="text-right tabular-nums text-gray-900">{row.total}</TableCell>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {mahasiswaPerProdi.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={2} className="py-8 text-center text-gray-500">
+                                                    Belum ada data
+                                                </TableCell>
                                             </TableRow>
-                                        ))
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </CardContent>
-                </Card>
+                                        ) : (
+                                            mahasiswaPerProdi.map((row) => (
+                                                <TableRow key={row.nama_prodi}>
+                                                    <TableCell className="text-gray-900">{row.nama_prodi}</TableCell>
+                                                    <TableCell className="text-right tabular-nums text-gray-900">{row.total}</TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-gray-900">Mahasiswa Aktif per Semester</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="overflow-x-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="text-gray-600">Semester</TableHead>
+                                            <TableHead className="text-right text-gray-600">Jumlah Mahasiswa</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {mahasiswaPerSemester.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={2} className="py-8 text-center text-gray-500">
+                                                    Belum ada data
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            mahasiswaPerSemester.map((row) => (
+                                                <TableRow key={row.semester}>
+                                                    <TableCell className="text-gray-900">Semester {row.semester}</TableCell>
+                                                    <TableCell className="text-right tabular-nums text-gray-900">{row.total}</TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </>
     );

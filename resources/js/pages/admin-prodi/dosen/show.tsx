@@ -1,17 +1,33 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     ArrowLeft,
-    Mail,
-    Phone,
-    MapPin,
-    User,
-    GraduationCap,
     Award,
+    Clock,
+    Edit,
+    GraduationCap,
     Hash,
+    Mail,
+    MapPin,
+    Phone,
+    Trash2,
+    User,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+
+type ProgramStudi = {
+    id: number;
+    kode_prodi: string;
+    nama_prodi: string;
+};
+
+type UserPhoto = {
+    id: number;
+    photo: string | null;
+    photo_url: string | null;
+};
 
 type Dosen = {
     id: number;
@@ -26,6 +42,14 @@ type Dosen = {
     pendidikan_terakhir: string;
     alamat: string;
     status: string;
+    created_at: string;
+    updated_at: string;
+    program_studi: ProgramStudi;
+    user?: UserPhoto;
+};
+
+type Props = {
+    dosen: Dosen;
 };
 
 function getInitials(name: string) {
@@ -52,32 +76,46 @@ const STATUS_LABELS: Record<string, string> = {
     pensiun: 'Pensiun',
 };
 
-export default function DosenShow({ dosen }: { dosen: Dosen }) {
+export default function DosenShow({ dosen }: Props) {
+    const formatDate = (date: string) =>
+        new Date(date).toLocaleDateString('id-ID', { dateStyle: 'full' });
+
+    const handleDelete = () => {
+        if (confirm('Apakah Anda yakin ingin menghapus dosen ini?')) {
+            router.delete(`/admin-prodi/dosen/${dosen.uuid}`);
+        }
+    };
+
     return (
         <>
             <Head title={`Dosen - ${dosen.nama}`} />
 
             <div className="space-y-6">
-                <div>
-                    <Link
-                        href="/admin-prodi/dosen"
-                        className="mb-2 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-                    >
-                        <ArrowLeft className="mr-1 h-4 w-4" />
-                        Kembali ke Daftar
-                    </Link>
-                    <h1 className="text-2xl font-bold">Profil Dosen</h1>
-                    <p className="text-muted-foreground">Detail data dosen</p>
-                </div>
+                <Link
+                    href="/admin-prodi/dosen"
+                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Kembali ke Daftar Dosen
+                </Link>
 
-                <Card className="overflow-hidden">
+                {/* Header Card */}
+                <Card className="overflow-hidden border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
                         <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
-                                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-white shadow-sm">
-                                    <span className="text-4xl font-semibold text-siak-pine">
-                                        {getInitials(dosen.nama)}
-                                    </span>
+                                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm">
+                                    {dosen.user?.photo_url ? (
+                                        <img
+                                            src={dosen.user.photo_url}
+                                            alt={dosen.nama}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <span className="text-4xl font-semibold text-siak-pine">
+                                            {getInitials(dosen.nama)}
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="text-center text-white">
                                     <p className="text-sm opacity-80">NIDN</p>
@@ -87,116 +125,16 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                 </div>
                             </div>
                         </div>
-
                         <div className="flex-1 p-6 md:p-8">
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 <div>
-                                    <h2 className="text-2xl font-bold tracking-tight">
+                                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
                                         {dosen.nama}
-                                    </h2>
+                                    </h1>
+                                    <p className="text-gray-600">
+                                        {dosen.program_studi?.nama_prodi}
+                                    </p>
                                 </div>
-
-                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Hash className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">
-                                                NUPTK
-                                            </p>
-                                            <p className="font-mono font-medium">
-                                                {dosen.nuptk || '-'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <User className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">
-                                                Jenis Kelamin
-                                            </p>
-                                            <p className="font-medium">
-                                                {dosen.jenis_kelamin}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Award className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">
-                                                Pangkat / Golongan
-                                            </p>
-                                            <p className="font-medium">
-                                                {dosen.pangkat_golongan || '-'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">
-                                                Pendidikan Terakhir
-                                            </p>
-                                            <p className="font-medium">
-                                                {dosen.pendidikan_terakhir ||
-                                                    '-'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Mail className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">
-                                                Email
-                                            </p>
-                                            <p className="truncate font-medium">
-                                                {dosen.email}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <Phone className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">
-                                                No. Telepon
-                                            </p>
-                                            <p className="font-medium">
-                                                {dosen.no_telepon || '-'}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-3 sm:col-span-2">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                                            <MapPin className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-muted-foreground">
-                                                Alamat
-                                            </p>
-                                            <p className="font-medium">
-                                                {dosen.alamat || '-'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div className="flex items-center gap-2">
                                     <Badge
                                         variant={
@@ -207,11 +145,197 @@ export default function DosenShow({ dosen }: { dosen: Dosen }) {
                                         {STATUS_LABELS[dosen.status] ||
                                             dosen.status}
                                     </Badge>
+                                    <span className="text-sm text-gray-500">
+                                        • {dosen.jenis_kelamin}
+                                    </span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Link
+                                        href={`/admin-prodi/dosen/${dosen.uuid}/edit`}
+                                    >
+                                        <Button className="bg-green-700 hover:bg-green-800">
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            Edit
+                                        </Button>
+                                    </Link>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleDelete}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Hapus
+                                    </Button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </Card>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                    {/* Biodata */}
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-gray-900">
+                                <User className="h-5 w-5 text-green-700" />
+                                Biodata Diri
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Hash className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        NIDN
+                                    </p>
+                                    <p className="font-mono font-medium text-gray-900">
+                                        {dosen.nidn}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Hash className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        NUPTK
+                                    </p>
+                                    <p className="font-mono font-medium text-gray-900">
+                                        {dosen.nuptk || '-'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <User className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Jenis Kelamin
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {dosen.jenis_kelamin}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Award className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Pangkat / Golongan
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {dosen.pangkat_golongan || '-'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <GraduationCap className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Pendidikan Terakhir
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {dosen.pendidikan_terakhir || '-'}
+                                    </p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className="space-y-6">
+                        {/* Kontak */}
+                        <Card className="border border-gray-200 shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-gray-900">
+                                    <Phone className="h-5 w-5 text-green-700" />
+                                    Kontak
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <Mail className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">
+                                            Email
+                                        </p>
+                                        <p className="truncate font-medium text-gray-900">
+                                            {dosen.email}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <Phone className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">
+                                            No. Telepon
+                                        </p>
+                                        <p className="font-medium text-gray-900">
+                                            {dosen.no_telepon || '-'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                        <MapPin className="h-5 w-5 text-green-700" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">
+                                            Alamat
+                                        </p>
+                                        <p className="font-medium text-gray-900">
+                                            {dosen.alamat || '-'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Informasi Sistem */}
+                        <Card className="border border-gray-200 shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-gray-900">
+                                    <Clock className="h-5 w-5 text-green-700" />
+                                    Informasi Sistem
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">
+                                        Dibuat Pada
+                                    </span>
+                                    <span className="text-sm text-gray-900">
+                                        {formatDate(dosen.created_at)}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-sm text-gray-500">
+                                        Terakhir Diperbarui
+                                    </span>
+                                    <span className="text-sm text-gray-900">
+                                        {formatDate(dosen.updated_at)}
+                                    </span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
             </div>
         </>
     );

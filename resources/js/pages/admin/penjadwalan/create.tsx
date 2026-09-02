@@ -66,6 +66,9 @@ export default function PenjadwalanCreate({
         mata_kuliah_id: '',
         dosen_id: '',
         ruang_id: '',
+        hari: '',
+        jam_mulai: '',
+        jam_selesai: '',
         kapasitas: '',
         semester: '',
         academic_year_semester_id: '',
@@ -339,6 +342,91 @@ export default function PenjadwalanCreate({
                                     {errors.ruang_id && (
                                         <p className="text-sm text-destructive">
                                             {errors.ruang_id}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                                <div className="space-y-2">
+                                    <Label htmlFor="hari">Hari</Label>
+                                    <Select
+                                        value={data.hari}
+                                        onValueChange={(v) =>
+                                            setData('hari', v)
+                                        }
+                                    >
+                                        <SelectTrigger
+                                            id="hari"
+                                            aria-invalid={!!errors.hari}
+                                        >
+                                            <SelectValue placeholder="Pilih Hari" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {[
+                                                'Senin',
+                                                'Selasa',
+                                                'Rabu',
+                                                'Kamis',
+                                                'Jumat',
+                                                'Sabtu',
+                                                'Minggu',
+                                            ].map((h) => (
+                                                <SelectItem key={h} value={h}>
+                                                    {h}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.hari && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.hari}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="jam_mulai">
+                                        Jam Mulai
+                                    </Label>
+                                    <Input
+                                        id="jam_mulai"
+                                        type="time"
+                                        value={data.jam_mulai}
+                                        onChange={(e) =>
+                                            setData(
+                                                'jam_mulai',
+                                                e.target.value,
+                                            )
+                                        }
+                                        aria-invalid={!!errors.jam_mulai}
+                                    />
+                                    {errors.jam_mulai && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.jam_mulai}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="jam_selesai">
+                                        Jam Selesai
+                                    </Label>
+                                    <Input
+                                        id="jam_selesai"
+                                        type="time"
+                                        value={data.jam_selesai}
+                                        onChange={(e) =>
+                                            setData(
+                                                'jam_selesai',
+                                                e.target.value,
+                                            )
+                                        }
+                                        aria-invalid={!!errors.jam_selesai}
+                                    />
+                                    {errors.jam_selesai && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.jam_selesai}
                                         </p>
                                     )}
                                 </div>

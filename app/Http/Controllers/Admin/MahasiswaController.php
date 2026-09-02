@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\ProgramStudi;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MahasiswaController extends Controller
 {
+    use InteractsWithUploads;
+
     /**
      * Display a listing of the resource.
      */
@@ -40,6 +43,10 @@ class MahasiswaController extends Controller
             $query->where('program_studi_id', $request->program_studi_id);
         }
 
+        if ($request->filled('semester')) {
+            $this->applySemesterFilter($query, $request->input('semester'));
+        }
+
         $mahasiswas = $query->latest()
             ->paginate(10)
             ->withQueryString();
@@ -49,8 +56,61 @@ class MahasiswaController extends Controller
         return Inertia::render('admin/mahasiswa/index', [
             'mahasiswas' => $mahasiswas,
             'programStudis' => $programStudis,
-            'filters' => $request->only(['search', 'status', 'program_studi_id']),
+            'filters' => $request->only(['search', 'status', 'program_studi_id', 'semester']),
         ]);
+    }
+
+    /**
+     * Narrow the query to a specific semester, or to mahasiswa who have gone
+     * past the normal length of their jenjang ("over").
+     *
+     * A prodi-to-cap map is built once and matched with OR branches rather
+     * than a correlated subquery — simple, and the number of program studi is
+     * always small enough that this stays cheap.
+     */
+    /**
+     * @param  Builder<Mahasiswa>  $query
+     */
+    private function applySemesterFilter(Builder $query, string $semester): void
+    {
+        if ($semester !== 'over') {
+            $query->where('semester_saat_ini', (int) $semester);
+
+            return;
+        }
+
+        $normalCapByProdi = ProgramStudi::query()->pluck('lama_studi', 'id');
+
+        $query->where(function ($outer) use ($normalCapByProdi): void {
+            foreach ($normalCapByProdi as $programStudiId => $lamaStudi) {
+                $outer->orWhere(function ($inner) use ($programStudiId, $lamaStudi): void {
+                    $inner->where('program_studi_id', $programStudiId)
+                        ->where('semester_saat_ini', '>', $lamaStudi * 2);
+                });
+            }
+        });
+    }
+
+    /**
+     * Bulk-advance every active mahasiswa of one program studi to their next
+     * semester. Cuti/nonaktif/lulus mahasiswa are left untouched — advancing
+     * them would misrepresent students who are not actually progressing.
+     */
+    public function naikkanSemester(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'program_studi_id' => ['required', 'integer', 'exists:program_studi,id'],
+        ]);
+
+        $affected = Mahasiswa::where('program_studi_id', $validated['program_studi_id'])
+            ->where('status', 'aktif')
+            ->increment('semester_saat_ini');
+
+        if ($affected === 0) {
+            return back()->with('error', 'Tidak ada mahasiswa aktif di program studi ini.');
+        }
+
+        return back()->with('success', "Semester berhasil dinaikkan untuk {$affected} mahasiswa aktif.");
     }
 
     /**
@@ -90,7 +150,7 @@ class MahasiswaController extends Controller
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('photos', 'public');
+            $photoPath = static::storeUpload($request->file('photo'), 'photos');
         }
 
         DB::transaction(function () use ($validated, $photoPath): void {
@@ -162,15 +222,16 @@ class MahasiswaController extends Controller
             'alamat' => ['required', 'string', 'max:255'],
             'kode_domisili' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,nonaktif,lulus'],
+            'semester_saat_ini' => ['required', 'integer', 'min:1', 'max:40'],
             'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
         ]);
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
             if ($mahasiswa->user?->photo) {
-                Storage::disk('public')->delete($mahasiswa->user->photo);
+                static::deleteUpload($mahasiswa->user->photo);
             }
-            $photoPath = $request->file('photo')->store('photos', 'public');
+            $photoPath = static::storeUpload($request->file('photo'), 'photos');
         }
 
         DB::transaction(function () use ($mahasiswa, $validated, $photoPath): void {
@@ -196,7 +257,7 @@ class MahasiswaController extends Controller
     {
         DB::transaction(function () use ($mahasiswa): void {
             if ($mahasiswa->user?->photo) {
-                Storage::disk('public')->delete($mahasiswa->user->photo);
+                static::deleteUpload($mahasiswa->user->photo);
             }
             if ($mahasiswa->user) {
                 $mahasiswa->user->delete();

@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
     'jenis',
     'sks',
     'semester',
+    'prasyarat_mata_kuliah_id',
     'status',
 ])]
 class MataKuliah extends Model
@@ -52,6 +53,14 @@ class MataKuliah extends Model
     public function kelas(): HasMany
     {
         return $this->hasMany(Kelas::class);
+    }
+
+    /**
+     * @return BelongsTo<MataKuliah, $this>
+     */
+    public function prasyarat(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'prasyarat_mata_kuliah_id');
     }
 
     /**

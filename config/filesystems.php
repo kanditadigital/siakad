@@ -17,6 +17,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Uploads Disk
+    |--------------------------------------------------------------------------
+    |
+    | The disk that receives every file uploaded by a user. Resolved through
+    | this key rather than hardcoded at each call site so the whole app can be
+    | pointed elsewhere (e.g. "public" for local development) in one place.
+    |
+    */
+
+    'uploads' => env('UPLOAD_DISK', 'uploads'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Upload URL Lifetime
+    |--------------------------------------------------------------------------
+    |
+    | How many minutes a pre-signed URL for an upload stays valid. Long enough
+    | to load a page and view the file, short enough that a leaked URL stops
+    | working quickly.
+    |
+    */
+
+    'upload_url_ttl' => (int) env('UPLOAD_URL_TTL', 30),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
@@ -44,6 +70,26 @@ return [
             'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
+            'report' => false,
+        ],
+
+        /*
+         * Every user upload (photos, bukti pembayaran, RPS, logo) lives here.
+         * The bucket is private: files are never served by a public URL and
+         * are only reachable through short-lived pre-signed URLs built by the
+         * application. Point UPLOAD_DISK at "public" for offline development.
+         */
+        'uploads' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'visibility' => 'private',
+            'throw' => true,
             'report' => false,
         ],
 

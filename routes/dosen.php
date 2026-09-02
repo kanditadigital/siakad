@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Dosen\BimbinganAkademikController;
 use App\Http\Controllers\Dosen\BimbinganTugasAkhirController;
 use App\Http\Controllers\Dosen\DosenProfileController;
+use App\Http\Controllers\Dosen\KrsPaController;
 use App\Http\Controllers\Dosen\MahasiswaAsuhController;
 use App\Http\Controllers\Dosen\PerkuliahanController;
 use Illuminate\Support\Facades\Route;
@@ -25,8 +27,17 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->name('do
 
     // Mahasiswa Asuh
     Route::get('mahasiswa-asuh', [MahasiswaAsuhController::class, 'index'])->name('mahasiswa-asuh.index');
+    Route::get('mahasiswa-asuh/{mahasiswa}', [MahasiswaAsuhController::class, 'show'])->name('mahasiswa-asuh.show');
     Route::put('mahasiswa-asuh/{mahasiswa}', [MahasiswaAsuhController::class, 'update'])->name('mahasiswa-asuh.update');
     Route::delete('mahasiswa-asuh/{mahasiswa}', [MahasiswaAsuhController::class, 'destroy'])->name('mahasiswa-asuh.destroy');
+    Route::post('mahasiswa-asuh/{mahasiswa}/bimbingan', [BimbinganAkademikController::class, 'store'])->name('mahasiswa-asuh.bimbingan.store');
+
+    // KRS (Pembimbing Akademik) — approve/reject/revisi independen dari Admin Prodi
+    Route::get('krs-pa', [KrsPaController::class, 'index'])->name('krs-pa.index');
+    Route::get('krs-pa/{krs}', [KrsPaController::class, 'show'])->name('krs-pa.show');
+    Route::patch('krs-pa/{krs}/approve', [KrsPaController::class, 'approve'])->name('krs-pa.approve');
+    Route::patch('krs-pa/{krs}/reject', [KrsPaController::class, 'reject'])->name('krs-pa.reject');
+    Route::patch('krs-pa/{krs}/revisi', [KrsPaController::class, 'requestRevision'])->name('krs-pa.revisi');
 
     // Bimbingan Tugas Akhir
     Route::get('bimbingan-tugas-akhir', [BimbinganTugasAkhirController::class, 'index'])->name('bimbingan-tugas-akhir.index');

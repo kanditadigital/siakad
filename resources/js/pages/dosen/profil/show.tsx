@@ -139,9 +139,7 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                                 Jenis Kelamin
                                             </p>
                                             <p className="font-medium">
-                                                {dosen.jenis_kelamin === 'L'
-                                                    ? 'Laki-laki'
-                                                    : 'Perempuan'}
+                                                {dosen.jenis_kelamin}
                                             </p>
                                         </div>
                                     </div>
@@ -310,10 +308,7 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                                         Jenis Kelamin
                                                     </p>
                                                     <p className="font-medium">
-                                                        {dosen.jenis_kelamin ===
-                                                        'L'
-                                                            ? 'Laki-laki'
-                                                            : 'Perempuan'}
+                                                        {dosen.jenis_kelamin}
                                                     </p>
                                                 </div>
                                                 <div>

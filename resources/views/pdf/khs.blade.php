@@ -124,9 +124,9 @@
             @forelse($nilais as $index => $nilai)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $nilai->krs->kelas->mata_kuliah->kode_mk ?? '-' }}</td>
-                    <td>{{ $nilai->krs->kelas->mata_kuliah->nama_mk ?? '-' }}</td>
-                    <td>{{ $nilai->krs->kelas->mata_kuliah->sks ?? '-' }}</td>
+                    <td>{{ $nilai->krs->kelas->mataKuliah->kode_mk ?? '-' }}</td>
+                    <td>{{ $nilai->krs->kelas->mataKuliah->nama_mk ?? '-' }}</td>
+                    <td>{{ $nilai->krs->kelas->mataKuliah->sks ?? '-' }}</td>
                     <td>{{ $nilai->nilai ?? '-' }}</td>
                     <td>
                         @if($nilai->grade)
@@ -135,8 +135,8 @@
                             -
                         @endif
                     </td>
-                    <td>{{ $nilai->krs->academic_year_semester->semester ?? '-' }}</td>
-                    <td>{{ $nilai->krs->academic_year_semester->nama_tahun_akademik ?? '-' }}</td>
+                    <td>{{ $nilai->krs->academicYearSemester->semester ?? '-' }}</td>
+                    <td>{{ $nilai->krs->academicYearSemester->nama_tahun_akademik ?? '-' }}</td>
                 </tr>
             @empty
                 <tr>

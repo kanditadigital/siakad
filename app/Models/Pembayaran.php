@@ -2,14 +2,21 @@
 
 namespace App\Models;
 
+use App\Concerns\InteractsWithUploads;
+use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
+/**
+ * @property string|null $bukti_pembayaran
+ * @property-read string|null $bukti_pembayaran_url
+ */
+#[Appends(['bukti_pembayaran_url'])]
 class Pembayaran extends Model
 {
-    use HasFactory;
+    use HasFactory, InteractsWithUploads;
 
     protected $table = 'pembayaran';
 
@@ -32,6 +39,14 @@ class Pembayaran extends Model
                 $model->uuid = Str::uuid7();
             }
         });
+    }
+
+    /**
+     * Expiring URL for the uploaded proof of payment.
+     */
+    public function getBuktiPembayaranUrlAttribute(): ?string
+    {
+        return static::uploadUrl($this->bukti_pembayaran);
     }
 
     public function getRouteKeyName(): string

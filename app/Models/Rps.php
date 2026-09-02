@@ -2,18 +2,25 @@
 
 namespace App\Models;
 
+use App\Concerns\InteractsWithUploads;
 use Database\Factories\RpsFactory;
+use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
+/**
+ * @property string|null $file_path
+ * @property-read string|null $file_url
+ */
+#[Appends(['file_url'])]
 #[Fillable(['kelas_id', 'file_path', 'status', 'catatan', 'uploaded_at'])]
 class Rps extends Model
 {
     /** @use HasFactory<RpsFactory> */
-    use HasFactory;
+    use HasFactory, InteractsWithUploads;
 
     /**
      * @var string
@@ -35,6 +42,14 @@ class Rps extends Model
         return [
             'uploaded_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Expiring URL for the uploaded RPS document.
+     */
+    public function getFileUrlAttribute(): ?string
+    {
+        return static::uploadUrl($this->file_path);
     }
 
     /**

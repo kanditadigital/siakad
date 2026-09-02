@@ -11,16 +11,25 @@ use App\Models\Materi;
 use App\Models\Nilai;
 use App\Models\ProgramStudi;
 use App\Models\TagihanUkt;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
         $role = $user->role?->value;
+
+        // Admin prodi has its own dashboard controller/page under a
+        // differently-named route (admin-prodi.dashboard), since its
+        // component lives at resources/js/pages/admin-prodi/dashboard.tsx
+        // rather than dashboard/{role}.tsx like the other roles.
+        if ($role === 'admin_prodi') {
+            return redirect()->route('admin-prodi.dashboard');
+        }
 
         $data = [];
 
@@ -34,18 +43,6 @@ class DashboardController extends Controller
                 'total_program_studi' => ProgramStudi::count(),
                 'krs_pending' => Krs::where('status', 'pending')->count(),
                 'tagihan_belum_lunas' => TagihanUkt::whereIn('status', ['belum', 'terlambat'])->count(),
-            ];
-        } elseif ($role === 'admin_prodi') {
-            $mahasiswa = $user->mahasiswa;
-            $programStudi = $user->programStudi;
-
-            $data['programStudi'] = $programStudi;
-            $data['stats'] = [
-                'mahasiswa' => Mahasiswa::where('program_studi_id', $user->program_studi_id)->count(),
-                'dosen' => Dosen::where('program_studi_id', $user->program_studi_id)->count(),
-                'penjadwalan' => Kelas::whereHas('mataKuliah', function ($q) use ($user): void {
-                    $q->where('program_studi_id', $user->program_studi_id);
-                })->count(),
             ];
         } elseif ($role === 'mahasiswa') {
             $mahasiswa = $user->mahasiswa;

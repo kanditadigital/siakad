@@ -35,7 +35,7 @@ test('admin can manually record a payment which is immediately verified and reco
 });
 
 test('mahasiswa can upload proof of payment for their own tagihan', function () {
-    Storage::fake('public');
+    Storage::fake(config('filesystems.uploads'));
 
     $user = User::factory()->create(['role' => 'mahasiswa']);
     $mahasiswa = Mahasiswa::factory()->create(['user_id' => $user->id]);
@@ -57,7 +57,7 @@ test('mahasiswa can upload proof of payment for their own tagihan', function () 
     ]);
 
     $pembayaran = Pembayaran::where('tagihan_ukt_id', $tagihan->id)->first();
-    Storage::disk('public')->assertExists($pembayaran->bukti_pembayaran);
+    Storage::disk(config('filesystems.uploads'))->assertExists($pembayaran->bukti_pembayaran);
 });
 
 test('mahasiswa cannot upload payment proof for another mahasiswa tagihan', function () {

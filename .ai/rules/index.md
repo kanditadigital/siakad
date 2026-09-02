@@ -1,8 +1,9 @@
-# AI Rules Index
+# Project Rules Index
 
-## File Mapping
+Before planning or editing, find the row whose globs match the file's path and read that rule file.
 
-| Glob | Rule File |
-|------|-----------|
-| `app/Http/Controllers/**/*.php` | `photo-upload-pattern.md` |
-| `resources/js/pages/**/*.tsx` | `photo-upload-pattern.md` |
+| Applies to | Rule file |
+| --- | --- |
+| app/Http/Controllers/** | .ai/rules/controllers.md |
+| app/Http/Controllers/Dosen/** | .ai/rules/dosen.md |
+| app/Models/Mahasiswa.php | .ai/rules/models.md |
