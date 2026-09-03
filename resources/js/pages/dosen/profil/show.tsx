@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import {
     Edit,
     Mail,
@@ -9,12 +9,35 @@ import {
     GraduationCap,
     Briefcase,
     Award,
+    Plus,
+    PenLine,
+    Trash2,
 } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
+
+const JENJANG_OPTIONS = ['SMA/SMK', 'D3', 'D4', 'S1', 'S2', 'S3'];
 
 type ProgramStudi = {
     id: number;
@@ -38,6 +61,13 @@ type Kelas = {
     status: string;
 };
 
+type RiwayatPendidikan = {
+    uuid: string;
+    jenjang: string;
+    nama_institusi: string;
+    fakultas_prodi: string | null;
+};
+
 type Dosen = {
     id: number;
     nidn: string;
@@ -51,6 +81,7 @@ type Dosen = {
     status: string;
     program_studi: ProgramStudi;
     kelas: Kelas[];
+    riwayat_pendidikan: RiwayatPendidikan[];
 };
 
 function getInitials(name: string) {
@@ -63,6 +94,54 @@ function getInitials(name: string) {
 }
 
 export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editing, setEditing] = useState<RiwayatPendidikan | null>(null);
+
+    const { data, setData, post, put, processing, errors, reset, clearErrors } =
+        useForm({
+            jenjang: '',
+            nama_institusi: '',
+            fakultas_prodi: '',
+        });
+
+    const openCreate = () => {
+        setEditing(null);
+        reset();
+        clearErrors();
+        setDialogOpen(true);
+    };
+
+    const openEdit = (riwayat: RiwayatPendidikan) => {
+        setEditing(riwayat);
+        setData({
+            jenjang: riwayat.jenjang,
+            nama_institusi: riwayat.nama_institusi,
+            fakultas_prodi: riwayat.fakultas_prodi ?? '',
+        });
+        clearErrors();
+        setDialogOpen(true);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const onSuccess = () => setDialogOpen(false);
+
+        if (editing) {
+            put(`/dosen/riwayat-pendidikan/${editing.uuid}`, { onSuccess });
+        } else {
+            post('/dosen/riwayat-pendidikan', { onSuccess });
+        }
+    };
+
+    const handleDelete = (riwayat: RiwayatPendidikan) => {
+        if (!confirm(`Hapus riwayat pendidikan ${riwayat.jenjang}?`)) {
+            return;
+        }
+
+        router.delete(`/dosen/riwayat-pendidikan/${riwayat.uuid}`);
+    };
+
     const uniqueMataKuliah =
         dosen.kelas
             ?.filter((k) => k.status === 'Aktif')
@@ -345,35 +424,73 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
 
                             <TabsContent value="pendidikan">
                                 <div className="space-y-4 pt-4">
-                                    <h3 className="text-lg font-semibold">
-                                        Riwayat Pendidikan
-                                    </h3>
-                                    <div className="space-y-4">
-                                        <div className="flex items-start gap-4 rounded-lg border bg-card p-4">
-                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-siak-pine/10">
-                                                <GraduationCap className="h-6 w-6 text-siak-pine" />
-                                            </div>
-                                            <div className="flex-1">
-                                                <p className="font-semibold">
-                                                    {dosen.pendidikan_terakhir ||
-                                                        'Belum diisi'}
-                                                </p>
-                                                <p className="text-sm text-muted-foreground">
-                                                    {
-                                                        dosen.program_studi
-                                                            ?.nama_prodi
-                                                    }
-                                                </p>
-                                            </div>
-                                            <Badge variant="default">
-                                                Terakhir
-                                            </Badge>
-                                        </div>
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-lg font-semibold">
+                                            Riwayat Pendidikan
+                                        </h3>
+                                        <Button size="sm" onClick={openCreate}>
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            Tambah
+                                        </Button>
                                     </div>
-                                    <p className="text-sm text-muted-foreground italic">
-                                        Hubungi admin untuk memperbarui riwayat
-                                        pendidikan
-                                    </p>
+                                    {dosen.riwayat_pendidikan.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {dosen.riwayat_pendidikan.map(
+                                                (riwayat) => (
+                                                    <div
+                                                        key={riwayat.uuid}
+                                                        className="flex items-start gap-4 rounded-lg border bg-card p-4"
+                                                    >
+                                                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-siak-pine/10">
+                                                            <GraduationCap className="h-6 w-6 text-siak-pine" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="font-semibold">
+                                                                {
+                                                                    riwayat.nama_institusi
+                                                                }
+                                                            </p>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                {riwayat.fakultas_prodi ||
+                                                                    '-'}
+                                                            </p>
+                                                        </div>
+                                                        <Badge variant="default">
+                                                            {riwayat.jenjang}
+                                                        </Badge>
+                                                        <div className="flex items-center gap-1">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() =>
+                                                                    openEdit(
+                                                                        riwayat,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <PenLine className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() =>
+                                                                    handleDelete(
+                                                                        riwayat,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Trash2 className="h-4 w-4 text-destructive" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ),
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground italic">
+                                            Belum ada riwayat pendidikan
+                                        </p>
+                                    )}
                                 </div>
                             </TabsContent>
 
@@ -476,6 +593,123 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                         </Tabs>
                     </CardContent>
                 </Card>
+
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <DialogContent>
+                        <form onSubmit={handleSubmit}>
+                            <DialogHeader>
+                                <DialogTitle>
+                                    {editing
+                                        ? 'Edit Riwayat Pendidikan'
+                                        : 'Tambah Riwayat Pendidikan'}
+                                </DialogTitle>
+                                <DialogDescription>
+                                    Jenjang, nama sekolah/universitas, dan
+                                    fakultas/prodi.
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="jenjang">
+                                        Jenjang{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
+                                    </Label>
+                                    <Select
+                                        value={data.jenjang}
+                                        onValueChange={(value) =>
+                                            setData('jenjang', value)
+                                        }
+                                    >
+                                        <SelectTrigger
+                                            id="jenjang"
+                                            aria-invalid={!!errors.jenjang}
+                                        >
+                                            <SelectValue placeholder="Pilih jenjang" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {JENJANG_OPTIONS.map((option) => (
+                                                <SelectItem
+                                                    key={option}
+                                                    value={option}
+                                                >
+                                                    {option}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.jenjang && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.jenjang}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="nama_institusi">
+                                        Nama Sekolah/Universitas{' '}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
+                                    </Label>
+                                    <Input
+                                        id="nama_institusi"
+                                        value={data.nama_institusi}
+                                        onChange={(e) =>
+                                            setData(
+                                                'nama_institusi',
+                                                e.target.value,
+                                            )
+                                        }
+                                        aria-invalid={!!errors.nama_institusi}
+                                    />
+                                    {errors.nama_institusi && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.nama_institusi}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="fakultas_prodi">
+                                        Fakultas/Prodi
+                                    </Label>
+                                    <Input
+                                        id="fakultas_prodi"
+                                        value={data.fakultas_prodi}
+                                        onChange={(e) =>
+                                            setData(
+                                                'fakultas_prodi',
+                                                e.target.value,
+                                            )
+                                        }
+                                        aria-invalid={!!errors.fakultas_prodi}
+                                    />
+                                    {errors.fakultas_prodi && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.fakultas_prodi}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <DialogFooter>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setDialogOpen(false)}
+                                >
+                                    Batal
+                                </Button>
+                                <Button type="submit" disabled={processing}>
+                                    {processing ? 'Menyimpan...' : 'Simpan'}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </>
     );

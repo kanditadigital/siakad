@@ -15,6 +15,7 @@ type Props = {
     label?: string;
     loadingLabel?: string;
     separator?: string;
+    separatorPosition?: 'before' | 'after';
 };
 
 export default function PasskeyVerify({
@@ -22,6 +23,7 @@ export default function PasskeyVerify({
     label,
     loadingLabel,
     separator,
+    separatorPosition = 'after',
 }: Props = {}) {
     const { verify, isLoading, error, isSupported } = usePasskeyVerify({
         ...(routes && {
@@ -39,36 +41,46 @@ export default function PasskeyVerify({
         return null;
     }
 
-    return (
-        <>
-            <div className="grid gap-2">
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={verify}
-                    disabled={isLoading}
-                >
-                    {isLoading ? <Spinner /> : <KeyRound className="h-4 w-4" />}
-                    {isLoading
-                        ? (loadingLabel ?? 'Authenticating...')
-                        : (label ?? 'Sign in with a passkey')}
-                </Button>
-                {error && (
-                    <InputError message={error} className="text-center" />
-                )}
+    const separatorEl = (
+        <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full" />
             </div>
+            <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                    {separator ?? 'Or continue with email'}
+                </span>
+            </div>
+        </div>
+    );
 
-            <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                    <Separator className="w-full" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                        {separator ?? 'Or continue with email'}
-                    </span>
-                </div>
-            </div>
+    const buttonEl = (
+        <div className="grid gap-2">
+            <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={verify}
+                disabled={isLoading}
+            >
+                {isLoading ? <Spinner /> : <KeyRound className="h-4 w-4" />}
+                {isLoading
+                    ? (loadingLabel ?? 'Authenticating...')
+                    : (label ?? 'Sign in with a passkey')}
+            </Button>
+            {error && <InputError message={error} className="text-center" />}
+        </div>
+    );
+
+    return separatorPosition === 'before' ? (
+        <>
+            {separatorEl}
+            {buttonEl}
+        </>
+    ) : (
+        <>
+            {buttonEl}
+            {separatorEl}
         </>
     );
 }

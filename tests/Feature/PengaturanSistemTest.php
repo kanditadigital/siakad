@@ -21,11 +21,6 @@ function validSettingsPayload(array $overrides = []): array
             'dibuka' => true,
         ],
         'nilai' => [
-            'bobot_tugas' => 20,
-            'bobot_uts' => 25,
-            'bobot_uas' => 30,
-            'bobot_partisipasi' => 10,
-            'bobot_kehadiran' => 15,
             'periode_input_dibuka' => true,
         ],
         'notifikasi' => [
@@ -61,17 +56,6 @@ test('admin can persist settings and they are read back on the next request', fu
 
     $second = $this->actingAs($admin)->get(route('admin.pengaturan.index'));
     $second->assertInertia(fn ($page) => $page->where('settings.identitas.nama_kampus', 'Kampus Baru'));
-});
-
-test('nilai bobot must total 100 percent', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
-
-    $response = $this->actingAs($admin)->put(route('admin.pengaturan.update'), validSettingsPayload([
-        'nilai' => ['bobot_tugas' => 50],
-    ]));
-
-    $response->assertSessionHasErrors('nilai.bobot_tugas');
-    $this->assertDatabaseMissing('settings', ['key' => 'nilai.bobot_tugas', 'value' => '50']);
 });
 
 test('a corrupted settings cache entry self-heals instead of throwing', function () {

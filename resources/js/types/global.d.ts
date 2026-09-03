@@ -18,6 +18,14 @@ declare module '@inertiajs/core' {
                 /** Expiring pre-signed URL for the logo uploaded in Pengaturan Sistem. */
                 logo_url: string | null;
             };
+            chrome: {
+                periode: { label: string; pekan: number | null } | null;
+                /** Institution-wide pending work; null for non-staff roles. */
+                tugas: {
+                    krs_pending: number;
+                    tagihan_belum_lunas: number;
+                } | null;
+            };
             [key: string]: unknown;
         };
     }

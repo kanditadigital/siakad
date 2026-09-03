@@ -5,7 +5,9 @@ use App\Http\Controllers\Dosen\BimbinganTugasAkhirController;
 use App\Http\Controllers\Dosen\DosenProfileController;
 use App\Http\Controllers\Dosen\KrsPaController;
 use App\Http\Controllers\Dosen\MahasiswaAsuhController;
+use App\Http\Controllers\Dosen\PengaturanNilaiController;
 use App\Http\Controllers\Dosen\PerkuliahanController;
+use App\Http\Controllers\Dosen\RiwayatPendidikanController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
@@ -13,6 +15,15 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->name('do
     Route::get('profil', [DosenProfileController::class, 'show'])->name('profil.show');
     Route::get('profil/edit', [DosenProfileController::class, 'edit'])->name('profil.edit');
     Route::put('profil', [DosenProfileController::class, 'update'])->name('profil.update');
+
+    // Riwayat Pendidikan
+    Route::post('riwayat-pendidikan', [RiwayatPendidikanController::class, 'store'])->name('riwayat-pendidikan.store');
+    Route::put('riwayat-pendidikan/{riwayatPendidikan}', [RiwayatPendidikanController::class, 'update'])->name('riwayat-pendidikan.update');
+    Route::delete('riwayat-pendidikan/{riwayatPendidikan}', [RiwayatPendidikanController::class, 'destroy'])->name('riwayat-pendidikan.destroy');
+
+    // Pengaturan Nilai — bobot komponen penilaian, berlaku untuk semua kelas yang diampu
+    Route::get('pengaturan-nilai', [PengaturanNilaiController::class, 'show'])->name('pengaturan-nilai.show');
+    Route::put('pengaturan-nilai', [PengaturanNilaiController::class, 'update'])->name('pengaturan-nilai.update');
 
     // Perkuliahan
     Route::get('perkuliahan', [PerkuliahanController::class, 'index'])->name('perkuliahan.index');

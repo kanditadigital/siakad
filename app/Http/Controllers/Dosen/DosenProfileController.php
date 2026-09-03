@@ -16,7 +16,7 @@ class DosenProfileController extends Controller
      */
     public function show(Request $request): Response
     {
-        $dosen = Dosen::with(['programStudi', 'kelas.mataKuliah'])
+        $dosen = Dosen::with(['programStudi', 'kelas.mataKuliah', 'riwayatPendidikan'])
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 
@@ -59,7 +59,7 @@ class DosenProfileController extends Controller
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'pendidikan_terakhir' => ['required', 'string', 'in:S2,S3'],
+            'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'no_telepon' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
         ]);

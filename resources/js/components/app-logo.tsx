@@ -3,36 +3,57 @@ import { usePage } from '@inertiajs/react';
 import AppLogoIcon from '@/components/app-logo-icon';
 
 /**
- * Sidebar brand block: the logo uploaded in Pengaturan Sistem, falling back to
- * the built-in mark when no logo has been set yet.
+ * Sidebar brand block: a square institutional plate above the campus name.
  *
- * The logo sits on a white plate because an uploaded logo is authored for light
- * backgrounds and would otherwise disappear against the green sidebar.
+ * The plate is green with the campus initials until a logo is uploaded in
+ * Pengaturan Sistem; an uploaded logo is authored for light backgrounds, so it
+ * gets a white plate with a hairline ring instead of being burnt onto green.
  */
 export default function AppLogo() {
     const { kampus } = usePage().props;
 
     return (
-        <>
-            <div className="flex aspect-square size-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white ring-1 ring-white/25 group-data-[collapsible=icon]:size-8">
+        <div className="flex flex-col items-center gap-3 text-center group-data-[collapsible=icon]:gap-0">
+            <div
+                className={`flex aspect-square size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl group-data-[collapsible=icon]:size-8 ${
+                    kampus.logo_url
+                        ? 'bg-white ring-1 ring-border'
+                        : 'bg-green-700'
+                }`}
+            >
                 {kampus.logo_url ? (
                     <img
                         src={kampus.logo_url}
                         alt={`Logo ${kampus.nama}`}
-                        className="size-full object-contain p-0.5"
+                        className="size-full object-contain p-1"
                     />
                 ) : (
-                    <AppLogoIcon className="size-6 text-green-800" />
+                    <>
+                        <span className="text-xl font-bold tracking-tight text-white group-data-[collapsible=icon]:hidden">
+                            {inisialKampus(kampus.nama)}
+                        </span>
+                        <AppLogoIcon className="hidden size-5 text-white group-data-[collapsible=icon]:block" />
+                    </>
                 )}
             </div>
-            <div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate text-sm font-semibold text-white">
+            <div className="group-data-[collapsible=icon]:hidden">
+                <p className="text-sm leading-snug font-bold text-foreground">
                     {kampus.nama}
-                </span>
-                <span className="truncate text-[11px] font-medium tracking-wide text-white/60 uppercase">
+                </p>
+                <p className="mt-1 text-[10px] font-semibold tracking-[0.09em] text-muted-foreground uppercase">
                     Sistem Informasi Akademik
-                </span>
+                </p>
             </div>
-        </>
+        </div>
     );
+}
+
+/** First letters of the first two words, e.g. "STIT Daarurrahmah …" → "SD". */
+function inisialKampus(nama: string): string {
+    return nama
+        .trim()
+        .split(/\s+/u)
+        .slice(0, 2)
+        .map((kata) => kata.charAt(0).toUpperCase())
+        .join('');
 }

@@ -30,31 +30,25 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import type { NavItem } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
 
 /**
- * Section label above the menu. Names the role rather than saying "Platform",
- * so the sidebar tells the user which hat they are wearing — SIAKAD accounts
- * differ sharply in what they can reach.
+ * System-administration menu, split out of the main list so the sidebar reads as
+ * "what I work on" above and "what I administer" below.
  */
-const ROLE_NAV_LABELS: Record<string, string> = {
-    admin: 'Administrator',
-    admin_prodi: 'Admin Program Studi',
-    dosen: 'Dosen',
-    mahasiswa: 'Mahasiswa',
-    pimpinan: 'Pimpinan',
-};
+const MENU_SISTEM_ADMIN: NavItem[] = [
+    { title: 'Pengguna', href: '/admin/user', icon: UserCog },
+    { title: 'Pengaturan', href: '/admin/pengaturan', icon: Settings },
+];
 
 export function AppSidebar() {
     const page = usePage();
     const user = page.props.auth?.user;
     const role = user?.role;
+    const { periode, tugas } = page.props.chrome;
 
-    const getNavItemsByRole = (): NavItem[] => {
+    const menuUtama = (): NavItem[] => {
         const baseItems: NavItem[] = [
             {
                 title: 'Dashboard',
@@ -140,6 +134,7 @@ export function AppSidebar() {
                         title: 'Keuangan',
                         href: '#',
                         icon: CreditCard,
+                        badge: tugas?.tagihan_belum_lunas,
                         children: [
                             {
                                 title: 'Skema UKT',
@@ -162,23 +157,6 @@ export function AppSidebar() {
                         title: 'Laporan',
                         href: '/admin/laporan',
                         icon: PieChart,
-                    },
-                    {
-                        title: 'Pengaturan',
-                        href: '#',
-                        icon: Settings,
-                        children: [
-                            {
-                                title: 'Manajemen User',
-                                href: '/admin/user',
-                                icon: UserCog,
-                            },
-                            {
-                                title: 'Pengaturan Sistem',
-                                href: '/admin/pengaturan',
-                                icon: Settings,
-                            },
-                        ],
                     },
                 ];
 
@@ -209,6 +187,11 @@ export function AppSidebar() {
                         title: 'Bimbingan Tugas Akhir',
                         href: '/dosen/bimbingan-tugas-akhir',
                         icon: ClipboardCheck,
+                    },
+                    {
+                        title: 'Pengaturan Nilai',
+                        href: '/dosen/pengaturan-nilai',
+                        icon: Settings,
                     },
                 ];
 
@@ -316,35 +299,45 @@ export function AppSidebar() {
         }
     };
 
-    const mainNavItems: NavItem[] = getNavItemsByRole();
+    const groups: NavGroup[] = [
+        { label: 'Menu Utama', items: menuUtama() },
+        ...(role === 'admin'
+            ? [{ label: 'Sistem', items: MENU_SISTEM_ADMIN }]
+            : []),
+    ];
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader className="gap-0 border-b border-white/10 pb-2">
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton
-                            size="lg"
-                            asChild
-                            className="hover:bg-white/10 active:bg-white/10"
-                        >
-                            <Link href="/dashboard" prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+        <Sidebar collapsible="icon">
+            <SidebarHeader className="gap-0 border-b border-sidebar-border px-4 pt-5 pb-4 group-data-[collapsible=icon]:px-1">
+                <Link href="/dashboard" prefetch>
+                    <AppLogo />
+                </Link>
             </SidebarHeader>
 
-            <SidebarContent className="pt-2">
-                <NavMain
-                    items={mainNavItems}
-                    label={role ? ROLE_NAV_LABELS[role] : undefined}
-                />
+            <SidebarContent className="gap-4 pt-4">
+                <NavMain groups={groups} />
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-white/10 pt-2">
-                <NavUser />
+            <SidebarFooter className="gap-3 p-0">
+                {periode ? (
+                    <div className="mx-3 rounded-lg border border-green-100 bg-green-50 px-3.5 py-3 group-data-[collapsible=icon]:hidden">
+                        <p className="text-[10px] font-bold tracking-[0.08em] text-green-700 uppercase">
+                            Tahun Akademik
+                        </p>
+                        <p className="mt-1 text-sm font-bold">
+                            {periode.label}
+                        </p>
+                        {periode.pekan ? (
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                                Perkuliahan pekan ke-{periode.pekan}
+                            </p>
+                        ) : null}
+                    </div>
+                ) : null}
+
+                <div className="border-t border-sidebar-border p-2">
+                    <NavUser />
+                </div>
             </SidebarFooter>
         </Sidebar>
     );

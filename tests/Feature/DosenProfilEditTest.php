@@ -117,14 +117,19 @@ test('jenis_kelamin must be one of the two allowed values', function () {
     )->assertSessionHasErrors('jenis_kelamin');
 });
 
-test('pendidikan_terakhir must be S2 or S3', function () {
+test('dosen can save profile without changing an existing non-S2/S3 pendidikan_terakhir', function () {
     $user = User::factory()->create(['role' => 'dosen']);
-    Dosen::factory()->create(['user_id' => $user->id]);
+    $dosen = Dosen::factory()->create([
+        'user_id' => $user->id,
+        'pendidikan_terakhir' => 'S1',
+    ]);
 
     $this->actingAs($user)->put(
         route('dosen.profil.update'),
         validDosenProfilPayload(['pendidikan_terakhir' => 'S1']),
-    )->assertSessionHasErrors('pendidikan_terakhir');
+    )->assertSessionHasNoErrors();
+
+    expect($dosen->refresh()->pendidikan_terakhir)->toBe('S1');
 });
 
 test('dosen cannot change institutional fields the form does not expose', function () {

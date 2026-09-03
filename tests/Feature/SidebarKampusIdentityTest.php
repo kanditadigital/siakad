@@ -91,8 +91,6 @@ test('uploading a new logo in pengaturan replaces what the sidebar shows', funct
             ],
             'krs' => ['sks_maks' => 24, 'sks_min' => 12, 'dibuka' => true],
             'nilai' => [
-                'bobot_tugas' => 20, 'bobot_uts' => 25, 'bobot_uas' => 30,
-                'bobot_partisipasi' => 10, 'bobot_kehadiran' => 15,
                 'periode_input_dibuka' => true,
             ],
             'notifikasi' => ['email_aktif' => true, 'tagihan_aktif' => true],

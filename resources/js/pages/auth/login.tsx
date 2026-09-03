@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import AppLogoIcon from '@/components/app-logo-icon';
 import PasskeyVerify from '@/components/passkey-verify';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -21,23 +22,15 @@ type Props = {
 const NILAI_INSTITUSI = ['Berilmu', 'Berbahasa', 'Berdaya'];
 
 /**
- * A mathematically correct equilateral pointed arch: two circular arcs of
- * radius = span, each centred on the opposite springing point. Used as a solid
- * tonal block — the architectural anchor of the brand panel.
+ * Two soft, oversized tonal circles bleeding off the panel edges — a quiet
+ * decorative wash behind the brand copy, not a literal shape to read.
  */
-function ArchBackdrop() {
+function CircleBackdrop() {
     return (
-        <svg
-            className="absolute right-0 bottom-0 h-[78%] w-auto text-siak-pine"
-            viewBox="0 0 200 400"
-            preserveAspectRatio="xMaxYMax meet"
-            aria-hidden="true"
-        >
-            <path
-                d="M0,400 L0,200 A200,200 0 0,1 100,26.795 A200,200 0 0,1 200,200 L200,400 Z"
-                fill="currentColor"
-            />
-        </svg>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+            <div className="absolute top-[-18%] right-[-22%] h-[65%] w-[65%] rounded-full bg-white/[0.06]" />
+            <div className="absolute top-[8%] right-[-10%] h-[42%] w-[42%] rounded-full bg-white/[0.08]" />
+        </div>
     );
 }
 
@@ -75,6 +68,7 @@ export default function Login({ canResetPassword, status }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         login_value: '',
         password: '',
+        remember: true,
     });
 
     // Fortify reports a failed attempt under its configured username field
@@ -97,7 +91,7 @@ export default function Login({ canResetPassword, status }: Props) {
             <div className="min-h-screen bg-background lg:grid lg:grid-cols-[1.15fr_1fr] xl:grid-cols-[1.25fr_1fr]">
                 {/* Brand panel — desktop */}
                 <aside className="relative hidden overflow-hidden bg-siak-pine-deep lg:flex lg:flex-col lg:justify-between lg:p-14 xl:p-20">
-                    <ArchBackdrop />
+                    <CircleBackdrop />
 
                     <div className="relative z-10 flex items-center gap-3">
                         <BrandMark
@@ -126,13 +120,16 @@ export default function Login({ canResetPassword, status }: Props) {
                     </div>
 
                     <div className="relative z-10">
-                        <dl className="flex flex-wrap gap-x-12 gap-y-6">
+                        <dl className="flex flex-wrap gap-4">
                             {NILAI_INSTITUSI.map((nilai, index) => (
-                                <div key={nilai}>
+                                <div
+                                    key={nilai}
+                                    className="rounded-xl bg-white/10 px-5 py-4"
+                                >
                                     <dt className="font-display text-sm text-gold-soft italic">
                                         0{index + 1}
                                     </dt>
-                                    <dd className="mt-1 text-sm font-medium tracking-wide text-white/85">
+                                    <dd className="mt-1 text-sm font-semibold tracking-wide text-white">
                                         {nilai}
                                     </dd>
                                 </div>
@@ -184,15 +181,7 @@ export default function Login({ canResetPassword, status }: Props) {
                                 </div>
                             )}
 
-                            <div className="mt-8">
-                                <PasskeyVerify
-                                    label="Masuk dengan Passkey"
-                                    loadingLabel="Memverifikasi…"
-                                    separator="atau gunakan akun institusi"
-                                />
-                            </div>
-
-                            <form onSubmit={onSubmit} className="space-y-5">
+                            <form onSubmit={onSubmit} className="mt-8 space-y-5">
                                 <div className="space-y-2">
                                     <Label
                                         htmlFor="login_value"
@@ -287,6 +276,22 @@ export default function Login({ canResetPassword, status }: Props) {
                                     )}
                                 </div>
 
+                                <div className="flex items-center gap-2">
+                                    <Checkbox
+                                        id="remember"
+                                        checked={data.remember}
+                                        onCheckedChange={(checked) =>
+                                            setData('remember', checked === true)
+                                        }
+                                    />
+                                    <Label
+                                        htmlFor="remember"
+                                        className="text-sm font-normal text-foreground"
+                                    >
+                                        Ingat saya di perangkat ini
+                                    </Label>
+                                </div>
+
                                 <Button
                                     type="submit"
                                     disabled={processing}
@@ -305,6 +310,15 @@ export default function Login({ canResetPassword, status }: Props) {
                                     )}
                                 </Button>
                             </form>
+
+                            <div>
+                                <PasskeyVerify
+                                    label="Masuk dengan Passkey"
+                                    loadingLabel="Memverifikasi…"
+                                    separator="Atau"
+                                    separatorPosition="before"
+                                />
+                            </div>
 
                             <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
                                 Belum punya akses? Hubungi BAAK atau admin

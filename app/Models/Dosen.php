@@ -25,6 +25,11 @@ use Illuminate\Support\Str;
     'pendidikan_terakhir',
     'alamat',
     'status',
+    'bobot_tugas',
+    'bobot_uts',
+    'bobot_uas',
+    'bobot_partisipasi',
+    'bobot_kehadiran',
 ])]
 class Dosen extends Model
 {
@@ -65,6 +70,14 @@ class Dosen extends Model
     public function kelas(): HasMany
     {
         return $this->hasMany(Kelas::class);
+    }
+
+    /**
+     * @return HasMany<RiwayatPendidikanDosen, $this>
+     */
+    public function riwayatPendidikan(): HasMany
+    {
+        return $this->hasMany(RiwayatPendidikanDosen::class);
     }
 
     /**

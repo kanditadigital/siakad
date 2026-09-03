@@ -89,6 +89,14 @@
     --color-siak-moss: #cbd9d0;
     --color-siak-sage: #55685d;
 
+    /* KPI ribbon on the dashboard. Four distinguishable fills are needed to tell
+       four different measures apart at a glance; they are registered here as
+       tokens so no page reaches for a raw hex. */
+    --color-kpi-mahasiswa: var(--color-green-700);
+    --color-kpi-pegawai: #0f766e;
+    --color-kpi-akademik: #1d4ed8;
+    --color-kpi-keuangan: #c2410c;
+
     /* Secondary institutional accent (from siakad.json: "tema warna hijau & kuning").
        Used sparingly — decorative borders/details, never large fills. */
     --color-gold: #a9822f;
@@ -96,8 +104,10 @@
 }
 
 :root {
-    --background: #ffffff;
-    --foreground: #1a1a1a;
+    /* The working surface is a muted green-grey, not white: cards, tables and
+       the sidebar are white and need a ground to sit on. */
+    --background: #f3f5f3;
+    --foreground: #15201a;
 
     --card: #ffffff;
     --card-foreground: #1a1a1a;
@@ -111,8 +121,8 @@
     --secondary: #f0fdf4;
     --secondary-foreground: #166534;
 
-    --muted: #f5f5f5;
-    --muted-foreground: #737373;
+    --muted: #f1f4f1;
+    --muted-foreground: #7d8880;
 
     --accent: #dcfce7;
     --accent-foreground: #166534;
@@ -120,8 +130,8 @@
     --destructive: #dc2626;
     --destructive-foreground: #ffffff;
 
-    --border: #e5e5e5;
-    --input: #e5e5e5;
+    --border: #e8ebe8;
+    --input: #e4e8e4;
     --ring: #166534;
 
     --chart-1: #166534;
@@ -132,14 +142,16 @@
 
     --radius: 0.5rem;
 
-    --sidebar: #166534;
-    --sidebar-foreground: #ffffff;
-    --sidebar-primary: #ffffff;
-    --sidebar-primary-foreground: #166534;
-    --sidebar-accent: #15803d;
-    --sidebar-accent-foreground: #ffffff;
-    --sidebar-border: #15803d;
-    --sidebar-ring: #22c55e;
+    /* White sidebar (2026-09-02): the brand block at the top carries the
+       institutional colour instead of the whole panel. */
+    --sidebar: #ffffff;
+    --sidebar-foreground: #3f4a43;
+    --sidebar-primary: var(--color-green-700);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #eaf6ee;
+    --sidebar-accent-foreground: var(--color-green-700);
+    --sidebar-border: #e8ebe8;
+    --sidebar-ring: var(--color-green-700);
 }
 
 @layer base {
