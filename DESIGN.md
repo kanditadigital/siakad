@@ -17,7 +17,7 @@ Yang dihindari secara eksplisit (ciri khas "generic AI dashboard"):
 - Empty state dengan ilustrasi generik bertema "cloud" atau "rocket" yang tidak relevan dengan konteks akademik.
 - Warna aksen sembarang (indigo/violet) yang tidak berhubungan dengan identitas kampus.
 - Glassmorphism (`bg-white/20` + `backdrop-blur` di atas panel berwarna) — dibersihkan total dari aplikasi 2026-09-01, jangan diperkenalkan kembali.
-- Gradient dekoratif apa pun (`bg-gradient-to-*`), termasuk gradient "halus" seperti `from-green-50 to-white` pada kartu KPI — solid + border + shadow-sm sudah cukup memberi kedalaman.
+- Gradient dekoratif apa pun (`bg-gradient-to-*`), termasuk gradient "halus" seperti `from-green-50 to-white` pada kartu KPI — solid + border + shadow-sm sudah cukup memberi kedalaman. Pita KPI dashboard memakai **empat fill solid** dari token `--color-kpi-*`, bukan gradient.
 
 ---
 
@@ -29,7 +29,10 @@ Sumber kebenaran: `resources/css/app.css` (`@theme` dan `:root`). **Jangan** men
 | Token | Nilai | Peran |
 |---|---|---|
 | `--primary` / `primary` | `#166534` (green-800) | Aksi utama, brand, sidebar aktif |
-| `--sidebar` | `#166534` | Latar sidebar (bukan putih — ini identitas kampus, bukan dashboard generik) |
+| `--background` | `#f3f5f3` | Latar area kerja (hijau-abu redup) — kartu/tabel butuh "tanah" untuk berpijak. Sempat `#f3f6fa` (biru-abu) selama fase Midone; dikembalikan saat sidebar kembali hijau karena latar dingin di bawah panel hijau terasa sumbang |
+| `--sidebar` | `var(--color-green-800)` `#166534` | Latar sidebar. Sejak 2026-09-05 sidebar **hijau institusi** — nilainya sama dengan `--primary`, jadi panel memakai warna merek sendiri, bukan warna pinjaman. Menggantikan fase biru Midone (`#2947b8`) yang hanya bertahan sehari, dan sidebar putih 2026-09-02 |
+| `--sidebar-accent` / `-accent-foreground` | `#ffffff` / `#1f2937` | Item menu aktif: pil putih + label gelap + ikon hijau (`text-sidebar`). Hover item non-aktif memakai `bg-white/10`, bukan token ini |
+| `--color-kpi-*` (`mahasiswa`/`pegawai`/`akademik`/`keuangan`) | hijau / teal / biru / oranye | **Khusus pita KPI dashboard**: empat ukuran berbeda harus bisa dibedakan sekilas. Di luar KPI dashboard, jangan pakai empat warna ini |
 | `--accent` | `#dcfce7` (green-100) | Highlight lembut, badge status positif |
 | `--destructive` | `#dc2626` | Error, status "belum lunas"/"ditolak" |
 | `--muted` | `#f5f5f5` | Latar sekunder, baris tabel alternatif |
@@ -59,7 +62,7 @@ Jangan gunakan warna berbeda untuk status yang secara semantik sama di dua halam
 - Data uang (Rupiah) selalu diformat via `Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })` — jangan hardcode "Rp" + string manual (rawan salah format ribuan).
 
 ### 2.3 Border Radius & Skala
-Radius sudah ditentukan lewat `--radius: 0.5rem` dan turunannya (`--radius-lg/md/sm`). **Jangan** memakai `rounded-2xl`/`rounded-3xl` di kartu — itu ciri khas template AI generik. Skala radius kita:
+Radius sudah ditentukan lewat `--radius: 0.375rem` (6px, diturunkan dari 8px 2026-09-05 mengikuti referensi Midone) dan turunannya (`--radius-lg/md/sm`). **Jangan** memakai `rounded-2xl`/`rounded-3xl` di kartu — itu ciri khas template AI generik. Skala radius kita:
 - Kartu, modal, dropdown: `rounded-lg` (var `--radius-lg`)
 - Button, input, badge: `rounded-md`
 - Avatar/foto profil bulat: `rounded-full` (satu-satunya pengecualian penuh)
@@ -95,12 +98,34 @@ Tabel adalah komponen paling sering dipakai di SIAKAD (daftar mahasiswa, nilai, 
 - Tombol submit primer selalu di kanan bawah form, tombol batal/kembali di kirinya dengan varian `outline` — urutan ini konsisten di semua form CRUD.
 
 ### 3.5 Navigasi (Sidebar)
-Sidebar hijau institusi (`--sidebar: #166534`) sudah menjadi identitas kuat — **pertahankan**, jangan diputihkan mengikuti tren "sidebar minimal putih" karena itu justru menghapus identitas kampus yang sudah dibangun.
+Sidebar **hijau institusi gelap** (`--sidebar: var(--color-green-800)` = `#166534`, `--sidebar-border: rgba(255,255,255,.12)`), diputuskan 2026-09-05. Nilainya sengaja sama dengan `--primary`: panel navigasi memakai warna merek kampus sendiri, sehingga tombol utama, tautan, dan sidebar terbaca sebagai satu palet.
+
+Riwayat keputusan (jangan diputar balik tanpa keputusan baru): sidebar hijau solid lama → **putih** (2026-09-02) → **biru Midone** `#2947b8` (2026-09-05) → **hijau institusi** (2026-09-05, sore). Bentuk/struktur hasil fase Midone — brand horizontal, pil putih untuk item aktif, sudut melengkung, lebar 240px — **dipertahankan**; yang berubah hanya warnanya. Jadi jangan menafsirkan "kembali ke hijau" sebagai kembali ke tata letak sebelum 2026-09-05.
+- **Lebar 240px** (`--sidebar-width: 15rem`, di-override dari `SidebarProvider` pada `app-shell.tsx`, bukan 16rem bawaan shadcn) — lebih rapat, mendekati pita 220–230px referensi, dan masih cukup untuk label terpanjang ("Bimbingan Tugas Akhir").
+- **Transisi curved** di pertemuan sidebar dan top header. Siluetnya adalah **panel konten yang membulatkan sudut kiri-atasnya** dengan warna sidebar di belakangnya — *bukan* gigitan pada sidebar; sisi kanan sidebar tetap lurus. Implementasinya satu elemen dekoratif di `app-sidebar-header.tsx`: kotak `absolute top-0 left-0 size-6 bg-sidebar` berisi `size-full rounded-tl-[1.5rem] bg-card`. Ingat `border-radius` **membuang** material dari sudut yang disebutnya — karena itu yang dibulatkan adalah sudut kiri-atas milik lapisan putih, sehingga warna sidebar muncul di sudut pertemuan. Membulatkan sudut yang salah menghasilkan artefak "pojok terlipat" (pernah terjadi 2026-09-05).
+- Elemen itu dipasang pada offset **positif** (`left-0`) di dalam header, jadi aman dari `overflow-x-clip` milik pembungkus konten — versi yang menggantung ke kiri (offset negatif) terpotong diam-diam. Karena ia anak dari header, kurvanya ikut `sticky` saat halaman digulir dan otomatis mengikuti tepi rail saat sidebar collapse ke mode ikon. Hanya desktop (`lg:block`); di mobile sidebar adalah drawer, jadi tidak ada sambungan yang perlu dilembutkan.
+- **Tanpa border kanan.** Primitif shadcn membawa `border-r` yang diwarnai aturan global `* { @apply border-border }` memakai `--border` (abu terang) — pas untuk sidebar putih dulu, tapi menjadi garis putih di tepi panel hijau. Dimatikan dari sisi pemanggil (`app-sidebar.tsx`, `className="group-data-[side=left]:border-r-0"`) supaya `components/ui/sidebar.tsx` tetap utuh. Varian `group-data-[side=left]:` **wajib** ikut ditulis: tailwind-merge hanya menggabungkan kelas dengan varian yang sama, dan `border-r-0` polos juga kalah spesifisitas.
+- Teks dan ikon default di sidebar memakai `text-sidebar-foreground` (putih tembus, bukan `text-muted-foreground`) — token itu sengaja gelap untuk latar putih lama dan **tidak terbaca** di atas panel gelap. Ini berlaku untuk label grup (`nav-main.tsx`), ikon item, dan chevron submenu.
+- **Header sidebar** adalah blok **horizontal** setinggi ±72px: plate `size-9 rounded-lg` (logo kampus dari prop global `kampus`) di kiri, lalu nama kampus (`13px`, `font-semibold`, `line-clamp-2`) dan subjudul "SISTEM INFORMASI AKADEMIK" (`9px`, `tracking-[0.1em]`). Susunan tegak-terpusat yang lama memakan ±150px tinggi sebelum menu pertama — mahal untuk hiasan. Bila logo **belum** diunggah, plate memakai `bg-white/10 ring-white/20` + inisial kampus (dua huruf pertama dari dua kata pertama), **bukan** plate `green-700` seperti dulu: di atas sidebar hijau, plate hijau lenyap ditelan panel di belakangnya. Jangan hapus fallback itu — instalasi baru selalu mulai tanpa logo.
+- Label grup menu: **"MENU UTAMA"** dan **"SISTEM"** (`10px`, `font-medium`, `tracking-[0.14em]`, uppercase, `sidebar-foreground/45`). Grup "SISTEM" hanya ada untuk admin (Pengguna, Pengaturan) — memisahkan "yang saya kerjakan" dari "yang saya administrasi". Akun pengguna (nama, role, logout) dibuka lewat avatar di **top header**, bukan dari footer sidebar (lihat §3.6) — sidebar tidak merender blok akun.
+- Item menu boleh membawa **lencana angka** (`NavItem.badge`, mis. jumlah tagihan belum lunas pada "Keuangan"). Angkanya datang dari prop global `chrome.tugas` (`HandleInertiaRequests`, di-cache 1 menit, hanya untuk peran staf) — jangan query ulang per halaman.
+- Footer sidebar hanya menampilkan kartu **TAHUN AKADEMIK** (dari `chrome.periode`), memakai **putih tembus** (`bg-white/8` + `ring-white/12` + teks putih) — kartu terang seperti `bg-green-50` melubangi panel gelap. Footer **tidak dirender sama sekali** bila `periode` kosong, dan disembunyikan di mode ikon: `SidebarFooter` kosong menyisakan garis `border-t` yang menggantung tanpa isi.
 - Grup menu (Data Master, Akademik, Keuangan, dst — lihat `app-sidebar.tsx`) tetap dipertahankan sebagai collapsible group per peran, bukan flat list — struktur ini mencerminkan model mental pengguna (BAAK berpikir per domain, bukan per halaman).
-- Item aktif: latar `sidebar-accent` + indikator kiri (border atau dot), bukan hanya perubahan warna teks — perlu afordansi kuat karena sidebar berwarna gelap solid.
+- Submenu (anak dari collapsible group) diberi **rail penanda** — garis vertikal `border-l border-white/15` + `pl-2` — bukan sekadar `ml-4` polos. Rail disembunyikan saat sidebar collapse ke mode ikon.
+- Header dan footer dipisahkan dari daftar menu dengan `border-sidebar-border` tipis, bukan shadow.
+- Item aktif: pil putih (`bg-sidebar-accent`) + teks gelap (`sidebar-accent-foreground`) + **ikon hijau** (`text-sidebar` — ikon selalu memakai warna panel itu sendiri, jadi ia ikut berubah bila warna sidebar diganti lagi). **Tanpa rail kiri 3px** — rail itu perlu waktu latar aktif masih wash hijau muda; di atas panel gelap pil putih sudah elemen paling keras di sidebar, menambah rail terbaca sebagai kebisingan.
+- **Hover** item non-aktif memakai wash `bg-white/10`, bukan pil putih penuh bawaan primitif shadcn (`hover:bg-sidebar-accent`). Menyisakan pil solid khusus untuk item aktif adalah yang membuat panel tetap tenang saat kursor melintasinya — override ini ada di konstanta `ITEM` pada `nav-main.tsx`.
+- Di mode ikon, `SidebarGroup` memakai `px-2` (bukan `px-3`) supaya tombol ikon 32px jatuh **terpusat** di rail 48px, tidak menempel ke tepi kiri.
 - Ikon sidebar (`lucide-react`) selalu dari satu set ikon konsisten (sudah dimulai di `app-sidebar.tsx`) — jangan campur dengan set ikon lain (Heroicons, Font Awesome) di halaman berbeda.
 
-### 3.6 Empty State
+### 3.6 Header Aplikasi
+Bar putih `sticky` di atas area konten (`app-sidebar-header.tsx`): tombol collapse sidebar, kolom pencarian pil kecil, lonceng notifikasi, dan avatar akun — dalam urutan itu dari kiri ke kanan di sisi kanan header, meniru referensi Midone.
+- Kolom pencarian (pil, `rounded-full`, `bg-muted`, lebar tetap ~160-176px) menembak `GET /pencarian` (`PencarianController`) — mahasiswa/dosen/mata kuliah, maksimal 5 per kategori, otomatis dibatasi ke prodi sendiri untuk `admin_prodi`. Hanya peran `admin` dan `admin_prodi` yang melihat kolom ini, karena hanya mereka yang punya halaman detail tujuannya.
+- Lonceng membuka daftar pekerjaan tertunda (`chrome.tugas`) dengan titik merah bila ada, bukan ikon hiasan tanpa isi.
+- **Avatar akun** (`header-user-menu.tsx`) membuka dropdown nama/role/pengaturan/logout — dipindah dari footer sidebar ke sini pada redesign 2026-09-05, isinya tetap memakai `UserMenuContent` yang sama (tidak ditulis ulang).
+- Breadcrumb tampil di bawah header **hanya** bila lebih dari satu level — halaman puncak seperti dashboard tidak perlu "Dashboard >".
+
+### 3.7 Empty State
 Setiap tabel/list kosong wajib punya empty state kontekstual, bukan tabel kosong tanpa penjelasan:
 - Ikon relevan konteks (mis. `GraduationCap` untuk "Belum ada mahasiswa"), bukan ilustrasi generik.
 - Satu kalimat penjelas + CTA jika relevan ("Belum ada mahasiswa terdaftar" + tombol "Tambah Mahasiswa" untuk admin, tanpa CTA untuk peran read-only seperti Pimpinan).

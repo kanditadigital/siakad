@@ -10,6 +10,35 @@
             color: #1a1a1a;
             margin: 0;
             padding: 20px;
+            padding-bottom: 50px;
+        }
+        .bottom-fixed {
+            position: fixed;
+            bottom: 35px;
+            left: 20px;
+            right: 20px;
+        }
+        .bottom-table {
+            width: 100%;
+            border: none;
+        }
+        .bottom-table td {
+            border: none;
+            padding: 0;
+            vertical-align: bottom;
+        }
+        .qr-code {
+            text-align: left;
+        }
+        .qr-code img {
+            width: 70px;
+            height: 70px;
+        }
+        .qr-code p {
+            margin: 2px 0 0;
+            font-size: 7px;
+            color: #666;
+            letter-spacing: 0.5px;
         }
         .header {
             text-align: center;
@@ -31,19 +60,24 @@
             margin: 3px 0;
             color: #666;
         }
-        .info-box {
-            background: #f0fdf4;
-            border: 1px solid #dcfce7;
-            border-radius: 5px;
-            padding: 15px;
+        .detail-table {
+            width: 100%;
+            border: none;
             margin-bottom: 20px;
         }
-        .info-row {
-            display: flex;
-            margin-bottom: 5px;
+        .detail-table td {
+            border: none;
+            padding: 3px 8px;
+            font-size: 12px;
         }
-        .info-label {
-            width: 120px;
+        .detail-label {
+            width: 110px;
+            color: #555;
+        }
+        .detail-colon {
+            width: 12px;
+        }
+        .detail-value {
             font-weight: bold;
         }
         table {
@@ -64,9 +98,15 @@
         tr:nth-child(even) {
             background: #f9f9f9;
         }
+        tfoot td {
+            font-weight: bold;
+            background: #f0fdf4;
+        }
+        .text-right {
+            text-align: right;
+        }
         .footer {
-            margin-top: 30px;
-            text-align: center;
+            text-align: right;
             font-size: 10px;
             color: #666;
         }
@@ -89,27 +129,73 @@
             background: #fecaca;
             color: #991b1b;
         }
+        .signature-table {
+            width: 100%;
+            border: none;
+            margin-top: 80px;
+        }
+        .signature-table td {
+            width: 50%;
+            border: none;
+            padding: 0;
+            text-align: center;
+            vertical-align: top;
+        }
+        .signature-table p {
+            margin: 0;
+        }
+        .signature-location {
+            margin-bottom: 8px;
+        }
+        .signature-name {
+            margin-top: 70px;
+            padding-top: 5px;
+            display: inline-block;
+            min-width: 200px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>KARTU RENCANA STUDI (KRS)</h1>
         <h2>Sitiddarurrahmah University</h2>
-        <p>NIM: {{ $mahasiswa->nim }}</p>
-        <p>Nama: {{ $mahasiswa->nama }}</p>
-        <p>Program Studi: {{ $mahasiswa->program_studi->nama_prodi ?? '-' }}</p>
     </div>
 
-    <div class="info-box">
-        <div class="info-row">
-            <span class="info-label">Total Mata Kuliah:</span>
-            <span>{{ count($krss) }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">Total SKS Disetujui:</span>
-            <span>{{ $totalSks }}</span>
-        </div>
-    </div>
+    <table class="detail-table">
+        <tr>
+            <td class="detail-label">Nama Mahasiswa</td>
+            <td class="detail-colon">:</td>
+            <td class="detail-value">{{ $mahasiswa->nama }}</td>
+            <td class="detail-label">Tahun Akademik</td>
+            <td class="detail-colon">:</td>
+            <td class="detail-value">{{ $academicYearSemester->nama_tahun_akademik ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">NIM</td>
+            <td class="detail-colon">:</td>
+            <td class="detail-value">{{ $mahasiswa->nim }}</td>
+            <td class="detail-label">Semester</td>
+            <td class="detail-colon">:</td>
+            <td class="detail-value">{{ $academicYearSemester->semester ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Program Studi</td>
+            <td class="detail-colon">:</td>
+            <td class="detail-value">{{ $mahasiswa->programStudi->nama_prodi ?? '-' }}</td>
+            <td class="detail-label">Dosen PA</td>
+            <td class="detail-colon">:</td>
+            <td class="detail-value">{{ $mahasiswa->paDosen->nama ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Jenjang</td>
+            <td class="detail-colon">:</td>
+            <td class="detail-value">{{ $mahasiswa->programStudi->jenis_prodi ?? '-' }}</td>
+            <td class="detail-label"></td>
+            <td class="detail-colon"></td>
+            <td class="detail-value"></td>
+        </tr>
+    </table>
 
     <table>
         <thead>
@@ -118,44 +204,73 @@
                 <th>Kode MK</th>
                 <th>Mata Kuliah</th>
                 <th>SKS</th>
-                <th>Kelas</th>
-                <th>Dosen</th>
-                <th>Ruang</th>
-                <th>Semester</th>
-                <th>Status</th>
+                <th>Ruangan</th>
+                <th>Waktu</th>
             </tr>
         </thead>
         <tbody>
             @forelse($krss as $index => $krs)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $krs->kelas->mata_kuliah->kode_mk ?? '-' }}</td>
-                    <td>{{ $krs->kelas->mata_kuliah->nama_mk ?? '-' }}</td>
-                    <td>{{ $krs->kelas->mata_kuliah->sks ?? '-' }}</td>
-                    <td>{{ $krs->kelas->nama_kelas ?? '-' }}</td>
-                    <td>{{ $krs->kelas->dosen->nama ?? '-' }}</td>
+                    <td>{{ $krs->kelas->mataKuliah->kode_mk ?? '-' }}</td>
+                    <td>{{ $krs->kelas->mataKuliah->nama_mk ?? '-' }}</td>
+                    <td>{{ $krs->kelas->mataKuliah->sks ?? '-' }}</td>
                     <td>{{ $krs->kelas->ruang->kode_ruang ?? '-' }}</td>
-                    <td>{{ $krs->academic_year_semester->semester ?? '-' }}</td>
                     <td>
-                        @if($krs->status === 'approved')
-                            <span class="status-badge status-approved">Disetujui</span>
-                        @elseif($krs->status === 'pending')
-                            <span class="status-badge status-pending">Pending</span>
+                        @if($krs->kelas->hari)
+                            {{ $krs->kelas->hari }}, {{ substr($krs->kelas->jam_mulai ?? '', 0, 5) }} - {{ substr($krs->kelas->jam_selesai ?? '', 0, 5) }}
                         @else
-                            <span class="status-badge status-rejected">Ditolak</span>
+                            -
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align: center;">Belum ada data KRS</td>
+                    <td colspan="6" style="text-align: center;">Belum ada data KRS</td>
                 </tr>
             @endforelse
         </tbody>
+        @if(count($krss) > 0)
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right">Total SKS</td>
+                    <td>{{ $krss->sum(fn($krs) => $krs->kelas->mataKuliah->sks ?? 0) }}</td>
+                    <td colspan="2"></td>
+                </tr>
+            </tfoot>
+        @endif
     </table>
 
-    <div class="footer">
-        <p>Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
+    <table class="signature-table">
+        <tr>
+            <td>
+                <p  style="margin-bottom:70px; margin-top:17px;">Mahasiswa</p>
+                <p class="signature-name">{{ $mahasiswa->nama }}</p>
+                <p>NIM: {{ $mahasiswa->nim }}</p>
+            </td>
+            <td>
+                <p class="signature-location">Subulussalam, {{ now()->translatedFormat('d F Y') }}</p>
+                <p style="margin-bottom:70px;">Dosen Pembimbing Akademik</p>
+                <p class="signature-name">{{ $mahasiswa->paDosen->nama ?? '-' }}</p>
+                <p>NIDN: {{ $mahasiswa->paDosen->nidn ?? '-' }}</p>
+            </td>
+        </tr>
+    </table>
+
+    <div class="bottom-fixed">
+        <table class="bottom-table">
+            <tr>
+                <td class="qr-code">
+                    @if(isset($qrCode))
+                        <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code Keaslian Dokumen">
+                        <p>{{ $printCode }}</p>
+                    @endif
+                </td>
+                <td class="footer">
+                    <p>Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>

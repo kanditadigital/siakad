@@ -24,6 +24,7 @@ type UserType = {
     email: string;
     role: string;
     photo: string | null;
+    photo_url: string | null;
     program_studi_id: number | null;
 };
 
@@ -48,7 +49,7 @@ export default function UserEdit({
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(
-        user.photo ? `/storage/${user.photo}` : null,
+        user.photo_url ?? null,
     );
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [processing, setProcessing] = useState(false);

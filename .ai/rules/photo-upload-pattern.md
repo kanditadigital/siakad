@@ -24,7 +24,19 @@ public function edit(Model $model): Response
 ```
 
 ### Store/Update
+
+Uploads go to the private uploads disk through `App\Concerns\InteractsWithUploads` —
+never `disk('public')`. See `.ai/rules/controllers.md`.
+
 ```php
+use App\Concerns\InteractsWithUploads;
+
+class DosenController extends Controller
+{
+    use InteractsWithUploads;
+    // ...
+}
+
 $validated = $request->validate([
     'photo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:2048'],
 ]);
@@ -32,17 +44,22 @@ $validated = $request->validate([
 $photoPath = null;
 if ($request->hasFile('photo')) {
     // Delete old photo if exists
-    if ($model->user?->photo) {
-        Storage::disk('public')->delete($model->user->photo);
-    }
-    $photoPath = $request->file('photo')->store('photos', 'public');
+    static::deleteUpload($model->user?->photo);
+    $photoPath = static::storeUpload($request->file('photo'), 'photos');
 }
 ```
 
 ### React Form
+
+The bucket is private, so the page receives `photo_url` (an expiring pre-signed
+URL appended by the `User` model), never the raw `photo` path. Do not build
+`/storage/${path}`.
+
 ```tsx
+// type User = { photo: string | null; photo_url: string | null };
+const existingPhoto = model.user?.photo_url;
 const [photoPreview, setPhotoPreview] = useState<string | null>(
-    existingPhoto ? `/storage/${existingPhoto}` : null
+    existingPhoto ?? null
 );
 const fileInputRef = useRef<HTMLInputElement>(null);
 

@@ -33,6 +33,7 @@ class MahasiswaFactory extends Factory
             'alamat' => fake()->address(),
             'kode_domisili' => fake()->numerify('#####'),
             'status' => 'aktif',
+            'semester_saat_ini' => 1,
         ];
     }
 }

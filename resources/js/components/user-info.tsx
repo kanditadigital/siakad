@@ -21,13 +21,13 @@ export function UserInfo({
     showRole?: boolean;
 }) {
     const getInitials = useInitials();
-    const showAvatar = Boolean(user.avatar && user.avatar !== '');
+    const photoUrl = user.photo_url;
 
     return (
         <>
             <Avatar className="h-8 w-8 overflow-hidden rounded-lg">
-                {showAvatar ? (
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                {photoUrl ? (
+                    <AvatarImage src={photoUrl} alt={user.name} />
                 ) : null}
                 <AvatarFallback className="rounded-lg text-black dark:text-white">
                     {getInitials(user.name)}

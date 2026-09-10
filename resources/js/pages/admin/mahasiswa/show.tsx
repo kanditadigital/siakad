@@ -26,6 +26,7 @@ type ProgramStudi = {
 type User = {
     id: number;
     photo: string | null;
+    photo_url: string | null;
 };
 
 type Mahasiswa = {
@@ -42,6 +43,8 @@ type Mahasiswa = {
     alamat: string;
     kode_domisili: string;
     status: string;
+    semester_saat_ini: number;
+    batas_semester_normal: number;
     created_at: string;
     updated_at: string;
     program_studi: ProgramStudi;
@@ -105,14 +108,14 @@ export default function MahasiswaShow({ mahasiswa }: Props) {
                 </Link>
 
                 {/* Header Card */}
-                <Card className="overflow-hidden border border-gray-200 shadow-sm">
+                <Card className="overflow-hidden py-0 border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
                         <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
                                 <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm">
-                                    {mahasiswa.user?.photo ? (
+                                    {mahasiswa.user?.photo_url ? (
                                         <img
-                                            src={`/storage/${mahasiswa.user.photo}`}
+                                            src={mahasiswa.user.photo_url}
                                             alt={mahasiswa.nama}
                                             className="h-full w-full object-cover"
                                         />
@@ -140,7 +143,7 @@ export default function MahasiswaShow({ mahasiswa }: Props) {
                                         {mahasiswa.program_studi?.nama_prodi}
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-wrap items-center gap-2">
                                     <Badge
                                         variant={
                                             STATUS_VARIANTS[mahasiswa.status] ||
@@ -150,6 +153,19 @@ export default function MahasiswaShow({ mahasiswa }: Props) {
                                         {STATUS_LABELS[mahasiswa.status] ||
                                             mahasiswa.status}
                                     </Badge>
+                                    <Badge variant="outline">
+                                        Semester{' '}
+                                        {mahasiswa.semester_saat_ini}
+                                    </Badge>
+                                    {mahasiswa.semester_saat_ini >
+                                        mahasiswa.batas_semester_normal && (
+                                        <Badge
+                                            variant="outline"
+                                            className="border-amber-300 bg-amber-50 text-amber-700"
+                                        >
+                                            Melebihi Masa Studi Normal
+                                        </Badge>
+                                    )}
                                     <span className="text-sm text-gray-500">
                                         • {mahasiswa.jenis_kelamin}
                                     </span>

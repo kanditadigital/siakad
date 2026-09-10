@@ -8,7 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 test('dosen can upload rps for their own kelas', function () {
-    Storage::fake('public');
+    Storage::fake(config('filesystems.uploads'));
 
     $user = User::factory()->create(['role' => 'dosen']);
     $dosen = Dosen::factory()->create(['user_id' => $user->id]);
@@ -23,7 +23,7 @@ test('dosen can upload rps for their own kelas', function () {
     $rps = Rps::where('kelas_id', $kelas->id)->first();
     expect($rps)->not->toBeNull()
         ->and($rps->status)->toBe('sudah_upload');
-    Storage::disk('public')->assertExists($rps->file_path);
+    Storage::disk(config('filesystems.uploads'))->assertExists($rps->file_path);
 });
 
 test('dosen cannot upload rps for a kelas they do not own', function () {

@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { Receipt, Clock, CheckCircle, CreditCard } from 'lucide-react';
+import { CheckCircle, Clock, CreditCard, Receipt } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -202,111 +202,106 @@ export default function TagihanUktMahasiswa({ tagihans, mahasiswa }: Props) {
                 </div>
 
                 {/* Table (desktop/tablet) */}
-                <Card className="hidden border border-gray-200 shadow-sm sm:block">
-                    <CardHeader>
-                        <CardTitle className="text-gray-900">
-                            Daftar Tagihan
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
+                <Card className="hidden overflow-hidden py-0 sm:block">
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Periode</TableHead>
+                                    <TableHead>Skema UKT</TableHead>
+                                    <TableHead className="text-right">
+                                        Jumlah Tagihan
+                                    </TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">
+                                        Aksi
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {tagihans.length === 0 ? (
                                     <TableRow>
-                                        <TableHead className="text-gray-600">
-                                            Tahun Akademik
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Semester
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Skema UKT
-                                        </TableHead>
-                                        <TableHead className="text-right text-gray-600">
-                                            Jumlah Tagihan
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Status
-                                        </TableHead>
-                                        <TableHead className="text-gray-600">
-                                            Aksi
-                                        </TableHead>
+                                        <TableCell
+                                            colSpan={5}
+                                            className="py-12 text-center"
+                                        >
+                                            <div className="flex flex-col items-center gap-2">
+                                                <Receipt className="h-8 w-8 text-muted-foreground/50" />
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    Belum ada data tagihan
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Tagihan UKT akan muncul di
+                                                    sini setiap semester
+                                                </p>
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {tagihans.length === 0 ? (
-                                        <TableRow>
-                                            <TableCell
-                                                colSpan={6}
-                                                className="py-8 text-center text-gray-500"
-                                            >
-                                                Belum ada data tagihan
-                                            </TableCell>
-                                        </TableRow>
-                                    ) : (
-                                        tagihans.map((tagihan) => (
-                                            <TableRow key={tagihan.id}>
-                                                <TableCell className="text-gray-900">
+                                ) : (
+                                    tagihans.map((tagihan) => (
+                                        <TableRow key={tagihan.id}>
+                                            <TableCell>
+                                                <div>
                                                     {
                                                         tagihan
                                                             .academic_year_semester
                                                             ?.nama_tahun_akademik
                                                     }
-                                                </TableCell>
-                                                <TableCell className="text-gray-900">
+                                                </div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    Semester{' '}
                                                     {
                                                         tagihan
                                                             .academic_year_semester
                                                             ?.semester
                                                     }
-                                                </TableCell>
-                                                <TableCell className="text-gray-900">
-                                                    {tagihan.ukt_scheme?.nama}
-                                                </TableCell>
-                                                <TableCell className="text-right font-medium text-gray-900 tabular-nums">
-                                                    {formatCurrency(
-                                                        tagihan.jumlah_tagihan,
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Badge
-                                                        variant={
-                                                            STATUS_VARIANTS[
-                                                                tagihan.status
-                                                            ] || 'outline'
-                                                        }
-                                                    >
-                                                        {STATUS_LABELS[
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                {tagihan.ukt_scheme?.nama}
+                                            </TableCell>
+                                            <TableCell className="text-right font-medium tabular-nums">
+                                                {formatCurrency(
+                                                    tagihan.jumlah_tagihan,
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    variant={
+                                                        STATUS_VARIANTS[
                                                             tagihan.status
-                                                        ] || tagihan.status}
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell>
-                                                    {(tagihan.status ===
-                                                        'belum' ||
-                                                        tagihan.status ===
-                                                            'terlambat') && (
-                                                        <Button
-                                                            asChild
-                                                            size="sm"
-                                                            className="bg-green-700 hover:bg-green-800"
+                                                        ] || 'outline'
+                                                    }
+                                                >
+                                                    {STATUS_LABELS[
+                                                        tagihan.status
+                                                    ] || tagihan.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                {(tagihan.status === 'belum' ||
+                                                    tagihan.status ===
+                                                        'terlambat') && (
+                                                    <Button
+                                                        asChild
+                                                        size="sm"
+                                                        className="bg-green-700 hover:bg-green-800"
+                                                    >
+                                                        <Link
+                                                            href={`/mahasiswa/tagihan-ukt/${tagihan.uuid}/bayar`}
                                                         >
-                                                            <Link
-                                                                href={`/mahasiswa/tagihan-ukt/${tagihan.uuid}/bayar`}
-                                                            >
-                                                                <CreditCard className="mr-1 h-3.5 w-3.5" />
-                                                                Bayar Sekarang
-                                                            </Link>
-                                                        </Button>
-                                                    )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </CardContent>
+                                                            <CreditCard className="mr-1 h-3.5 w-3.5" />
+                                                            Bayar Sekarang
+                                                        </Link>
+                                                    </Button>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </Card>
             </div>
         </>

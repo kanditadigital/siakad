@@ -1,15 +1,19 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import {
+    ArrowLeft,
+    BookOpen,
+    CalendarClock,
+    Clock,
+    DoorOpen,
+    Edit,
+    GraduationCap,
+    Hash,
+    Trash2,
+    Users,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import AppLayout from '@/layouts/app-layout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type MataKuliah = {
     id: number;
@@ -42,158 +46,276 @@ type Kelas = {
     semester: string;
     tahun_akademik: string;
     status: string;
+    hari: string | null;
+    jam_mulai: string | null;
+    jam_selesai: string | null;
     mata_kuliah: MataKuliah;
     dosen: Dosen | null;
     ruang: Ruang | null;
 };
 
-const STATUS_VARIANTS: Record<
-    string,
-    'default' | 'secondary' | 'destructive' | 'outline'
-> = {
-    Aktif: 'default',
-    'Tidak Aktif': 'secondary',
-    Selesai: 'outline',
-};
-
 export default function PenjadwalanShow({ kelas }: { kelas: Kelas }) {
     const handleDelete = () => {
-        router.delete(`/admin/penjadwalan/${kelas.uuid}`);
+        if (confirm('Apakah Anda yakin ingin menghapus kelas ini?')) {
+            router.delete(`/admin/penjadwalan/${kelas.uuid}`);
+        }
     };
 
     return (
         <>
-            <Head title="Detail Kelas" />
+            <Head title={`Kelas - ${kelas.nama_kelas}`} />
 
             <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                    <Link href="/admin/penjadwalan">
-                        <Button variant="ghost" size="icon">
-                            <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                    </Link>
-                    <div className="flex-1">
-                        <h1 className="text-2xl font-semibold tracking-tight text-green-800">
-                            Detail Kelas
-                        </h1>
-                        <p className="text-muted-foreground">
-                            Informasi lengkap kelas {kelas.nama_kelas}
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Link href={`/admin/penjadwalan/${kelas.uuid}/edit`}>
-                            <Button variant="outline">
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit
-                            </Button>
-                        </Link>
-                        <Button variant="destructive" onClick={handleDelete}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Hapus
-                        </Button>
-                    </div>
-                </div>
+                <Link
+                    href="/admin/penjadwalan"
+                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Kembali ke Daftar Penjadwalan
+                </Link>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <Card>
+                {/* Header Card */}
+                <Card className="overflow-hidden py-0 border border-gray-200 shadow-sm">
+                    <div className="flex flex-col md:flex-row">
+                        <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[200px] md:w-64">
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-sm">
+                                    <CalendarClock className="h-12 w-12 text-siak-pine" />
+                                </div>
+                                <div className="text-center text-white">
+                                    <p className="text-sm opacity-80">
+                                        Kode Kelas
+                                    </p>
+                                    <p className="font-mono text-lg font-semibold">
+                                        {kelas.kode_kelas}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex-1 p-6 md:p-8">
+                            <div className="space-y-4">
+                                <div>
+                                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                                        {kelas.nama_kelas}
+                                    </h1>
+                                    <p className="text-gray-600">
+                                        {kelas.mata_kuliah?.nama_mk}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Badge
+                                        variant="outline"
+                                        className="border-green-200 text-green-700"
+                                    >
+                                        {kelas.status}
+                                    </Badge>
+                                    <span className="text-sm text-gray-500">
+                                        • Semester {kelas.semester} •{' '}
+                                        {kelas.tahun_akademik}
+                                    </span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Link
+                                        href={`/admin/penjadwalan/${kelas.uuid}/edit`}
+                                    >
+                                        <Button className="bg-green-700 hover:bg-green-800">
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            Edit
+                                        </Button>
+                                    </Link>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleDelete}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Hapus
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                    {/* Informasi Kelas */}
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle>Informasi Kelas</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-gray-900">
+                                <CalendarClock className="h-5 w-5 text-green-700" />
+                                Informasi Kelas
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Kode Kelas
-                                </p>
-                                <p className="font-mono font-medium">
-                                    {kelas.kode_kelas}
-                                </p>
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Hash className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Kode Kelas
+                                    </p>
+                                    <p className="font-mono font-medium text-gray-900">
+                                        {kelas.kode_kelas}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Nama Kelas
-                                </p>
-                                <p className="font-medium">
-                                    {kelas.nama_kelas}
-                                </p>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <CalendarClock className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Nama Kelas
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {kelas.nama_kelas}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Kapasitas
-                                </p>
-                                <p>{kelas.kapasitas} mahasiswa</p>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Users className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Kapasitas
+                                    </p>
+                                    <p className="text-gray-900">
+                                        {kelas.kapasitas} mahasiswa
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Semester
-                                </p>
-                                <p>Semester {kelas.semester}</p>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Clock className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Semester
+                                    </p>
+                                    <p className="text-gray-900">
+                                        Semester {kelas.semester}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Tahun Akademik
-                                </p>
-                                <p>{kelas.tahun_akademik}</p>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <GraduationCap className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Tahun Akademik
+                                    </p>
+                                    <p className="text-gray-900">
+                                        {kelas.tahun_akademik}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Status
-                                </p>
-                                <Badge
-                                    variant={
-                                        STATUS_VARIANTS[kelas.status] ||
-                                        'outline'
-                                    }
-                                >
-                                    {kelas.status}
-                                </Badge>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Clock className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Waktu
+                                    </p>
+                                    <p className="text-gray-900">
+                                        {kelas.hari
+                                            ? `${kelas.hari}, ${kelas.jam_mulai?.slice(0, 5) ?? '-'} - ${kelas.jam_selesai?.slice(0, 5) ?? '-'}`
+                                            : '-'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <CalendarClock className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Status
+                                    </p>
+                                    <Badge
+                                        variant="outline"
+                                        className="border-green-200 text-green-700"
+                                    >
+                                        {kelas.status}
+                                    </Badge>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card>
+                    {/* Mata Kuliah, Dosen & Ruang */}
+                    <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle>Mata Kuliah & Dosen</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-gray-900">
+                                <BookOpen className="h-5 w-5 text-green-700" />
+                                Mata Kuliah, Dosen & Ruang
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Mata Kuliah
-                                </p>
-                                <p className="font-medium">
-                                    {kelas.mata_kuliah?.nama_mk}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                    {kelas.mata_kuliah?.kode_mk} •{' '}
-                                    {kelas.mata_kuliah?.sks} SKS
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Dosen Pengampu
-                                </p>
-                                <p className="font-medium">
-                                    {kelas.dosen?.nama || '-'}
-                                </p>
-                                {kelas.dosen && (
-                                    <p className="text-sm text-muted-foreground">
-                                        NIDN: {kelas.dosen.nidn}
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <BookOpen className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Mata Kuliah
                                     </p>
-                                )}
-                            </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Ruang
-                                </p>
-                                <p className="font-medium">
-                                    {kelas.ruang?.kode_ruang || '-'}
-                                </p>
-                                {kelas.ruang && (
-                                    <p className="text-sm text-muted-foreground">
-                                        {kelas.ruang.nama_ruang} • Lantai{' '}
-                                        {kelas.ruang.lantai} •{' '}
-                                        {kelas.ruang.gedung}
+                                    <p className="font-medium text-gray-900">
+                                        {kelas.mata_kuliah?.nama_mk}
                                     </p>
-                                )}
+                                    <p className="text-xs text-gray-500">
+                                        {kelas.mata_kuliah?.kode_mk} •{' '}
+                                        {kelas.mata_kuliah?.sks} SKS
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <GraduationCap className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Dosen Pengampu
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {kelas.dosen?.nama || '-'}
+                                    </p>
+                                    {kelas.dosen && (
+                                        <p className="text-xs text-gray-500">
+                                            NIDN: {kelas.dosen.nidn}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <DoorOpen className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Ruang
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {kelas.ruang?.kode_ruang || '-'}
+                                    </p>
+                                    {kelas.ruang && (
+                                        <p className="text-xs text-gray-500">
+                                            {kelas.ruang.nama_ruang} • Lantai{' '}
+                                            {kelas.ruang.lantai} •{' '}
+                                            {kelas.ruang.gedung}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -203,14 +325,10 @@ export default function PenjadwalanShow({ kelas }: { kelas: Kelas }) {
     );
 }
 
-PenjadwalanShow.layout = (page: React.ReactNode) => (
-    <AppLayout
-        breadcrumbs={[
-            { title: 'Dashboard', href: '/dashboard' },
-            { title: 'Penjadwalan', href: '/admin/penjadwalan' },
-            { title: 'Detail', href: '#' },
-        ]}
-    >
-        {page}
-    </AppLayout>
-);
+PenjadwalanShow.layout = (page: React.ReactNode) => ({
+    breadcrumbs: [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Penjadwalan', href: '/admin/penjadwalan' },
+        { title: 'Detail', href: '#' },
+    ],
+});

@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { User, Hash, GraduationCap, MapPin } from 'lucide-react';
+import { User, Hash, GraduationCap, MapPin, UserCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
@@ -7,6 +7,12 @@ type ProgramStudi = {
     id: number;
     kode_prodi: string;
     nama_prodi: string;
+};
+
+type DosenPa = {
+    id: number;
+    nama: string;
+    nidn: string;
 };
 
 type Mahasiswa = {
@@ -21,6 +27,7 @@ type Mahasiswa = {
     kode_domisili: string;
     status: string;
     program_studi: ProgramStudi;
+    pa_dosen: DosenPa | null;
 };
 
 type Props = {
@@ -73,7 +80,7 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                 </div>
 
                 {/* Header Card */}
-                <Card className="overflow-hidden border border-gray-200 shadow-sm">
+                <Card className="overflow-hidden py-0 border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
                         {/* Photo Section */}
                         <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">
@@ -174,6 +181,23 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                                             </p>
                                             <p className="font-medium text-gray-900">
                                                 {mahasiswa.alamat}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3 sm:col-span-2">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                            <UserCheck className="h-5 w-5 text-green-700" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">
+                                                Dosen Pembimbing Akademik
+                                                (PA)
+                                            </p>
+                                            <p className="font-medium text-gray-900">
+                                                {mahasiswa.pa_dosen
+                                                    ? `${mahasiswa.pa_dosen.nama} (${mahasiswa.pa_dosen.nidn})`
+                                                    : 'Belum ditentukan'}
                                             </p>
                                         </div>
                                     </div>

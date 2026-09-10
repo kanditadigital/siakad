@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Tendik;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class TendikController extends Controller
 {
+    use InteractsWithUploads;
+
     /**
      * Display a listing of the resource.
      */
@@ -68,7 +71,7 @@ class TendikController extends Controller
         $validated = $request->validate([
             'nip' => ['required', 'string', 'max:255', 'unique:tendik,nip'],
             'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:tendik,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:tendik,email', 'unique:users,email'],
             'no_telepon' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
             'jabatan' => ['required', 'string', 'max:255'],
@@ -81,7 +84,7 @@ class TendikController extends Controller
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('photos', 'public');
+            $photoPath = static::storeUpload($request->file('photo'), 'photos');
         }
 
         DB::transaction(function () use ($validated, $photoPath): void {
@@ -132,7 +135,11 @@ class TendikController extends Controller
         $validated = $request->validate([
             'nip' => ['required', 'string', 'max:255', 'unique:tendik,nip,'.$tendik->id],
             'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:tendik,email,'.$tendik->id],
+            'email' => [
+                'required', 'email', 'max:255',
+                Rule::unique('tendik', 'email')->ignore($tendik->id),
+                Rule::unique('users', 'email')->ignore($tendik->user_id),
+            ],
             'no_telepon' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
             'jabatan' => ['required', 'string', 'max:255'],
@@ -146,9 +153,9 @@ class TendikController extends Controller
         $photoPath = null;
         if ($request->hasFile('photo')) {
             if ($tendik->user?->photo) {
-                Storage::disk('public')->delete($tendik->user->photo);
+                static::deleteUpload($tendik->user->photo);
             }
-            $photoPath = $request->file('photo')->store('photos', 'public');
+            $photoPath = static::storeUpload($request->file('photo'), 'photos');
         }
 
         DB::transaction(function () use ($tendik, $validated, $photoPath): void {
@@ -177,7 +184,7 @@ class TendikController extends Controller
     {
         DB::transaction(function () use ($tendik): void {
             if ($tendik->user?->photo) {
-                Storage::disk('public')->delete($tendik->user->photo);
+                static::deleteUpload($tendik->user->photo);
             }
             if ($tendik->user) {
                 $tendik->user->delete();

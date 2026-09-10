@@ -32,22 +32,28 @@ class NilaiController extends Controller
             });
         }
 
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
         $nilais = $query->latest()
             ->paginate(10)
             ->withQueryString();
 
         return Inertia::render('admin-prodi/nilai/index', [
             'nilais' => $nilais,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
     /**
      * Display the specified nilai.
      */
-    public function show(Nilai $nilai): Response
+    public function show(Request $request, Nilai $nilai): Response
     {
-        $nilai->load(['krs.mahasiswa.programStudi', 'krs.kelas.mataKuliah']);
+        $nilai->load(['krs.mahasiswa.programStudi', 'krs.kelas.mataKuliah', 'krs.kelas.dosen', 'krs.academicYearSemester']);
+
+        abort_unless($nilai->krs?->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
 
         return Inertia::render('admin-prodi/nilai/show', [
             'nilai' => $nilai,

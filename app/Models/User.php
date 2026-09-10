@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Concerns\HasTeams;
+use App\Concerns\InteractsWithUploads;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,13 +36,16 @@ use Laravel\Fortify\PasskeyAuthenticatable;
  * @property-read Mahasiswa|null $mahasiswa
  * @property-read Dosen|null $dosen
  * @property-read ProgramStudi|null $programStudi
+ * @property string|null $photo
+ * @property-read string|null $photo_url
  */
+#[Appends(['photo_url'])]
 #[Fillable(['name', 'email', 'password', 'role', 'nim', 'nidn', 'program_studi_id', 'photo'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasTeams, Notifiable, PasskeyAuthenticatable;
+    use HasFactory, HasTeams, InteractsWithUploads, Notifiable, PasskeyAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -54,6 +59,14 @@ class User extends Authenticatable implements PasskeyUser
             'password' => 'hashed',
             'role' => UserRole::class,
         ];
+    }
+
+    /**
+     * Expiring URL for the profile photo, since the uploads bucket is private.
+     */
+    public function getPhotoUrlAttribute(): ?string
+    {
+        return static::uploadUrl($this->photo);
     }
 
     /**

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\AdminProdi;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicYearSemester;
 use App\Models\Krs;
+use App\Models\Mahasiswa;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -11,46 +14,97 @@ use Inertia\Response;
 class KrsController extends Controller
 {
     /**
-     * Display a listing of KRS for this program studi.
+     * Display KRS for this program studi, grouped by mahasiswa.
      */
     public function index(Request $request): Response
     {
         $programStudiId = $request->user()->program_studi_id;
 
-        $query = Krs::with(['mahasiswa.programStudi', 'kelas.mataKuliah'])
-            ->whereHas('mahasiswa', function ($q) use ($programStudiId): void {
-                $q->where('program_studi_id', $programStudiId);
-            });
+        $entryFilter = function ($query) use ($request): void {
+            if ($request->filled('status')) {
+                $query->where('status', $request->input('status'));
+            }
+            if ($request->filled('academic_year_semester_id')) {
+                $query->where('academic_year_semester_id', $request->input('academic_year_semester_id'));
+            }
+        };
 
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search): void {
-                $q->whereHas('mahasiswa', function ($mq) use ($search): void {
-                    $mq->where('nim', 'like', "%{$search}%")
-                        ->orWhere('nama', 'like', "%{$search}%");
-                });
+        $mahasiswaQuery = Mahasiswa::where('program_studi_id', $programStudiId)
+            ->whereHas('krs', $entryFilter);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $mahasiswaQuery->where(function ($q) use ($search): void {
+                $q->where('nim', 'like', "%{$search}%")
+                    ->orWhere('nama', 'like', "%{$search}%");
             });
         }
 
-        $krss = $query->latest()
+        $mahasiswas = $mahasiswaQuery->orderBy('nama')
             ->paginate(10)
             ->withQueryString();
 
+        $mahasiswas->getCollection()->load(['krs' => function ($query) use ($entryFilter): void {
+            $entryFilter($query);
+            $query->with(['kelas.mataKuliah', 'kelas.dosen', 'academicYearSemester'])->latest();
+        }]);
+
         return Inertia::render('admin-prodi/krs/index', [
-            'krss' => $krss,
-            'filters' => $request->only(['search']),
+            'mahasiswas' => $mahasiswas,
+            'academicYearSemesters' => AcademicYearSemester::orderByDesc('nama_tahun_akademik')
+                ->orderBy('semester')
+                ->get(),
+            'filters' => $request->only(['search', 'status', 'academic_year_semester_id']),
         ]);
     }
 
     /**
      * Display the specified KRS.
      */
-    public function show(Krs $krs): Response
+    public function show(Request $request, Krs $krs): Response
     {
-        $krs->load(['mahasiswa.programStudi', 'kelas.mataKuliah', 'kelas.ruang']);
+        $krs->load(['mahasiswa.programStudi', 'kelas.mataKuliah', 'kelas.dosen', 'kelas.ruang', 'academicYearSemester']);
+
+        abort_unless($krs->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
 
         return Inertia::render('admin-prodi/krs/show', [
             'krs' => $krs,
         ]);
+    }
+
+    /**
+     * Approve a pending KRS entry, enforcing the max-SKS limit.
+     */
+    public function approve(Request $request, Krs $krs): RedirectResponse
+    {
+        abort_unless($krs->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
+        abort_unless($krs->status === 'pending', 422, 'KRS ini sudah diproses.');
+
+        $krs->load('kelas.mataKuliah');
+        $totalSks = Krs::totalSksDisetujui($krs->mahasiswa_id, $krs->academic_year_semester_id)
+            + ($krs->kelas?->mataKuliah?->sks ?? 0);
+
+        if ($totalSks > Krs::maxSks()) {
+            return back()->withErrors([
+                'krs' => "Total SKS akan menjadi {$totalSks}, melebihi batas maksimal ".Krs::maxSks().' SKS per semester.',
+            ]);
+        }
+
+        $krs->update(['status' => 'disetujui']);
+
+        return back()->with('success', 'KRS berhasil disetujui');
+    }
+
+    /**
+     * Reject a pending KRS entry.
+     */
+    public function reject(Request $request, Krs $krs): RedirectResponse
+    {
+        abort_unless($krs->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
+        abort_unless($krs->status === 'pending', 422, 'KRS ini sudah diproses.');
+
+        $krs->update(['status' => 'ditolak']);
+
+        return back()->with('success', 'KRS berhasil ditolak');
     }
 }

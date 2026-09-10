@@ -12,4 +12,15 @@ export type NavItem = {
     icon?: LucideIcon | null;
     isActive?: boolean;
     children?: NavItem[];
+    /** Count shown as a pill on the right of the item; hidden when 0/undefined. */
+    badge?: number;
+};
+
+/**
+ * A labelled block of sidebar items ("MENU UTAMA", "SISTEM"). Grouping is what
+ * keeps a 20-item admin menu scannable.
+ */
+export type NavGroup = {
+    label: string;
+    items: NavItem[];
 };

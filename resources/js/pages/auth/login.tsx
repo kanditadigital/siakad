@@ -1,275 +1,405 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import {
-    User,
-    Lock,
+    ArrowRight,
     Eye,
     EyeOff,
     Loader2,
-    ArrowRight,
-    Fingerprint,
-    GraduationCap,
-    BookOpen,
-    Users,
-    Award,
+    Lock,
+    ShieldCheck,
+    User,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-function LeftPanel() {
+type Props = {
+    canResetPassword: boolean;
+    status?: string;
+};
+
+/**
+ * Institutional values from the campus profile (siakad.json) — constants of the
+ * institution's identity, not configurable settings, so they live here rather
+ * than in Pengaturan Sistem.
+ */
+const NILAI_INSTITUSI = ['Berilmu', 'Berbahasa', 'Berdaya'];
+
+/**
+ * Faint diagonal grid over the pine panel, like a campus site plan — reads as
+ * texture at a glance, not a literal pattern to inspect.
+ */
+function GridBackdrop() {
     return (
-        <div className="relative hidden flex-col justify-between overflow-hidden bg-siak-pine-deep p-12 lg:flex xl:p-16">
-            {/* Background decoration */}
-            <div className="absolute inset-0">
-                <svg
-                    className="absolute -right-20 -top-20 h-[500px] w-[500px] opacity-[0.06]"
-                    viewBox="0 0 500 500"
-                    aria-hidden="true"
+        <svg
+            className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.07]"
+            aria-hidden="true"
+        >
+            <defs>
+                <pattern
+                    id="grid-login"
+                    width="56"
+                    height="56"
+                    patternUnits="userSpaceOnUse"
                 >
-                    <circle cx="250" cy="250" r="200" fill="none" stroke="currentColor" strokeWidth="1" className="text-gold" />
-                    <circle cx="250" cy="250" r="140" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gold" />
-                    <circle cx="250" cy="250" r="80" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-white" />
-                </svg>
-                <svg
-                    className="absolute -bottom-32 -left-32 h-[400px] w-[400px] opacity-[0.04]"
-                    viewBox="0 0 400 400"
-                    aria-hidden="true"
-                >
-                    <polygon
-                        points="200,30 240,150 370,150 265,225 305,345 200,270 95,345 135,225 30,150 160,150"
+                    <path
+                        d="M56 0H0V56"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="1"
-                        className="text-white"
                     />
-                </svg>
-            </div>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid-login)" />
+        </svg>
+    );
+}
 
-            {/* Content */}
-            <div className="relative z-10">
-                <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-                        <GraduationCap className="h-5 w-5 text-white" />
-                    </div>
-                    <span className="text-sm font-semibold tracking-wide text-white/90">
-                        SIAKAD
-                    </span>
-                </div>
-            </div>
-
-            <div className="relative z-10 space-y-6">
-                <div className="space-y-3">
-                    <h2 className="font-display text-5xl leading-tight font-semibold text-white">
-                        Sistem Informasi
-                        <br />
-                        Akademik
-                    </h2>
-                    <p className="max-w-md text-sm leading-relaxed text-white/50">
-                        Portal terpadu untuk mengelola perkuliahan, nilai, dan
-                        administrasi akademik STIT Daarurrahmah Sepadan.
-                    </p>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                    {[
-                        { icon: BookOpen, text: 'Kurikulum & RPS' },
-                        { icon: Users, text: 'Data Mahasiswa & Dosen' },
-                        { icon: Award, text: 'Penilaian & Transkrip' },
-                    ].map(({ icon: Icon, text }) => (
-                        <div key={text} className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
-                                <Icon className="h-4.5 w-4.5 text-white/70" />
-                            </div>
-                            <span className="text-sm text-white/60">{text}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className="relative z-10">
-                <p className="text-[11px] text-white/30">
-                    &copy; {new Date().getFullYear()} STIT Daarurrahmah Sepadan
-                </p>
-            </div>
+/**
+ * The logo an admin uploaded in Pengaturan Sistem, on a white plate — an
+ * institutional logo is authored for light backgrounds and would disappear
+ * against the green panel. Falls back to the built-in mark.
+ */
+function BrandMark({
+    logoUrl,
+    nama,
+}: {
+    logoUrl: string | null;
+    nama: string;
+}) {
+    return (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white">
+            {logoUrl ? (
+                <img
+                    src={logoUrl}
+                    alt={`Logo ${nama}`}
+                    className="h-full w-full object-contain p-1"
+                />
+            ) : (
+                <AppLogoIcon className="h-5 w-5 text-siak-pine" />
+            )}
         </div>
     );
 }
 
-export default function Login() {
+/**
+ * Text field whose label sits inside the field at rest and floats up into a
+ * small caption the moment the field is focused or already holds a value —
+ * so the label doubles as a placeholder without ever obscuring what's typed.
+ */
+function FloatingLabelField({
+    id,
+    label,
+    icon: Icon,
+    trailing,
+    className,
+    value,
+    onFocus,
+    onBlur,
+    ...inputProps
+}: {
+    id: string;
+    label: string;
+    icon: LucideIcon;
+    trailing?: React.ReactNode;
+} & React.ComponentProps<typeof Input>) {
+    const [focused, setFocused] = useState(false);
+    const floated = focused || String(value ?? '').length > 0;
+
+    return (
+        <div className="relative">
+            <Icon className="pointer-events-none absolute top-1/2 left-3.5 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+                id={id}
+                value={value}
+                onFocus={(e) => {
+                    setFocused(true);
+                    onFocus?.(e);
+                }}
+                onBlur={(e) => {
+                    setFocused(false);
+                    onBlur?.(e);
+                }}
+                className={cn(
+                    'h-14 pl-10',
+                    trailing && 'pr-10',
+                    floated ? 'pt-5 pb-1' : 'pt-0 pb-0',
+                    className,
+                )}
+                {...inputProps}
+            />
+            <Label
+                htmlFor={id}
+                className={cn(
+                    'pointer-events-none absolute left-10 origin-left transition-all duration-150 ease-out',
+                    floated
+                        ? 'top-3.5 -translate-y-0 text-[11px] font-semibold text-primary'
+                        : 'top-1/2 -translate-y-1/2 text-sm font-normal text-muted-foreground',
+                )}
+            >
+                {label}
+            </Label>
+            {trailing}
+        </div>
+    );
+}
+
+export default function Login({ canResetPassword, status }: Props) {
+    const { kampus, errors: pageErrors } = usePage().props;
     const [showPassword, setShowPassword] = useState(false);
+
     const { data, setData, post, processing, errors } = useForm({
         login_value: '',
         password: '',
+        remember: true,
     });
+
+    // Fortify reports a failed attempt under its configured username field
+    // ('email'), which is not one of this form's own fields — so it has to be
+    // read off the shared page errors rather than the form helper.
+    const authError =
+        (pageErrors as Record<string, string>)?.email ?? errors.login_value;
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post('/login', {
             onSuccess: () => toast.success('Login berhasil'),
-            onError: () => toast.error('Login gagal, periksa kredensial Anda'),
         });
     };
 
     return (
         <>
-            <Head title="Login SIAKAD" />
+            <Head title="Masuk" />
 
-            <div className="flex min-h-screen">
-                <LeftPanel />
+            <div className="grid min-h-screen lg:grid-cols-2">
+                {/* Brand panel — desktop */}
+                <aside className="relative hidden overflow-hidden bg-siak-pine-deep lg:flex lg:flex-col lg:justify-between lg:p-16 xl:p-20">
+                    <GridBackdrop />
+                    <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
+                    <div className="pointer-events-none absolute right-[-10%] bottom-[-10%] h-96 w-96 rounded-full bg-white/[0.05] blur-3xl" />
 
-                {/* Right panel — form */}
-                <div className="flex min-h-screen w-full items-center justify-center bg-background px-6 py-10 lg:w-[45%] lg:px-16 xl:w-[45%]">
-                    {/* Mobile branding */}
-                    <div className="fixed top-0 right-0 left-0 flex items-center justify-between bg-background px-6 py-4 lg:hidden">
-                        <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-siak-pine">
-                                <GraduationCap className="h-4 w-4 text-white" />
-                            </div>
-                            <span className="text-sm font-semibold text-siak-pine">
-                                SIAKAD
-                            </span>
+                    <div className="relative z-10 flex items-center gap-3">
+                        <BrandMark
+                            logoUrl={kampus.logo_url}
+                            nama={kampus.nama}
+                        />
+                        <span className="text-[11px] font-semibold tracking-[0.22em] text-white/70 uppercase">
+                            Siakad
+                        </span>
+                    </div>
+
+                    <div className="relative z-10 max-w-lg">
+                        <p className="text-[11px] font-semibold tracking-[0.22em] text-gold-soft uppercase">
+                            Portal Akademik
+                        </p>
+                        <h1 className="mt-5 text-4xl leading-[1.12] font-semibold text-white xl:text-5xl">
+                            {kampus.nama}
+                        </h1>
+                        <div className="mt-7 h-px w-14 bg-gold" />
+                        <p className="mt-7 max-w-md text-sm leading-relaxed text-white/60">
+                            Satu portal terpadu untuk perkuliahan, kartu rencana
+                            studi, penilaian, dan administrasi akademik —
+                            terintegrasi bagi mahasiswa, dosen, dan tenaga
+                            kependidikan.
+                        </p>
+                    </div>
+
+                    <div className="relative z-10">
+                        <dl className="grid grid-cols-3 gap-3">
+                            {NILAI_INSTITUSI.map((nilai, index) => (
+                                <div
+                                    key={nilai}
+                                    className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-4"
+                                >
+                                    <dt className="text-sm font-semibold text-gold-soft">
+                                        0{index + 1}
+                                    </dt>
+                                    <dd className="mt-1 text-sm font-semibold tracking-wide text-white">
+                                        {nilai}
+                                    </dd>
+                                </div>
+                            ))}
+                        </dl>
+                        <p className="mt-10 text-[11px] text-white/35">
+                            &copy; {new Date().getFullYear()} {kampus.nama}
+                        </p>
+                    </div>
+                </aside>
+
+                {/* Form panel */}
+                <main className="flex min-h-screen flex-col bg-background">
+                    {/* Brand bar — mobile only */}
+                    <div className="flex items-center gap-3 bg-siak-pine-deep px-6 py-5 lg:hidden">
+                        <BrandMark
+                            logoUrl={kampus.logo_url}
+                            nama={kampus.nama}
+                        />
+                        <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-white">
+                                {kampus.nama}
+                            </p>
+                            <p className="text-[10px] font-semibold tracking-[0.2em] text-gold-soft uppercase">
+                                Portal Akademik
+                            </p>
                         </div>
                     </div>
 
-                    <div className="w-full max-w-lg mt-14 lg:mt-0">
-                        <div className="mb-8 lg:hidden">
-                            <h2 className="text-xl font-semibold text-foreground">
-                                Masuk
-                            </h2>
-                            <p className="mt-1 text-sm text-muted-foreground">
-                                Akun institusi untuk sistem akademik
-                            </p>
-                        </div>
-
-                        <div className="mb-8 hidden lg:block">
-                            <div className="mb-5 flex items-center gap-2">
-                                <div className="h-1.5 w-1.5 rounded-full bg-siak-pine" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-siak-pine/40" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-siak-pine/20" />
-                            </div>
-                            <h2 className="text-2xl font-semibold text-foreground">
-                                Selamat datang
-                            </h2>
-                            <p className="mt-1.5 text-sm text-muted-foreground">
-                                Masuk dengan akun institusi Anda
-                            </p>
-                        </div>
-
-                        <form onSubmit={onSubmit} className="space-y-4">
-                            <div className="space-y-2">
-                                <Label
-                                    htmlFor="login-username"
-                                    className="text-sm font-medium text-foreground/80"
-                                >
-                                    Username / NIM / NIDN
-                                </Label>
-                                <div className="relative">
-                                    <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
-                                    <Input
-                                        id="login-username"
-                                        type="text"
-                                        placeholder="Masukkan username atau NIM/NIDN"
-                                        value={data.login_value}
-                                        onChange={(e) => setData('login_value', e.target.value)}
-                                        className="h-12 rounded-xl border-border/60 bg-muted/40 pl-11 text-sm"
-                                        aria-invalid={!!errors.login_value}
-                                        autoComplete="username"
-                                        required
-                                    />
-                                </div>
-                                {errors.login_value && (
-                                    <p className="text-xs text-destructive">{errors.login_value}</p>
-                                )}
+                    <div className="flex flex-1 items-center justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-24">
+                        <div className="w-full max-w-sm animate-in duration-500 fade-in slide-in-from-bottom-2">
+                            <div className="mb-8 flex items-center gap-2 text-siak-pine">
+                                <ShieldCheck className="h-4 w-4" />
+                                <span className="text-[11px] font-semibold tracking-[0.18em] uppercase">
+                                    Akses Aman
+                                </span>
                             </div>
 
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label
-                                        htmlFor="login-password"
-                                        className="text-sm font-medium text-foreground/80"
-                                    >
-                                        Password
-                                    </Label>
-                                    <a
-                                        href="#"
-                                        className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
-                                    >
-                                        Lupa password?
-                                    </a>
+                            <h2 className="text-3xl font-semibold text-foreground">
+                                Selamat datang kembali
+                            </h2>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Masuk memakai akun institusi Anda untuk
+                                melanjutkan.
+                            </p>
+
+                            {status && (
+                                <div className="mt-6 rounded-lg border-l-4 border-primary bg-accent px-4 py-3 text-sm text-accent-foreground">
+                                    {status}
                                 </div>
-                                <div className="relative">
-                                    <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
-                                    <Input
-                                        id="login-password"
-                                        type={showPassword ? 'text' : 'password'}
-                                        placeholder="Masukkan password"
+                            )}
+
+                            {authError && (
+                                <div className="mt-6 rounded-lg border-l-4 border-destructive bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                                    {authError}
+                                </div>
+                            )}
+
+                            <form
+                                onSubmit={onSubmit}
+                                className="mt-8 space-y-5"
+                            >
+                                <FloatingLabelField
+                                    id="login_value"
+                                    label="Email, NIM, atau NIDN"
+                                    icon={User}
+                                    type="text"
+                                    value={data.login_value}
+                                    onChange={(e) =>
+                                        setData('login_value', e.target.value)
+                                    }
+                                    aria-invalid={!!authError}
+                                    autoComplete="username"
+                                    autoFocus
+                                    required
+                                />
+
+                                <div className="space-y-2">
+                                    <FloatingLabelField
+                                        id="password"
+                                        label="Kata Sandi"
+                                        icon={Lock}
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
                                         value={data.password}
-                                        onChange={(e) => setData('password', e.target.value)}
-                                        className="h-12 rounded-xl border-border/60 bg-muted/40 pl-11 pr-11 text-sm"
+                                        onChange={(e) =>
+                                            setData('password', e.target.value)
+                                        }
                                         aria-invalid={!!errors.password}
                                         autoComplete="current-password"
                                         required
+                                        trailing={
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setShowPassword(
+                                                        !showPassword,
+                                                    )
+                                                }
+                                                className="absolute top-1/2 right-3 z-10 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                                aria-label={
+                                                    showPassword
+                                                        ? 'Sembunyikan kata sandi'
+                                                        : 'Tampilkan kata sandi'
+                                                }
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4" />
+                                                )}
+                                            </button>
+                                        }
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/40 transition-colors hover:text-foreground"
-                                        aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
-                                    >
-                                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                    </button>
+                                    <div className="flex items-center justify-between">
+                                        {errors.password ? (
+                                            <p className="text-xs text-destructive">
+                                                {errors.password}
+                                            </p>
+                                        ) : (
+                                            <span />
+                                        )}
+                                        {canResetPassword && (
+                                            <a
+                                                href="/forgot-password"
+                                                className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+                                            >
+                                                Lupa kata sandi?
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
-                                {errors.password && (
-                                    <p className="text-xs text-destructive">{errors.password}</p>
-                                )}
-                            </div>
 
-                            <Button
-                                type="submit"
-                                disabled={processing}
-                                className="group mt-2 h-12 w-full rounded-xl text-sm font-semibold"
-                            >
-                                {processing ? (
-                                    <>
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                        Memproses...
-                                    </>
-                                ) : (
-                                    <>
-                                        Masuk
-                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                                    </>
-                                )}
-                            </Button>
-                        </form>
+                                <div className="flex items-center gap-2">
+                                    <Checkbox
+                                        id="remember"
+                                        checked={data.remember}
+                                        onCheckedChange={(checked) =>
+                                            setData(
+                                                'remember',
+                                                checked === true,
+                                            )
+                                        }
+                                    />
+                                    <Label
+                                        htmlFor="remember"
+                                        className="text-sm font-normal text-foreground"
+                                    >
+                                        Ingat saya di perangkat ini
+                                    </Label>
+                                </div>
 
-                        <div className="relative my-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-border/50" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-background px-3 text-muted-foreground/50">atau</span>
-                            </div>
+                                <Button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="group h-11 w-full text-sm font-semibold"
+                                >
+                                    {processing ? (
+                                        <>
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            Memproses…
+                                        </>
+                                    ) : (
+                                        <>
+                                            Masuk
+                                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                                        </>
+                                    )}
+                                </Button>
+                            </form>
+
+                            <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
+                                Belum punya akses? Hubungi BAAK atau admin
+                                program studi Anda.
+                            </p>
                         </div>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="h-12 w-full rounded-xl text-sm font-medium"
-                        >
-                            <Fingerprint className="h-4 w-4" />
-                            Masuk dengan Passkey
-                        </Button>
                     </div>
-                </div>
+                </main>
             </div>
         </>
     );
 }
-
-Login.layout = () => ({
-    breadcrumbs: [],
-});

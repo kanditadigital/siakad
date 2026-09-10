@@ -27,6 +27,7 @@ type Settings = {
         alamat: string;
         website: string;
         logo: string | null;
+        logo_url: string | null;
     };
     krs: {
         sks_maks: number;
@@ -34,11 +35,6 @@ type Settings = {
         dibuka: boolean;
     };
     nilai: {
-        bobot_tugas: number;
-        bobot_uts: number;
-        bobot_uas: number;
-        bobot_partisipasi: number;
-        bobot_kehadiran: number;
         periode_input_dibuka: boolean;
     };
     notifikasi: {
@@ -60,18 +56,9 @@ export default function PengaturanIndex({ settings }: Props) {
     });
 
     const [logoPreview, setLogoPreview] = useState<string | null>(
-        settings.identitas.logo ? `/storage/${settings.identitas.logo}` : null,
+        settings.identitas.logo_url ?? null,
     );
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const totalBobot =
-        Number(data.nilai.bobot_tugas) +
-        Number(data.nilai.bobot_uts) +
-        Number(data.nilai.bobot_uas) +
-        Number(data.nilai.bobot_partisipasi) +
-        Number(data.nilai.bobot_kehadiran);
-
-    const bobotValid = totalBobot === 100;
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -348,57 +335,12 @@ fileInputRef.current.value = '';
                                     Pengaturan Nilai
                                 </CardTitle>
                                 <CardDescription>
-                                    Bobot komponen penilaian default — total
-                                    harus 100%
+                                    Status periode input nilai — bobot
+                                    komponen penilaian diatur oleh masing-masing
+                                    dosen di halaman profil mereka
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid gap-4 sm:grid-cols-3">
-                                    {(
-                                        [
-                                            ['bobot_tugas', 'Tugas'],
-                                            ['bobot_uts', 'UTS'],
-                                            ['bobot_uas', 'UAS'],
-                                            [
-                                                'bobot_partisipasi',
-                                                'Partisipasi',
-                                            ],
-                                            ['bobot_kehadiran', 'Kehadiran'],
-                                        ] as const
-                                    ).map(([key, label]) => (
-                                        <div key={key} className="space-y-2">
-                                            <Label htmlFor={key}>
-                                                {label} (%)
-                                            </Label>
-                                            <Input
-                                                id={key}
-                                                type="number"
-                                                min={0}
-                                                max={100}
-                                                value={data.nilai[key]}
-                                                onChange={(e) =>
-                                                    setData('nilai', {
-                                                        ...data.nilai,
-                                                        [key]: Number(
-                                                            e.target.value,
-                                                        ),
-                                                    })
-                                                }
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                                <p
-                                    className={`text-sm font-medium ${bobotValid ? 'text-green-700' : 'text-destructive'}`}
-                                >
-                                    Total bobot: {totalBobot}%{' '}
-                                    {bobotValid ? '' : '(harus 100%)'}
-                                </p>
-                                {errors['nilai.bobot_tugas'] && (
-                                    <p className="text-sm text-destructive">
-                                        {errors['nilai.bobot_tugas']}
-                                    </p>
-                                )}
                                 <div className="flex items-center gap-2">
                                     <Checkbox
                                         id="periode_input_dibuka"
@@ -475,7 +417,7 @@ fileInputRef.current.value = '';
                     <div className="mt-6">
                         <Button
                             type="submit"
-                            disabled={processing || !bobotValid}
+                            disabled={processing}
                             className="bg-green-700 hover:bg-green-800"
                         >
                             <Save className="mr-2 h-4 w-4" />

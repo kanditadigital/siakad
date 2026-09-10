@@ -28,6 +28,7 @@ type ProgramStudi = {
 type User = {
     id: number;
     photo: string | null;
+    photo_url: string | null;
 };
 
 type Mahasiswa = {
@@ -45,6 +46,8 @@ type Mahasiswa = {
     alamat: string;
     kode_domisili: string;
     status: string;
+    semester_saat_ini: number;
+    batas_semester_normal: number;
     user?: User;
 };
 
@@ -82,12 +85,13 @@ export default function MahasiswaEdit({ mahasiswa, programStudis }: Props) {
         alamat: mahasiswa.alamat,
         kode_domisili: mahasiswa.kode_domisili,
         status: mahasiswa.status,
+        semester_saat_ini: mahasiswa.semester_saat_ini.toString(),
         photo: null as File | null,
     });
 
-    const existingPhoto = mahasiswa.user?.photo;
+    const existingPhoto = mahasiswa.user?.photo_url;
     const [photoPreview, setPhotoPreview] = useState<string | null>(
-        existingPhoto ? `/storage/${existingPhoto}` : null,
+        existingPhoto ?? null,
     );
     const [removeExistingPhoto, setRemoveExistingPhoto] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -542,6 +546,37 @@ export default function MahasiswaEdit({ mahasiswa, programStudis }: Props) {
                                 {errors.status && (
                                     <p className="text-sm text-destructive">
                                         {errors.status}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="semester_saat_ini">
+                                    Semester Saat Ini
+                                    <Required />
+                                </Label>
+                                <Input
+                                    id="semester_saat_ini"
+                                    type="number"
+                                    min={1}
+                                    value={data.semester_saat_ini}
+                                    onChange={(e) =>
+                                        setData(
+                                            'semester_saat_ini',
+                                            e.target.value,
+                                        )
+                                    }
+                                    aria-invalid={!!errors.semester_saat_ini}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    Naik otomatis satu semester saat admin
+                                    menjalankan "Naikkan Semester" per program
+                                    studi. Masa studi normal program studi ini
+                                    adalah {mahasiswa.batas_semester_normal}{' '}
+                                    semester.
+                                </p>
+                                {errors.semester_saat_ini && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.semester_saat_ini}
                                     </p>
                                 )}
                             </div>

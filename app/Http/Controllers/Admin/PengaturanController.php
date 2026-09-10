@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PengaturanController extends Controller
 {
+    use InteractsWithUploads;
+
     /**
      * Default values used the first time a setting is read before it has ever been saved.
      *
@@ -25,11 +27,6 @@ class PengaturanController extends Controller
         'krs.sks_maks' => 24,
         'krs.sks_min' => 12,
         'krs.dibuka' => true,
-        'nilai.bobot_tugas' => 20,
-        'nilai.bobot_uts' => 25,
-        'nilai.bobot_uas' => 30,
-        'nilai.bobot_partisipasi' => 10,
-        'nilai.bobot_kehadiran' => 15,
         'nilai.periode_input_dibuka' => true,
         'notifikasi.email_aktif' => true,
         'notifikasi.tagihan_aktif' => true,
@@ -63,29 +60,12 @@ class PengaturanController extends Controller
             'krs.dibuka' => ['required', 'boolean'],
 
             'nilai' => ['required', 'array'],
-            'nilai.bobot_tugas' => ['required', 'integer', 'min:0', 'max:100'],
-            'nilai.bobot_uts' => ['required', 'integer', 'min:0', 'max:100'],
-            'nilai.bobot_uas' => ['required', 'integer', 'min:0', 'max:100'],
-            'nilai.bobot_partisipasi' => ['required', 'integer', 'min:0', 'max:100'],
-            'nilai.bobot_kehadiran' => ['required', 'integer', 'min:0', 'max:100'],
             'nilai.periode_input_dibuka' => ['required', 'boolean'],
 
             'notifikasi' => ['required', 'array'],
             'notifikasi.email_aktif' => ['required', 'boolean'],
             'notifikasi.tagihan_aktif' => ['required', 'boolean'],
         ]);
-
-        $totalBobot = $validated['nilai']['bobot_tugas']
-            + $validated['nilai']['bobot_uts']
-            + $validated['nilai']['bobot_uas']
-            + $validated['nilai']['bobot_partisipasi']
-            + $validated['nilai']['bobot_kehadiran'];
-
-        if ($totalBobot !== 100) {
-            return back()->withErrors([
-                'nilai.bobot_tugas' => "Total bobot komponen nilai harus 100%, saat ini {$totalBobot}%.",
-            ])->withInput();
-        }
 
         $validated['krs']['dibuka'] = $request->boolean('krs.dibuka');
         $validated['nilai']['periode_input_dibuka'] = $request->boolean('nilai.periode_input_dibuka');
@@ -95,9 +75,9 @@ class PengaturanController extends Controller
         if ($request->hasFile('identitas.logo')) {
             $currentLogo = Setting::get('identitas.logo');
             if ($currentLogo) {
-                Storage::disk('public')->delete($currentLogo);
+                static::deleteUpload($currentLogo);
             }
-            $validated['identitas']['logo'] = $request->file('identitas.logo')->store('logo', 'public');
+            $validated['identitas']['logo'] = static::storeUpload($request->file('identitas.logo'), 'logo');
         } else {
             unset($validated['identitas']['logo']);
         }
@@ -121,7 +101,7 @@ class PengaturanController extends Controller
      */
     private const BOOLEAN_KEYS = ['krs.dibuka', 'nilai.periode_input_dibuka', 'notifikasi.email_aktif', 'notifikasi.tagihan_aktif'];
 
-    private const INTEGER_KEYS = ['krs.sks_maks', 'krs.sks_min', 'nilai.bobot_tugas', 'nilai.bobot_uts', 'nilai.bobot_uas', 'nilai.bobot_partisipasi', 'nilai.bobot_kehadiran'];
+    private const INTEGER_KEYS = ['krs.sks_maks', 'krs.sks_min'];
 
     /**
      * @return array<string, array<string, mixed>>
@@ -147,6 +127,10 @@ class PengaturanController extends Controller
             [$group, $field] = explode('.', $key, 2);
             $grouped[$group][$field] = $value;
         }
+
+        // The logo lives in the private uploads bucket, so the page needs a
+        // pre-signed URL rather than the stored path.
+        $grouped['identitas']['logo_url'] = static::uploadUrl($grouped['identitas']['logo'] ?? null);
 
         return $grouped;
     }

@@ -24,8 +24,16 @@ type ProgramStudi = {
     nama_prodi: string;
 };
 
+type MataKuliahOption = {
+    id: number;
+    kode_mk: string;
+    nama_mk: string;
+    program_studi_id: number;
+};
+
 type Props = {
     programStudis: ProgramStudi[];
+    mataKuliahs: MataKuliahOption[];
 };
 
 const JENIS_OPTIONS = [
@@ -42,7 +50,7 @@ function Required() {
     return <span className="text-destructive"> *</span>;
 }
 
-export default function MataKuliahCreate({ programStudis }: Props) {
+export default function MataKuliahCreate({ programStudis, mataKuliahs }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         kode_mk: '',
         nama_mk: '',
@@ -50,8 +58,15 @@ export default function MataKuliahCreate({ programStudis }: Props) {
         jenis: '',
         sks: '',
         semester: '',
+        prasyarat_mata_kuliah_id: '',
         status: 'aktif',
     });
+
+    const prasyaratOptions = mataKuliahs.filter(
+        (mk) =>
+            data.program_studi_id &&
+            mk.program_studi_id === Number(data.program_studi_id),
+    );
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -269,6 +284,55 @@ export default function MataKuliahCreate({ programStudis }: Props) {
                                     {errors.semester && (
                                         <p className="text-sm text-destructive">
                                             {errors.semester}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="prasyarat_mata_kuliah_id">
+                                        Prasyarat{' '}
+                                        <span className="font-normal text-muted-foreground">
+                                            (opsional)
+                                        </span>
+                                    </Label>
+                                    <Select
+                                        value={
+                                            data.prasyarat_mata_kuliah_id ||
+                                            'none'
+                                        }
+                                        onValueChange={(v) =>
+                                            setData(
+                                                'prasyarat_mata_kuliah_id',
+                                                v === 'none' ? '' : v,
+                                            )
+                                        }
+                                        disabled={!data.program_studi_id}
+                                    >
+                                        <SelectTrigger
+                                            id="prasyarat_mata_kuliah_id"
+                                            aria-invalid={
+                                                !!errors.prasyarat_mata_kuliah_id
+                                            }
+                                        >
+                                            <SelectValue placeholder="Tanpa prasyarat" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">
+                                                Tanpa prasyarat
+                                            </SelectItem>
+                                            {prasyaratOptions.map((mk) => (
+                                                <SelectItem
+                                                    key={mk.id}
+                                                    value={mk.id.toString()}
+                                                >
+                                                    {mk.kode_mk} -{' '}
+                                                    {mk.nama_mk}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.prasyarat_mata_kuliah_id && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.prasyarat_mata_kuliah_id}
                                         </p>
                                     )}
                                 </div>

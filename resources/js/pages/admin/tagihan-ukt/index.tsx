@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -209,7 +210,7 @@ export default function TagihanUktIndex({
                     </Select>
                 </div>
 
-                <div className="rounded-lg border">
+                <Card className="overflow-hidden py-0">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -363,7 +364,7 @@ export default function TagihanUktIndex({
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                </Card>
 
                 {tagihanUkts.last_page > 1 && (
                     <div className="flex items-center justify-between">

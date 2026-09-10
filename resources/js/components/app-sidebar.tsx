@@ -7,6 +7,7 @@ import {
     UserCheck,
     Settings,
     Calendar,
+    CalendarCheck,
     FileText,
     ClipboardList,
     CreditCard,
@@ -19,32 +20,35 @@ import {
     PieChart,
     School,
     Building,
-    ClipboardPlus,
     FileUp,
-    PenLine,
     UserCog,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import type { NavItem } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
+
+/**
+ * System-administration menu, split out of the main list so the sidebar reads as
+ * "what I work on" above and "what I administer" below.
+ */
+const MENU_SISTEM_ADMIN: NavItem[] = [
+    { title: 'Pengguna', href: '/admin/user', icon: UserCog },
+    { title: 'Pengaturan', href: '/admin/pengaturan', icon: Settings },
+];
 
 export function AppSidebar() {
     const page = usePage();
     const user = page.props.auth?.user;
     const role = user?.role;
+    const { periode, tugas } = page.props.chrome;
 
-    const getNavItemsByRole = (): NavItem[] => {
+    const menuUtama = (): NavItem[] => {
         const baseItems: NavItem[] = [
             {
                 title: 'Dashboard',
@@ -130,6 +134,7 @@ export function AppSidebar() {
                         title: 'Keuangan',
                         href: '#',
                         icon: CreditCard,
+                        badge: tugas?.tagihan_belum_lunas,
                         children: [
                             {
                                 title: 'Skema UKT',
@@ -153,23 +158,6 @@ export function AppSidebar() {
                         href: '/admin/laporan',
                         icon: PieChart,
                     },
-                    {
-                        title: 'Pengaturan',
-                        href: '#',
-                        icon: Settings,
-                        children: [
-                            {
-                                title: 'Manajemen User',
-                                href: '/admin/user',
-                                icon: UserCog,
-                            },
-                            {
-                                title: 'Pengaturan Sistem',
-                                href: '/admin/pengaturan',
-                                icon: Settings,
-                            },
-                        ],
-                    },
                 ];
 
             case 'dosen':
@@ -191,9 +179,19 @@ export function AppSidebar() {
                         icon: Users,
                     },
                     {
+                        title: 'Review KRS (PA)',
+                        href: '/dosen/krs-pa',
+                        icon: FileCheck,
+                    },
+                    {
                         title: 'Bimbingan Tugas Akhir',
                         href: '/dosen/bimbingan-tugas-akhir',
                         icon: ClipboardCheck,
+                    },
+                    {
+                        title: 'Pengaturan Nilai',
+                        href: '/dosen/pengaturan-nilai',
+                        icon: Settings,
                     },
                 ];
 
@@ -226,9 +224,19 @@ export function AppSidebar() {
                         icon: Calendar,
                     },
                     {
+                        title: 'Kehadiran',
+                        href: '/mahasiswa/kehadiran',
+                        icon: CalendarCheck,
+                    },
+                    {
                         title: 'Tagihan UKT',
                         href: '/mahasiswa/tagihan-ukt',
                         icon: Receipt,
+                    },
+                    {
+                        title: 'Pengajuan Judul TA',
+                        href: '/mahasiswa/pengajuan-judul-ta',
+                        icon: BookMarked,
                     },
                 ];
 
@@ -250,6 +258,16 @@ export function AppSidebar() {
                         icon: UserCheck,
                     },
                     {
+                        title: 'Dosen PA',
+                        href: '/admin-prodi/dosen-pa',
+                        icon: UserCog,
+                    },
+                    {
+                        title: 'Mata Kuliah',
+                        href: '/admin-prodi/mata-kuliah',
+                        icon: BookOpen,
+                    },
+                    {
                         title: 'Penjadwalan',
                         href: '/admin-prodi/penjadwalan',
                         icon: ClipboardList,
@@ -263,6 +281,11 @@ export function AppSidebar() {
                         title: 'Data Nilai',
                         href: '/admin-prodi/nilai',
                         icon: FileText,
+                    },
+                    {
+                        title: 'Pengajuan Judul TA',
+                        href: '/admin-prodi/pengajuan-judul-ta',
+                        icon: FileCheck,
                     },
                 ];
 
@@ -291,29 +314,61 @@ export function AppSidebar() {
         }
     };
 
-    const mainNavItems: NavItem[] = getNavItemsByRole();
+    const groups: NavGroup[] = [
+        { label: 'Menu Utama', items: menuUtama() },
+        ...(role === 'admin'
+            ? [{ label: 'Sistem', items: MENU_SISTEM_ADMIN }]
+            : []),
+    ];
 
+    /*
+     * No right border: the primitive ships `border-r`, which the global
+     * `* { @apply border-border }` rule paints in the light `--border` grey —
+     * fine against the old white sidebar, a white seam against the green one.
+     * The colour change already separates panel from content.
+     *
+     * The variant has to be matched (`group-data-[side=left]:border-r-0`) for
+     * tailwind-merge to drop the original: it only merges classes sharing the
+     * same variant, and the prefixed rule also outranks a bare `border-r-0`
+     * on specificity.
+     */
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard" prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+        <Sidebar
+            collapsible="icon"
+            className="group-data-[side=left]:border-r-0"
+        >
+            <SidebarHeader className="gap-0 border-b border-sidebar-border px-4 py-4 group-data-[collapsible=icon]:px-1">
+                <Link href="/dashboard" prefetch>
+                    <AppLogo />
+                </Link>
             </SidebarHeader>
 
-            <SidebarContent>
-                <NavMain items={mainNavItems} />
+            <SidebarContent className="gap-5 py-5">
+                <NavMain groups={groups} />
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavUser />
-            </SidebarFooter>
+            {/* Period card, not a second brand colour: a light card (the old
+                green-50 one) punches a hole in the dark panel. Translucent white
+                keeps the panel reading as one surface. Rendered only when there
+                is a period — an empty footer would leave a stray hairline, as
+                would the card's slot in icon mode. */}
+            {periode ? (
+                <SidebarFooter className="gap-3 border-t border-sidebar-border p-3 group-data-[collapsible=icon]:hidden">
+                    <div className="rounded-md bg-white/8 px-3 py-2.5 ring-1 ring-white/12">
+                        <p className="text-[9px] font-medium tracking-[0.12em] text-sidebar-foreground/55 uppercase">
+                            Tahun Akademik
+                        </p>
+                        <p className="mt-1 text-[13px] leading-tight font-semibold text-white">
+                            {periode.label}
+                        </p>
+                        {periode.pekan ? (
+                            <p className="mt-0.5 text-[11px] text-sidebar-foreground/60">
+                                Perkuliahan pekan ke-{periode.pekan}
+                            </p>
+                        ) : null}
+                    </div>
+                </SidebarFooter>
+            ) : null}
         </Sidebar>
     );
 }

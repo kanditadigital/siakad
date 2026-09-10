@@ -3,6 +3,8 @@
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 function validSettingsPayload(array $overrides = []): array
@@ -19,11 +21,6 @@ function validSettingsPayload(array $overrides = []): array
             'dibuka' => true,
         ],
         'nilai' => [
-            'bobot_tugas' => 20,
-            'bobot_uts' => 25,
-            'bobot_uas' => 30,
-            'bobot_partisipasi' => 10,
-            'bobot_kehadiran' => 15,
             'periode_input_dibuka' => true,
         ],
         'notifikasi' => [
@@ -61,23 +58,25 @@ test('admin can persist settings and they are read back on the next request', fu
     $second->assertInertia(fn ($page) => $page->where('settings.identitas.nama_kampus', 'Kampus Baru'));
 });
 
-test('nilai bobot must total 100 percent', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+test('a corrupted settings cache entry self-heals instead of throwing', function () {
+    Setting::set('identitas.nama_kampus', 'Kampus Dari DB');
 
-    $response = $this->actingAs($admin)->put(route('admin.pengaturan.update'), validSettingsPayload([
-        'nilai' => ['bobot_tugas' => 50],
-    ]));
+    // Simulate a stale/corrupted cache entry (e.g. unserialize() producing
+    // something other than a Collection) sitting under the cache key.
+    Cache::forever('settings.all', new stdClass);
 
-    $response->assertSessionHasErrors('nilai.bobot_tugas');
-    $this->assertDatabaseMissing('settings', ['key' => 'nilai.bobot_tugas', 'value' => '50']);
+    $settings = Setting::allSettings();
+
+    expect($settings)->toBeInstanceOf(Collection::class);
+    expect($settings->get('identitas.nama_kampus'))->toBe('Kampus Dari DB');
 });
 
 test('uploading a new logo replaces and deletes the old one', function () {
-    Storage::fake('public');
+    Storage::fake(config('filesystems.uploads'));
     $admin = User::factory()->create(['role' => 'admin']);
 
     Setting::set('identitas.logo', 'logo/old.png');
-    Storage::disk('public')->put('logo/old.png', 'fake');
+    Storage::disk(config('filesystems.uploads'))->put('logo/old.png', 'fake');
 
     $response = $this->actingAs($admin)->put(route('admin.pengaturan.update'), array_merge(
         validSettingsPayload(),
@@ -88,8 +87,8 @@ test('uploading a new logo replaces and deletes the old one', function () {
 
     $response->assertRedirect(route('admin.pengaturan.index'));
 
-    Storage::disk('public')->assertMissing('logo/old.png');
+    Storage::disk(config('filesystems.uploads'))->assertMissing('logo/old.png');
     $newLogo = Setting::get('identitas.logo');
     expect($newLogo)->not->toBe('logo/old.png');
-    Storage::disk('public')->assertExists($newLogo);
+    Storage::disk(config('filesystems.uploads'))->assertExists($newLogo);
 });

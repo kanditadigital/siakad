@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
+use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\TagihanUkt;
@@ -12,6 +13,8 @@ use Inertia\Response;
 
 class PembayaranController extends Controller
 {
+    use InteractsWithUploads;
+
     /**
      * Show the form for uploading proof of payment for a tagihan.
      */
@@ -42,7 +45,7 @@ class PembayaranController extends Controller
             'bukti_pembayaran' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
         ]);
 
-        $buktiPath = $request->file('bukti_pembayaran')->store('bukti-pembayaran', 'public');
+        $buktiPath = static::storeUpload($request->file('bukti_pembayaran'), 'bukti-pembayaran');
 
         Pembayaran::create([
             'mahasiswa_id' => $mahasiswa->id,

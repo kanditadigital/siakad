@@ -50,13 +50,23 @@ class Setting extends Model
     /**
      * All settings as a flat key => value collection, cached.
      *
+     * Self-heals if the cached entry is unreadable (e.g. a stale/corrupted
+     * serialized value that unserializes to something other than a Collection),
+     * so a bad cache entry degrades to a fresh query instead of a hard 500.
+     *
      * @return Collection<string, mixed>
      */
     public static function allSettings(): Collection
     {
-        return Cache::rememberForever(
-            'settings.all',
-            fn () => static::query()->pluck('value', 'key')
-        );
+        $query = fn () => static::query()->pluck('value', 'key');
+
+        $cached = Cache::rememberForever('settings.all', $query);
+
+        if (! $cached instanceof Collection) {
+            Cache::forget('settings.all');
+            $cached = Cache::rememberForever('settings.all', $query);
+        }
+
+        return $cached;
     }
 }
