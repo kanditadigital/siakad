@@ -7,6 +7,7 @@ import {
     UserCheck,
     Settings,
     Calendar,
+    CalendarCheck,
     FileText,
     ClipboardList,
     CreditCard,
@@ -24,7 +25,6 @@ import {
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
     SidebarContent,
@@ -224,9 +224,19 @@ export function AppSidebar() {
                         icon: Calendar,
                     },
                     {
+                        title: 'Kehadiran',
+                        href: '/mahasiswa/kehadiran',
+                        icon: CalendarCheck,
+                    },
+                    {
                         title: 'Tagihan UKT',
                         href: '/mahasiswa/tagihan-ukt',
                         icon: Receipt,
+                    },
+                    {
+                        title: 'Pengajuan Judul TA',
+                        href: '/mahasiswa/pengajuan-judul-ta',
+                        icon: BookMarked,
                     },
                 ];
 
@@ -272,6 +282,11 @@ export function AppSidebar() {
                         href: '/admin-prodi/nilai',
                         icon: FileText,
                     },
+                    {
+                        title: 'Pengajuan Judul TA',
+                        href: '/admin-prodi/pengajuan-judul-ta',
+                        icon: FileCheck,
+                    },
                 ];
 
             case 'pimpinan':
@@ -306,39 +321,54 @@ export function AppSidebar() {
             : []),
     ];
 
+    /*
+     * No right border: the primitive ships `border-r`, which the global
+     * `* { @apply border-border }` rule paints in the light `--border` grey —
+     * fine against the old white sidebar, a white seam against the green one.
+     * The colour change already separates panel from content.
+     *
+     * The variant has to be matched (`group-data-[side=left]:border-r-0`) for
+     * tailwind-merge to drop the original: it only merges classes sharing the
+     * same variant, and the prefixed rule also outranks a bare `border-r-0`
+     * on specificity.
+     */
     return (
-        <Sidebar collapsible="icon">
-            <SidebarHeader className="gap-0 border-b border-sidebar-border px-4 pt-5 pb-4 group-data-[collapsible=icon]:px-1">
+        <Sidebar
+            collapsible="icon"
+            className="group-data-[side=left]:border-r-0"
+        >
+            <SidebarHeader className="gap-0 border-b border-sidebar-border px-4 py-4 group-data-[collapsible=icon]:px-1">
                 <Link href="/dashboard" prefetch>
                     <AppLogo />
                 </Link>
             </SidebarHeader>
 
-            <SidebarContent className="gap-4 pt-4">
+            <SidebarContent className="gap-5 py-5">
                 <NavMain groups={groups} />
             </SidebarContent>
 
-            <SidebarFooter className="gap-3 p-0">
-                {periode ? (
-                    <div className="mx-3 rounded-lg border border-green-100 bg-green-50 px-3.5 py-3 group-data-[collapsible=icon]:hidden">
-                        <p className="text-[10px] font-bold tracking-[0.08em] text-green-700 uppercase">
+            {/* Period card, not a second brand colour: a light card (the old
+                green-50 one) punches a hole in the dark panel. Translucent white
+                keeps the panel reading as one surface. Rendered only when there
+                is a period — an empty footer would leave a stray hairline, as
+                would the card's slot in icon mode. */}
+            {periode ? (
+                <SidebarFooter className="gap-3 border-t border-sidebar-border p-3 group-data-[collapsible=icon]:hidden">
+                    <div className="rounded-md bg-white/8 px-3 py-2.5 ring-1 ring-white/12">
+                        <p className="text-[9px] font-medium tracking-[0.12em] text-sidebar-foreground/55 uppercase">
                             Tahun Akademik
                         </p>
-                        <p className="mt-1 text-sm font-bold">
+                        <p className="mt-1 text-[13px] leading-tight font-semibold text-white">
                             {periode.label}
                         </p>
                         {periode.pekan ? (
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-0.5 text-[11px] text-sidebar-foreground/60">
                                 Perkuliahan pekan ke-{periode.pekan}
                             </p>
                         ) : null}
                     </div>
-                ) : null}
-
-                <div className="border-t border-sidebar-border p-2">
-                    <NavUser />
-                </div>
-            </SidebarFooter>
+                </SidebarFooter>
+            ) : null}
         </Sidebar>
     );
 }

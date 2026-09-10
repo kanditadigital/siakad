@@ -362,7 +362,7 @@ export default function KrsMahasiswa({
                 </div>
 
                 {/* Table (desktop/tablet) */}
-                <div className="hidden rounded-lg border sm:block">
+                <Card className="hidden overflow-hidden py-0 sm:block">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -530,7 +530,7 @@ export default function KrsMahasiswa({
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                </Card>
             </div>
         </>
     );

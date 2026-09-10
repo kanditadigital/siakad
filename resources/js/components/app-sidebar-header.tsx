@@ -1,7 +1,9 @@
-import { Link, router, usePage } from '@inertiajs/react';
-import { Bell, Search } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
+import { Bell } from 'lucide-react';
 import { useState } from 'react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { HeaderUserMenu } from '@/components/header-user-menu';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -10,66 +12,47 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
-/** Roles allowed through the `pencarian` route; others get no search box. */
-const PERAN_PENCARIAN = ['admin', 'admin_prodi'];
+type Tugas = { krs_pending: number; tagihan_belum_lunas: number };
 
 export function AppSidebarHeader({
     breadcrumbs = [],
 }: {
     breadcrumbs?: BreadcrumbItemType[];
 }) {
-    const props = usePage().props;
-    const { auth, chrome } = props;
-    const bolehMencari = PERAN_PENCARIAN.includes(auth.user?.role ?? '');
+    const { chrome } = usePage().props;
     const tugas = chrome.tugas;
-    /** Keeps the box filled with the query being viewed on the results page. */
-    const [kataKunci, setKataKunci] = useState(
-        typeof props.q === 'string' ? props.q : '',
-    );
 
     return (
         <>
             <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card px-4 sm:px-6">
+                {/* Curved transition where the sidebar meets the header. The
+                    silhouette is the *content* panel rounding its top-left corner
+                    with the sidebar colour behind it — not a bite taken out of
+                    the sidebar, whose right edge stays straight. Hence a
+                    sidebar-coloured box with the header's white rounded away from
+                    the junction corner (border-radius removes material from the
+                    corner it names).
+                    Sits at left-0 — a negative offset here would be swallowed by
+                    the content wrapper's `overflow-x-clip`. Desktop only: on
+                    mobile the sidebar is a drawer, so there's no seam to soften. */}
+                <div
+                    aria-hidden
+                    className="pointer-events-none absolute top-0 left-0 hidden size-6 bg-sidebar lg:block"
+                >
+                    <div className="size-full rounded-tl-[1.5rem] bg-card" />
+                </div>
+
                 <SidebarTrigger className="-ml-1 shrink-0" />
 
-                {bolehMencari ? (
-                    <form
-                        onSubmit={(event) => {
-                            event.preventDefault();
-                            router.get('/pencarian', { q: kataKunci });
-                        }}
-                        className="flex max-w-2xl flex-1 items-center gap-2"
-                    >
-                        <div className="relative flex-1">
-                            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                name="q"
-                                value={kataKunci}
-                                onChange={(event) =>
-                                    setKataKunci(event.target.value)
-                                }
-                                autoComplete="off"
-                                maxLength={100}
-                                placeholder="Cari mahasiswa, dosen, mata kuliah…"
-                                aria-label="Cari mahasiswa, dosen, atau mata kuliah"
-                                className="bg-muted pl-9"
-                            />
-                        </div>
-                        <Button type="submit" className="shrink-0">
-                            <Search className="h-4 w-4" />
-                            <span className="hidden sm:inline">Cari</span>
-                        </Button>
-                    </form>
-                ) : (
-                    <div className="flex-1" />
-                )}
+                <div className="flex-1" />
 
-                {tugas ? <LoncengTugas tugas={tugas} /> : null}
+                <div className="flex shrink-0 items-center gap-4">
+                    {tugas ? <LoncengTugas tugas={tugas} /> : null}
+                    <HeaderUserMenu />
+                </div>
             </header>
 
             {breadcrumbs.length > 1 ? (
@@ -84,12 +67,22 @@ export function AppSidebarHeader({
 /**
  * Pending institution-wide work. A bell with nothing behind it is decoration —
  * this one opens the actual queues waiting for an admin.
+ *
+ * Seeded from the `chrome.tugas` prop (fresh as of the last page load) and
+ * kept live afterwards over the `tugas` private channel — broadcast by
+ * TugasTertundaObserver whenever a Krs or TagihanUkt row changes — so the
+ * count updates without a reload while the user sits on any page.
+ *
+ * The leading dot on the event name opts out of Echo's default namespacing
+ * (which would otherwise look for `App\Events\tugas\diperbarui`) and matches
+ * the custom name set by `TugasTertundaDiperbarui::broadcastAs()`.
  */
-function LoncengTugas({
-    tugas,
-}: {
-    tugas: { krs_pending: number; tagihan_belum_lunas: number };
-}) {
+function LoncengTugas({ tugas: awal }: { tugas: Tugas }) {
+    const [realtime, setRealtime] = useState<Tugas | null>(null);
+    const tugas = realtime ?? awal;
+
+    useEcho<Tugas>('tugas', '.tugas.diperbarui', setRealtime);
+
     const daftar = [
         {
             teks: 'Pengajuan KRS menunggu persetujuan',

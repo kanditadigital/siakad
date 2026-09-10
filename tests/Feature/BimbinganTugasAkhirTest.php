@@ -41,6 +41,7 @@ test('dosen sees bimbingan where they are pembimbing 1 or 2', function () {
     $response->assertInertia(fn ($page) => $page
         ->component('dosen/bimbingan-tugas-akhir/index')
         ->has('bimbingans', 2)
+        ->has('tahapan', 7)
     );
 });
 

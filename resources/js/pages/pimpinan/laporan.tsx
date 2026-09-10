@@ -1,6 +1,20 @@
 import { Head } from '@inertiajs/react';
+import {
+    Award,
+    DollarSign,
+    GraduationCap,
+    TrendingUp,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { GraduationCap, FileText, DollarSign } from 'lucide-react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 
 type Props = {
     laporanAkademik: {
@@ -23,9 +37,28 @@ type Props = {
     };
 };
 
-export default function LaporanPimpinan({ laporanAkademik, laporanNilai, laporanKeuangan }: Props) {
+export default function LaporanPimpinan({
+    laporanAkademik,
+    laporanNilai,
+    laporanKeuangan,
+}: Props) {
     const formatCurrency = (amount: number) =>
-        new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+        }).format(amount);
+
+    const tunggakan =
+        laporanKeuangan.total_tagihan - laporanKeuangan.total_terbayar;
+    const persentaseLunas =
+        laporanKeuangan.total_tagihan > 0
+            ? Math.round(
+                  (laporanKeuangan.total_terbayar /
+                      laporanKeuangan.total_tagihan) *
+                      100,
+              )
+            : 0;
 
     return (
         <>
@@ -33,92 +66,224 @@ export default function LaporanPimpinan({ laporanAkademik, laporanNilai, laporan
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">Laporan Ringkas</h1>
-                    <p className="text-gray-600">Ringkasan akademik, mahasiswa, nilai/yudisium, dan keuangan kampus</p>
+                    <h1 className="text-2xl font-semibold tracking-tight text-green-800">
+                        Laporan Ringkas
+                    </h1>
+                    <p className="text-gray-600">
+                        Ringkasan akademik, mahasiswa, nilai/yudisium, dan
+                        keuangan kampus — bersifat pantauan, bukan pengelolaan
+                        data
+                    </p>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-3">
+                {/* KPI utama */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-gray-600">
+                                Total Mahasiswa
+                            </CardTitle>
+                            <div className="rounded-lg bg-green-600 p-2">
+                                <GraduationCap className="h-4 w-4 text-white" />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                                {laporanAkademik.total_mahasiswa}
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {laporanAkademik.mahasiswa_aktif} aktif
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-gray-600">
+                                Total Yudisium
+                            </CardTitle>
+                            <div className="rounded-lg bg-green-700 p-2">
+                                <Award className="h-4 w-4 text-white" />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold tabular-nums text-gray-900">
+                                {laporanNilai.total_yudisium}
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {laporanNilai.krs_disetujui} KRS disetujui
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200 shadow-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-gray-600">
+                                Total Terbayar
+                            </CardTitle>
+                            <div className="rounded-lg bg-green-700 p-2">
+                                <TrendingUp className="h-4 w-4 text-white" />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-green-700">
+                                {formatCurrency(laporanKeuangan.total_terbayar)}
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {persentaseLunas}% dari total tagihan
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-l-4 border-gray-200 border-l-red-500 shadow-sm">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-gray-600">
+                                Tunggakan
+                            </CardTitle>
+                            <div className="rounded-lg bg-red-500 p-2">
+                                <DollarSign className="h-4 w-4 text-white" />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-red-600">
+                                {formatCurrency(tunggakan)}
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {laporanKeuangan.tagihan_belum_lunas} tagihan
+                                belum lunas
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Rincian per domain */}
+                <div className="grid gap-6 md:grid-cols-2">
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-gray-900">
-                                <GraduationCap className="h-5 w-5 text-green-700" />
-                                Akademik & Mahasiswa
+                            <CardTitle className="text-gray-900">
+                                Status Mahasiswa
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Total Mahasiswa</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanAkademik.total_mahasiswa}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Aktif</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanAkademik.mahasiswa_aktif}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Cuti</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanAkademik.mahasiswa_cuti}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Lulus</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanAkademik.mahasiswa_lulus}</span>
-                            </div>
+                        <CardContent className="flex flex-wrap gap-2">
+                            <Badge variant="outline" className="text-sm">
+                                Aktif:{' '}
+                                <span className="ml-1 font-bold tabular-nums">
+                                    {laporanAkademik.mahasiswa_aktif}
+                                </span>
+                            </Badge>
+                            <Badge variant="outline" className="text-sm">
+                                Cuti:{' '}
+                                <span className="ml-1 font-bold tabular-nums">
+                                    {laporanAkademik.mahasiswa_cuti}
+                                </span>
+                            </Badge>
+                            <Badge variant="outline" className="text-sm">
+                                Lulus:{' '}
+                                <span className="ml-1 font-bold tabular-nums">
+                                    {laporanAkademik.mahasiswa_lulus}
+                                </span>
+                            </Badge>
                         </CardContent>
                     </Card>
 
                     <Card className="border border-gray-200 shadow-sm">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-gray-900">
-                                <FileText className="h-5 w-5 text-green-700" />
+                            <CardTitle className="text-gray-900">
                                 Nilai & Yudisium
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Total Nilai</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanNilai.total_nilai}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Nilai Tercatat</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanNilai.nilai_tercatat}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">KRS Disetujui</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanNilai.krs_disetujui}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Total Yudisium</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanNilai.total_yudisium}</span>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border border-gray-200 shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-gray-900">
-                                <DollarSign className="h-5 w-5 text-green-700" />
-                                Keuangan
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Total Tagihan</span>
-                                <span className="font-medium text-gray-900">{formatCurrency(laporanKeuangan.total_tagihan)}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Total Terbayar</span>
-                                <span className="font-medium text-green-700">{formatCurrency(laporanKeuangan.total_terbayar)}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Tagihan Lunas</span>
-                                <span className="font-medium tabular-nums text-gray-900">{laporanKeuangan.tagihan_lunas}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Tagihan Belum Lunas</span>
-                                <span className="font-medium tabular-nums text-red-600">{laporanKeuangan.tagihan_belum_lunas}</span>
-                            </div>
+                        <CardContent className="flex flex-wrap gap-2">
+                            <Badge variant="outline" className="text-sm">
+                                Total Nilai:{' '}
+                                <span className="ml-1 font-bold tabular-nums">
+                                    {laporanNilai.total_nilai}
+                                </span>
+                            </Badge>
+                            <Badge variant="outline" className="text-sm">
+                                Nilai Tercatat:{' '}
+                                <span className="ml-1 font-bold tabular-nums">
+                                    {laporanNilai.nilai_tercatat}
+                                </span>
+                            </Badge>
+                            <Badge variant="outline" className="text-sm">
+                                KRS Disetujui:{' '}
+                                <span className="ml-1 font-bold tabular-nums">
+                                    {laporanNilai.krs_disetujui}
+                                </span>
+                            </Badge>
+                            <Badge variant="outline" className="text-sm">
+                                Total Yudisium:{' '}
+                                <span className="ml-1 font-bold tabular-nums">
+                                    {laporanNilai.total_yudisium}
+                                </span>
+                            </Badge>
                         </CardContent>
                     </Card>
                 </div>
+
+                <Card className="border border-gray-200 shadow-sm">
+                    <CardHeader>
+                        <CardTitle className="text-gray-900">
+                            Ringkasan Keuangan
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="text-gray-600">
+                                            Rincian
+                                        </TableHead>
+                                        <TableHead className="text-right text-gray-600">
+                                            Nilai
+                                        </TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell className="text-gray-900">
+                                            Total Tagihan
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums text-gray-900">
+                                            {formatCurrency(
+                                                laporanKeuangan.total_tagihan,
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="text-gray-900">
+                                            Total Terbayar
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums text-green-700">
+                                            {formatCurrency(
+                                                laporanKeuangan.total_terbayar,
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="text-gray-900">
+                                            Tagihan Lunas
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums text-gray-900">
+                                            {laporanKeuangan.tagihan_lunas}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="text-gray-900">
+                                            Tagihan Belum Lunas
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums text-red-600">
+                                            {
+                                                laporanKeuangan.tagihan_belum_lunas
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </>
     );

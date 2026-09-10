@@ -1,5 +1,11 @@
-import { Head, router, useForm } from '@inertiajs/react';
-import { Check, GraduationCap, PenLine, Plus, Search } from 'lucide-react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import {
+    Check,
+    ClipboardList,
+    GraduationCap,
+    Plus,
+    Search,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -52,6 +58,8 @@ type Bimbingan = {
     judul: string;
     status: string;
     catatan: string | null;
+    tahap_saat_ini: string;
+    selesai_pada: string | null;
     mahasiswa: Mahasiswa;
     pembimbing1: Dosen;
     pembimbing2: Dosen | null;
@@ -59,11 +67,22 @@ type Bimbingan = {
 
 type Props = {
     bimbingans: Bimbingan[];
+    tahapan: [string, string][];
     /** Optional Inertia prop: only present after the dialog's partial reload. */
     mahasiswaOptions?: MahasiswaOptions;
     dosenOptions?: DosenOption[];
     filters: { mahasiswa_search: string };
 };
+
+type Kategori = 'semua' | 'baru' | 'berjalan' | 'selesai';
+
+function kategoriBimbingan(b: Bimbingan): Exclude<Kategori, 'semua'> {
+    if (b.selesai_pada) {
+        return 'selesai';
+    }
+
+    return b.tahap_saat_ini === 'pengajuan_judul' ? 'baru' : 'berjalan';
+}
 
 type MahasiswaOption = {
     id: number;
@@ -98,12 +117,55 @@ const STATUS_LABELS: Record<string, string> = {
     lainnya: 'Lainnya',
 };
 
+const KATEGORI_TABS: { value: Kategori; label: string }[] = [
+    { value: 'semua', label: 'Semua' },
+    { value: 'baru', label: 'Baru Mengajukan Judul' },
+    { value: 'berjalan', label: 'Sedang Berjalan' },
+    { value: 'selesai', label: 'Selesai' },
+];
+
+function ProgressTahap({
+    bimbingan,
+    tahapan,
+}: {
+    bimbingan: Bimbingan;
+    tahapan: [string, string][];
+}) {
+    if (bimbingan.selesai_pada) {
+        return (
+            <div className="flex items-center gap-1.5 text-green-700">
+                <GraduationCap className="h-3.5 w-3.5" />
+                <span className="text-xs font-medium">Selesai</span>
+            </div>
+        );
+    }
+
+    const index = tahapan.findIndex(
+        ([key]) => key === bimbingan.tahap_saat_ini,
+    );
+    const label = tahapan[index]?.[1] ?? bimbingan.tahap_saat_ini;
+    const percent = Math.round((index / tahapan.length) * 100);
+
+    return (
+        <div className="min-w-[140px] space-y-1">
+            <p className="text-xs text-gray-700">{label}</p>
+            <div className="h-1.5 w-full rounded-full bg-gray-200">
+                <div
+                    className="h-1.5 rounded-full bg-green-600"
+                    style={{ width: `${percent}%` }}
+                />
+            </div>
+        </div>
+    );
+}
+
 export default function BimbinganTugasAkhirIndex({
     bimbingans,
+    tahapan,
     filters,
 }: Props) {
     const [openCreate, setOpenCreate] = useState(false);
-    const [editing, setEditing] = useState<Bimbingan | null>(null);
+    const [kategori, setKategori] = useState<Kategori>('semua');
     const [search, setSearch] = useState(filters.mahasiswa_search);
     const [selected, setSelected] = useState<MahasiswaOption | null>(null);
     const [loadingOptions, setLoadingOptions] = useState(false);
@@ -177,11 +239,6 @@ export default function BimbinganTugasAkhirIndex({
         createForm.setData('mahasiswa_id', mahasiswa.id.toString());
     };
 
-    const statusForm = useForm({
-        status: 'aktif',
-        catatan: '',
-    });
-
     const handleCreate = (e: React.FormEvent) => {
         e.preventDefault();
         createForm.post('/dosen/bimbingan-tugas-akhir', {
@@ -193,25 +250,20 @@ export default function BimbinganTugasAkhirIndex({
         });
     };
 
-    const openEdit = (bimbingan: Bimbingan) => {
-        setEditing(bimbingan);
-        statusForm.setData({
-            status: bimbingan.status,
-            catatan: bimbingan.catatan || '',
-        });
+    const counts: Record<Kategori, number> = {
+        semua: bimbingans.length,
+        baru: 0,
+        berjalan: 0,
+        selesai: 0,
     };
+    bimbingans.forEach((b) => {
+        counts[kategoriBimbingan(b)]++;
+    });
 
-    const handleUpdate = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!editing) {
-            return;
-        }
-
-        statusForm.put(`/dosen/bimbingan-tugas-akhir/${editing.uuid}`, {
-            onSuccess: () => setEditing(null),
-        });
-    };
+    const filteredBimbingans =
+        kategori === 'semua'
+            ? bimbingans
+            : bimbingans.filter((b) => kategoriBimbingan(b) === kategori);
 
     return (
         <>
@@ -351,7 +403,39 @@ export default function BimbinganTugasAkhirIndex({
                             Daftar Bimbingan
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-4">
+                        <div className="flex flex-wrap gap-2 border-b">
+                            {KATEGORI_TABS.map((tab) => (
+                                <button
+                                    key={tab.value}
+                                    type="button"
+                                    onClick={() => setKategori(tab.value)}
+                                    className={cn(
+                                        'flex items-center gap-1.5 border-b-2 px-1 pb-2 text-sm font-medium transition-colors',
+                                        kategori === tab.value
+                                            ? 'border-green-700 text-green-800'
+                                            : 'border-transparent text-muted-foreground hover:text-gray-700',
+                                    )}
+                                >
+                                    {tab.label}
+                                    <Badge
+                                        variant={
+                                            kategori === tab.value
+                                                ? 'default'
+                                                : 'outline'
+                                        }
+                                        className={
+                                            kategori === tab.value
+                                                ? 'bg-green-700'
+                                                : ''
+                                        }
+                                    >
+                                        {counts[tab.value]}
+                                    </Badge>
+                                </button>
+                            ))}
+                        </div>
+
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
@@ -374,23 +458,28 @@ export default function BimbinganTugasAkhirIndex({
                                         <TableHead className="text-gray-600">
                                             Status
                                         </TableHead>
+                                        <TableHead className="text-gray-600">
+                                            Progress
+                                        </TableHead>
                                         <TableHead className="text-right text-gray-600">
                                             Aksi
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {bimbingans.length === 0 ? (
+                                    {filteredBimbingans.length === 0 ? (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={7}
+                                                colSpan={8}
                                                 className="py-8 text-center text-gray-500"
                                             >
-                                                Belum ada mahasiswa bimbingan
+                                                {bimbingans.length === 0
+                                                    ? 'Belum ada mahasiswa bimbingan'
+                                                    : 'Tidak ada bimbingan pada kategori ini'}
                                             </TableCell>
                                         </TableRow>
                                     ) : (
-                                        bimbingans.map((b) => (
+                                        filteredBimbingans.map((b) => (
                                             <TableRow key={b.id}>
                                                 <TableCell className="font-mono text-gray-900">
                                                     {b.mahasiswa?.nim}
@@ -420,119 +509,25 @@ export default function BimbinganTugasAkhirIndex({
                                                         ] || b.status}
                                                     </Badge>
                                                 </TableCell>
+                                                <TableCell>
+                                                    <ProgressTahap
+                                                        bimbingan={b}
+                                                        tahapan={tahapan}
+                                                    />
+                                                </TableCell>
                                                 <TableCell className="text-right">
-                                                    <Dialog
-                                                        open={
-                                                            editing?.id === b.id
-                                                        }
-                                                        onOpenChange={(open) =>
-                                                            !open &&
-                                                            setEditing(null)
-                                                        }
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        title="Detail progress"
+                                                        asChild
                                                     >
-                                                        <DialogTrigger asChild>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                onClick={() =>
-                                                                    openEdit(b)
-                                                                }
-                                                            >
-                                                                <PenLine className="h-4 w-4" />
-                                                            </Button>
-                                                        </DialogTrigger>
-                                                        <DialogContent>
-                                                            <DialogHeader>
-                                                                <DialogTitle>
-                                                                    Update
-                                                                    Status
-                                                                    Bimbingan
-                                                                </DialogTitle>
-                                                                <DialogDescription>
-                                                                    {
-                                                                        b
-                                                                            .mahasiswa
-                                                                            ?.nama
-                                                                    }
-                                                                </DialogDescription>
-                                                            </DialogHeader>
-                                                            <form
-                                                                onSubmit={
-                                                                    handleUpdate
-                                                                }
-                                                                className="space-y-4"
-                                                            >
-                                                                <div className="space-y-2">
-                                                                    <Label>
-                                                                        Status
-                                                                    </Label>
-                                                                    <Select
-                                                                        value={
-                                                                            statusForm
-                                                                                .data
-                                                                                .status
-                                                                        }
-                                                                        onValueChange={(
-                                                                            v,
-                                                                        ) =>
-                                                                            statusForm.setData(
-                                                                                'status',
-                                                                                v,
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        <SelectTrigger>
-                                                                            <SelectValue />
-                                                                        </SelectTrigger>
-                                                                        <SelectContent>
-                                                                            <SelectItem value="aktif">
-                                                                                Aktif
-                                                                            </SelectItem>
-                                                                            <SelectItem value="revisi">
-                                                                                Revisi
-                                                                            </SelectItem>
-                                                                            <SelectItem value="lainnya">
-                                                                                Lainnya
-                                                                            </SelectItem>
-                                                                        </SelectContent>
-                                                                    </Select>
-                                                                </div>
-                                                                <div className="space-y-2">
-                                                                    <Label>
-                                                                        Catatan
-                                                                    </Label>
-                                                                    <Textarea
-                                                                        value={
-                                                                            statusForm
-                                                                                .data
-                                                                                .catatan
-                                                                        }
-                                                                        onChange={(
-                                                                            e,
-                                                                        ) =>
-                                                                            statusForm.setData(
-                                                                                'catatan',
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                            )
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                                <DialogFooter>
-                                                                    <Button
-                                                                        type="submit"
-                                                                        disabled={
-                                                                            statusForm.processing
-                                                                        }
-                                                                        className="bg-green-700 hover:bg-green-800"
-                                                                    >
-                                                                        Simpan
-                                                                    </Button>
-                                                                </DialogFooter>
-                                                            </form>
-                                                        </DialogContent>
-                                                    </Dialog>
+                                                        <Link
+                                                            href={`/dosen/bimbingan-tugas-akhir/${b.uuid}`}
+                                                        >
+                                                            <ClipboardList className="h-4 w-4" />
+                                                        </Link>
+                                                    </Button>
                                                 </TableCell>
                                             </TableRow>
                                         ))

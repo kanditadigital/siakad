@@ -1,13 +1,22 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { ArrowRight, Eye, EyeOff, Loader2, Lock, User } from 'lucide-react';
+import {
+    ArrowRight,
+    Eye,
+    EyeOff,
+    Loader2,
+    Lock,
+    ShieldCheck,
+    User,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import AppLogoIcon from '@/components/app-logo-icon';
-import PasskeyVerify from '@/components/passkey-verify';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 type Props = {
     canResetPassword: boolean;
@@ -22,15 +31,32 @@ type Props = {
 const NILAI_INSTITUSI = ['Berilmu', 'Berbahasa', 'Berdaya'];
 
 /**
- * Two soft, oversized tonal circles bleeding off the panel edges — a quiet
- * decorative wash behind the brand copy, not a literal shape to read.
+ * Faint diagonal grid over the pine panel, like a campus site plan — reads as
+ * texture at a glance, not a literal pattern to inspect.
  */
-function CircleBackdrop() {
+function GridBackdrop() {
     return (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-            <div className="absolute top-[-18%] right-[-22%] h-[65%] w-[65%] rounded-full bg-white/[0.06]" />
-            <div className="absolute top-[8%] right-[-10%] h-[42%] w-[42%] rounded-full bg-white/[0.08]" />
-        </div>
+        <svg
+            className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.07]"
+            aria-hidden="true"
+        >
+            <defs>
+                <pattern
+                    id="grid-login"
+                    width="56"
+                    height="56"
+                    patternUnits="userSpaceOnUse"
+                >
+                    <path
+                        d="M56 0H0V56"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                    />
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid-login)" />
+        </svg>
     );
 }
 
@@ -57,6 +83,68 @@ function BrandMark({
             ) : (
                 <AppLogoIcon className="h-5 w-5 text-siak-pine" />
             )}
+        </div>
+    );
+}
+
+/**
+ * Text field whose label sits inside the field at rest and floats up into a
+ * small caption the moment the field is focused or already holds a value —
+ * so the label doubles as a placeholder without ever obscuring what's typed.
+ */
+function FloatingLabelField({
+    id,
+    label,
+    icon: Icon,
+    trailing,
+    className,
+    value,
+    onFocus,
+    onBlur,
+    ...inputProps
+}: {
+    id: string;
+    label: string;
+    icon: LucideIcon;
+    trailing?: React.ReactNode;
+} & React.ComponentProps<typeof Input>) {
+    const [focused, setFocused] = useState(false);
+    const floated = focused || String(value ?? '').length > 0;
+
+    return (
+        <div className="relative">
+            <Icon className="pointer-events-none absolute top-1/2 left-3.5 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+                id={id}
+                value={value}
+                onFocus={(e) => {
+                    setFocused(true);
+                    onFocus?.(e);
+                }}
+                onBlur={(e) => {
+                    setFocused(false);
+                    onBlur?.(e);
+                }}
+                className={cn(
+                    'h-14 pl-10',
+                    trailing && 'pr-10',
+                    floated ? 'pt-5 pb-1' : 'pt-0 pb-0',
+                    className,
+                )}
+                {...inputProps}
+            />
+            <Label
+                htmlFor={id}
+                className={cn(
+                    'pointer-events-none absolute left-10 origin-left transition-all duration-150 ease-out',
+                    floated
+                        ? 'top-3.5 -translate-y-0 text-[11px] font-semibold text-primary'
+                        : 'top-1/2 -translate-y-1/2 text-sm font-normal text-muted-foreground',
+                )}
+            >
+                {label}
+            </Label>
+            {trailing}
         </div>
     );
 }
@@ -88,10 +176,12 @@ export default function Login({ canResetPassword, status }: Props) {
         <>
             <Head title="Masuk" />
 
-            <div className="min-h-screen bg-background lg:grid lg:grid-cols-[1.15fr_1fr] xl:grid-cols-[1.25fr_1fr]">
+            <div className="grid min-h-screen lg:grid-cols-2">
                 {/* Brand panel — desktop */}
-                <aside className="relative hidden overflow-hidden bg-siak-pine-deep lg:flex lg:flex-col lg:justify-between lg:p-14 xl:p-20">
-                    <CircleBackdrop />
+                <aside className="relative hidden overflow-hidden bg-siak-pine-deep lg:flex lg:flex-col lg:justify-between lg:p-16 xl:p-20">
+                    <GridBackdrop />
+                    <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
+                    <div className="pointer-events-none absolute right-[-10%] bottom-[-10%] h-96 w-96 rounded-full bg-white/[0.05] blur-3xl" />
 
                     <div className="relative z-10 flex items-center gap-3">
                         <BrandMark
@@ -107,7 +197,7 @@ export default function Login({ canResetPassword, status }: Props) {
                         <p className="text-[11px] font-semibold tracking-[0.22em] text-gold-soft uppercase">
                             Portal Akademik
                         </p>
-                        <h1 className="mt-5 font-display text-4xl leading-[1.12] font-semibold text-white xl:text-5xl">
+                        <h1 className="mt-5 text-4xl leading-[1.12] font-semibold text-white xl:text-5xl">
                             {kampus.nama}
                         </h1>
                         <div className="mt-7 h-px w-14 bg-gold" />
@@ -120,13 +210,13 @@ export default function Login({ canResetPassword, status }: Props) {
                     </div>
 
                     <div className="relative z-10">
-                        <dl className="flex flex-wrap gap-4">
+                        <dl className="grid grid-cols-3 gap-3">
                             {NILAI_INSTITUSI.map((nilai, index) => (
                                 <div
                                     key={nilai}
-                                    className="rounded-xl bg-white/10 px-5 py-4"
+                                    className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-4"
                                 >
-                                    <dt className="font-display text-sm text-gold-soft italic">
+                                    <dt className="text-sm font-semibold text-gold-soft">
                                         0{index + 1}
                                     </dt>
                                     <dd className="mt-1 text-sm font-semibold tracking-wide text-white">
@@ -142,7 +232,7 @@ export default function Login({ canResetPassword, status }: Props) {
                 </aside>
 
                 {/* Form panel */}
-                <main className="flex min-h-screen flex-col lg:min-h-0">
+                <main className="flex min-h-screen flex-col bg-background">
                     {/* Brand bar — mobile only */}
                     <div className="flex items-center gap-3 bg-siak-pine-deep px-6 py-5 lg:hidden">
                         <BrandMark
@@ -159,10 +249,17 @@ export default function Login({ canResetPassword, status }: Props) {
                         </div>
                     </div>
 
-                    <div className="flex flex-1 items-center justify-center px-6 py-12 sm:px-10 lg:px-14 xl:px-20">
-                        <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
-                            <h2 className="font-display text-3xl font-semibold text-foreground">
-                                Selamat datang
+                    <div className="flex flex-1 items-center justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-24">
+                        <div className="w-full max-w-sm animate-in duration-500 fade-in slide-in-from-bottom-2">
+                            <div className="mb-8 flex items-center gap-2 text-siak-pine">
+                                <ShieldCheck className="h-4 w-4" />
+                                <span className="text-[11px] font-semibold tracking-[0.18em] uppercase">
+                                    Akses Aman
+                                </span>
+                            </div>
+
+                            <h2 className="text-3xl font-semibold text-foreground">
+                                Selamat datang kembali
                             </h2>
                             <p className="mt-2 text-sm text-muted-foreground">
                                 Masuk memakai akun institusi Anda untuk
@@ -170,55 +267,82 @@ export default function Login({ canResetPassword, status }: Props) {
                             </p>
 
                             {status && (
-                                <div className="mt-6 border-l-4 border-primary bg-accent px-4 py-3 text-sm text-accent-foreground">
+                                <div className="mt-6 rounded-lg border-l-4 border-primary bg-accent px-4 py-3 text-sm text-accent-foreground">
                                     {status}
                                 </div>
                             )}
 
                             {authError && (
-                                <div className="mt-6 border-l-4 border-destructive bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                                <div className="mt-6 rounded-lg border-l-4 border-destructive bg-destructive/5 px-4 py-3 text-sm text-destructive">
                                     {authError}
                                 </div>
                             )}
 
-                            <form onSubmit={onSubmit} className="mt-8 space-y-5">
-                                <div className="space-y-2">
-                                    <Label
-                                        htmlFor="login_value"
-                                        className="text-foreground"
-                                    >
-                                        Email, NIM, atau NIDN
-                                    </Label>
-                                    <div className="relative">
-                                        <User className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                        <Input
-                                            id="login_value"
-                                            type="text"
-                                            value={data.login_value}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'login_value',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="nama@kampus.ac.id"
-                                            className="h-11 pl-10"
-                                            aria-invalid={!!authError}
-                                            autoComplete="username"
-                                            autoFocus
-                                            required
-                                        />
-                                    </div>
-                                </div>
+                            <form
+                                onSubmit={onSubmit}
+                                className="mt-8 space-y-5"
+                            >
+                                <FloatingLabelField
+                                    id="login_value"
+                                    label="Email, NIM, atau NIDN"
+                                    icon={User}
+                                    type="text"
+                                    value={data.login_value}
+                                    onChange={(e) =>
+                                        setData('login_value', e.target.value)
+                                    }
+                                    aria-invalid={!!authError}
+                                    autoComplete="username"
+                                    autoFocus
+                                    required
+                                />
 
                                 <div className="space-y-2">
-                                    <div className="flex items-baseline justify-between">
-                                        <Label
-                                            htmlFor="password"
-                                            className="text-foreground"
-                                        >
-                                            Kata Sandi
-                                        </Label>
+                                    <FloatingLabelField
+                                        id="password"
+                                        label="Kata Sandi"
+                                        icon={Lock}
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
+                                        value={data.password}
+                                        onChange={(e) =>
+                                            setData('password', e.target.value)
+                                        }
+                                        aria-invalid={!!errors.password}
+                                        autoComplete="current-password"
+                                        required
+                                        trailing={
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setShowPassword(
+                                                        !showPassword,
+                                                    )
+                                                }
+                                                className="absolute top-1/2 right-3 z-10 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                                                aria-label={
+                                                    showPassword
+                                                        ? 'Sembunyikan kata sandi'
+                                                        : 'Tampilkan kata sandi'
+                                                }
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4" />
+                                                ) : (
+                                                    <Eye className="h-4 w-4" />
+                                                )}
+                                            </button>
+                                        }
+                                    />
+                                    <div className="flex items-center justify-between">
+                                        {errors.password ? (
+                                            <p className="text-xs text-destructive">
+                                                {errors.password}
+                                            </p>
+                                        ) : (
+                                            <span />
+                                        )}
                                         {canResetPassword && (
                                             <a
                                                 href="/forgot-password"
@@ -228,52 +352,6 @@ export default function Login({ canResetPassword, status }: Props) {
                                             </a>
                                         )}
                                     </div>
-                                    <div className="relative">
-                                        <Lock className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                        <Input
-                                            id="password"
-                                            type={
-                                                showPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            value={data.password}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'password',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="••••••••"
-                                            className="h-11 pr-10 pl-10"
-                                            aria-invalid={!!errors.password}
-                                            autoComplete="current-password"
-                                            required
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setShowPassword(!showPassword)
-                                            }
-                                            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-                                            aria-label={
-                                                showPassword
-                                                    ? 'Sembunyikan kata sandi'
-                                                    : 'Tampilkan kata sandi'
-                                            }
-                                        >
-                                            {showPassword ? (
-                                                <EyeOff className="h-4 w-4" />
-                                            ) : (
-                                                <Eye className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                    </div>
-                                    {errors.password && (
-                                        <p className="text-xs text-destructive">
-                                            {errors.password}
-                                        </p>
-                                    )}
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -281,7 +359,10 @@ export default function Login({ canResetPassword, status }: Props) {
                                         id="remember"
                                         checked={data.remember}
                                         onCheckedChange={(checked) =>
-                                            setData('remember', checked === true)
+                                            setData(
+                                                'remember',
+                                                checked === true,
+                                            )
                                         }
                                     />
                                     <Label
@@ -310,15 +391,6 @@ export default function Login({ canResetPassword, status }: Props) {
                                     )}
                                 </Button>
                             </form>
-
-                            <div>
-                                <PasskeyVerify
-                                    label="Masuk dengan Passkey"
-                                    loadingLabel="Memverifikasi…"
-                                    separator="Atau"
-                                    separatorPosition="before"
-                                />
-                            </div>
 
                             <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
                                 Belum punya akses? Hubungi BAAK atau admin

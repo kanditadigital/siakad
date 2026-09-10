@@ -17,9 +17,39 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn } from '@/lib/utils';
 import type { NavGroup, NavItem } from '@/types';
 
-/** Active-item treatment: soft green wash + green label, on a white sidebar. */
+/**
+ * Resting shape of every nav row. The hover wash is deliberately a translucent
+ * white rather than the primitive's default white pill: reserving the solid
+ * pill for the *active* row is what keeps the panel calm while the pointer
+ * moves through it.
+ */
+const ITEM =
+    'relative h-9 rounded-md px-3 text-[13px] font-normal transition-colors hover:bg-white/10 hover:text-white';
+
+/** Active row: solid white pill + dark label. No left rail — against the dark panel the pill is already the loudest thing in the sidebar, and doubling the treatment reads as noise. */
 const AKTIF =
-    'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground';
+    'bg-sidebar-accent font-medium text-sidebar-accent-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground';
+
+/**
+ * Top-level rows only (active or just hovered): squares off the right
+ * corners and bleeds the row's width 0.75rem (the group's right padding)
+ * past its normal right edge so it reaches the sidebar's true border — the
+ * hover wash and the active pill both read flush against the panel edge
+ * instead of stopping short at the group's padding. A trailing margin can't
+ * do this — a 100%-width block's right edge is fixed by its container
+ * regardless of margin — so the box itself has to be widened. Applied
+ * unconditionally (not just when active) so hover reaches the same edge;
+ * it's invisible until a background shows since the extra width has no
+ * fill on its own. Reverts to the plain rounded square button in
+ * icon-collapsed mode, where there's no edge to bleed into.
+ */
+const UTAMA =
+    'w-[calc(100%+0.75rem)] rounded-r-none group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:rounded-md';
+
+/** Icon colour for an inactive row — translucent white, legible on the dark panel. */
+const IKON_TIDAK_AKTIF = 'text-sidebar-foreground/70';
+/** Icon colour for an active row — the sidebar's own green, read against the white pill. */
+const IKON_AKTIF = 'text-sidebar';
 
 export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
     const { isCurrentUrl } = useCurrentUrl();
@@ -27,11 +57,16 @@ export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
     return (
         <>
             {groups.map((group) => (
-                <SidebarGroup key={group.label} className="px-2 py-0">
-                    <SidebarGroupLabel className="text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
+                <SidebarGroup
+                    key={group.label}
+                    // px-2 when collapsed so the 32px icon buttons land centred
+                    // in the 48px rail instead of hugging its left edge.
+                    className="px-3 py-0 group-data-[collapsible=icon]:px-2"
+                >
+                    <SidebarGroupLabel className="h-auto px-3 pb-1.5 text-[10px] font-medium tracking-[0.14em] text-sidebar-foreground/45 uppercase">
                         {group.label}
                     </SidebarGroupLabel>
-                    <SidebarMenu>
+                    <SidebarMenu className="gap-0.5">
                         {group.items.map((item) =>
                             item.children ? (
                                 <CollapsibleItem
@@ -62,16 +97,9 @@ export function NavMain({ groups = [] }: { groups: NavGroup[] }) {
     );
 }
 
-/** Left rail marking the active item — the wash alone is too soft to anchor the eye. */
-function PenandaAktif() {
-    return (
-        <span className="absolute top-1.5 bottom-1.5 left-0 w-[3px] rounded-r-full bg-sidebar-accent-foreground" />
-    );
-}
-
 function LencanaJumlah({ jumlah }: { jumlah: number }) {
     return (
-        <span className="ml-auto rounded-full bg-kpi-keuangan px-1.5 py-px text-[10px] font-bold tabular-nums text-white">
+        <span className="ml-auto rounded-full bg-kpi-keuangan px-1.5 py-px text-[10px] font-semibold tabular-nums text-white">
             {jumlah > 99 ? '99+' : jumlah}
         </span>
     );
@@ -92,15 +120,14 @@ function SimpleItem({
                 asChild
                 isActive={isActive}
                 tooltip={{ children: item.title }}
-                className={cn('relative transition-colors', isActive && AKTIF)}
+                className={cn(ITEM, UTAMA, isActive && AKTIF)}
             >
                 <Link href={item.href} prefetch>
-                    {isActive && <PenandaAktif />}
                     {item.icon && (
                         <item.icon
                             className={cn(
-                                'text-muted-foreground',
-                                isActive && 'text-sidebar-accent-foreground',
+                                IKON_TIDAK_AKTIF,
+                                isActive && IKON_AKTIF,
                             )}
                         />
                     )}
@@ -130,18 +157,13 @@ function CollapsibleItem({
                 <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                         tooltip={{ children: item.title }}
-                        className={cn(
-                            'relative transition-colors',
-                            isParentActive && AKTIF,
-                        )}
+                        className={cn(ITEM, UTAMA, isParentActive && AKTIF)}
                     >
-                        {isParentActive && <PenandaAktif />}
                         {item.icon && (
                             <item.icon
                                 className={cn(
-                                    'text-muted-foreground',
-                                    isParentActive &&
-                                        'text-sidebar-accent-foreground',
+                                    IKON_TIDAK_AKTIF,
+                                    isParentActive && IKON_AKTIF,
                                 )}
                             />
                         )}
@@ -151,7 +173,10 @@ function CollapsibleItem({
                         ) : null}
                         <ChevronRight
                             className={cn(
-                                'h-4 w-4 text-muted-foreground transition-transform',
+                                'size-3.5 transition-transform duration-200',
+                                isParentActive
+                                    ? 'text-sidebar-accent-foreground/60'
+                                    : 'text-sidebar-foreground/45',
                                 item.badge ? 'ml-1' : 'ml-auto',
                                 open && 'rotate-90',
                             )}
@@ -159,7 +184,7 @@ function CollapsibleItem({
                     </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                    <SidebarMenu className="my-0.5 ml-[1.15rem] gap-0.5 border-l border-sidebar-border pl-2 group-data-[collapsible=icon]:hidden">
+                    <SidebarMenu className="my-0.5 ml-[1.3rem] gap-0.5 border-l border-white/15 pl-2 group-data-[collapsible=icon]:hidden">
                         {item.children?.map((child) => {
                             const isActive = isCurrentUrl(child.href as string);
 
@@ -170,18 +195,17 @@ function CollapsibleItem({
                                         isActive={isActive}
                                         tooltip={{ children: child.title }}
                                         className={cn(
-                                            'relative text-sm transition-colors',
+                                            ITEM,
+                                            'h-8 text-[12.5px]',
                                             isActive && AKTIF,
                                         )}
                                     >
                                         <Link href={child.href} prefetch>
-                                            {isActive && <PenandaAktif />}
                                             {child.icon && (
                                                 <child.icon
                                                     className={cn(
-                                                        'text-muted-foreground',
-                                                        isActive &&
-                                                            'text-sidebar-accent-foreground',
+                                                        IKON_TIDAK_AKTIF,
+                                                        isActive && IKON_AKTIF,
                                                     )}
                                                 />
                                             )}

@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -184,7 +185,7 @@ export default function PenjadwalanIndex({
                 </div>
 
                 {/* Table */}
-                <div className="rounded-lg border">
+                <Card className="overflow-hidden py-0">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -341,7 +342,7 @@ export default function PenjadwalanIndex({
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                </Card>
 
                 {/* Pagination */}
                 {kelases.last_page > 1 && (

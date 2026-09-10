@@ -90,7 +90,7 @@ export default function TranskripNilaiMahasiswa({
                 </div>
 
                 {/* Header Card */}
-                <Card className="overflow-hidden border border-gray-200 shadow-sm">
+                <Card className="overflow-hidden py-0 border border-gray-200 shadow-sm">
                     <div className="flex flex-col md:flex-row">
                         <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[200px] md:w-64">
                             <div className="flex flex-col items-center gap-4">
@@ -219,7 +219,7 @@ export default function TranskripNilaiMahasiswa({
                 </div>
 
                 {/* Table (desktop/tablet) */}
-                <div className="hidden rounded-lg border sm:block">
+                <Card className="hidden overflow-hidden py-0 sm:block">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -318,7 +318,7 @@ export default function TranskripNilaiMahasiswa({
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                </Card>
             </div>
         </>
     );

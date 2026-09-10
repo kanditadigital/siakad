@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminProdi\KrsController;
 use App\Http\Controllers\AdminProdi\MahasiswaController;
 use App\Http\Controllers\AdminProdi\MataKuliahController;
 use App\Http\Controllers\AdminProdi\NilaiController;
+use App\Http\Controllers\AdminProdi\PengajuanJudulTaController;
 use App\Http\Controllers\AdminProdi\PenjadwalanController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,4 +60,9 @@ Route::middleware(['auth', 'verified', 'role:admin_prodi'])->prefix('admin-prodi
     // Nilai (read-only)
     Route::get('nilai', [NilaiController::class, 'index'])->name('nilai.index');
     Route::get('nilai/{nilai}', [NilaiController::class, 'show'])->name('nilai.show');
+
+    // Pengajuan Judul TA (approve/reject, scoped to this admin's program studi)
+    Route::get('pengajuan-judul-ta', [PengajuanJudulTaController::class, 'index'])->name('pengajuan-judul-ta.index');
+    Route::patch('pengajuan-judul-ta/{pengajuanJudulTa}/approve', [PengajuanJudulTaController::class, 'approve'])->name('pengajuan-judul-ta.approve');
+    Route::patch('pengajuan-judul-ta/{pengajuanJudulTa}/reject', [PengajuanJudulTaController::class, 'reject'])->name('pengajuan-judul-ta.reject');
 });

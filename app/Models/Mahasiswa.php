@@ -124,6 +124,14 @@ class Mahasiswa extends Model
     }
 
     /**
+     * @return HasMany<PengajuanJudulTa, $this>
+     */
+    public function pengajuanJudulTa(): HasMany
+    {
+        return $this->hasMany(PengajuanJudulTa::class);
+    }
+
+    /**
      * Normal maximum semester for this mahasiswa's jenjang (S1 = 8, D3 = 6, …),
      * derived from `program_studi.lama_studi` (years) rather than a second
      * stored number that could drift out of sync.

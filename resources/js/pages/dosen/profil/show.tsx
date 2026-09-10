@@ -177,7 +177,7 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                 </div>
 
                 {/* Card 1: Photo & Biodata Singkat */}
-                <Card className="overflow-hidden">
+                <Card className="overflow-hidden py-0">
                     <div className="flex flex-col md:flex-row">
                         {/* Photo Section */}
                         <div className="flex items-center justify-center bg-siak-pine p-8 md:min-h-[280px] md:w-64">

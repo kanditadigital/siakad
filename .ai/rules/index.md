@@ -4,7 +4,9 @@ Before planning or editing, find the row whose globs match the file's path and r
 
 | Applies to | Rule file |
 | --- | --- |
-| resources/js/components/** | .ai/rules/components.md |
+| resources/js/components/**, resources/js/components/nav-main.tsx | .ai/rules/components.md |
 | app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Http/Controllers/Dosen/** | .ai/rules/dosen.md |
+| app/Events/** | .ai/rules/events.md |
+| resources/js/** | .ai/rules/js.md |
 | app/Models/Mahasiswa.php | .ai/rules/models.md |

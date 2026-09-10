@@ -26,6 +26,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 
@@ -164,7 +165,7 @@ export default function RpsIndex({ rpsList, filters }: Props) {
                 </div>
 
                 {/* Table */}
-                <div className="rounded-lg border">
+                <Card className="overflow-hidden py-0">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -284,7 +285,7 @@ export default function RpsIndex({ rpsList, filters }: Props) {
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                </Card>
             </div>
 
             <Dialog

@@ -23,6 +23,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -360,7 +361,7 @@ export default function MahasiswaIndex({
                 </div>
 
                 {/* Table */}
-                <div className="rounded-lg border">
+                <Card className="overflow-hidden py-0">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -533,7 +534,7 @@ export default function MahasiswaIndex({
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                </Card>
 
                 {/* Pagination */}
                 {mahasiswas.last_page > 1 && (

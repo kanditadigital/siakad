@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Krs;
+use App\Models\TagihanUkt;
+use App\Observers\TugasTertundaObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        Krs::observe(TugasTertundaObserver::class);
+        TagihanUkt::observe(TugasTertundaObserver::class);
     }
 
     /**

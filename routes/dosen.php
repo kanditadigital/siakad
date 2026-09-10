@@ -53,5 +53,12 @@ Route::middleware(['auth', 'verified', 'role:dosen'])->prefix('dosen')->name('do
     // Bimbingan Tugas Akhir
     Route::get('bimbingan-tugas-akhir', [BimbinganTugasAkhirController::class, 'index'])->name('bimbingan-tugas-akhir.index');
     Route::post('bimbingan-tugas-akhir', [BimbinganTugasAkhirController::class, 'store'])->name('bimbingan-tugas-akhir.store');
+    Route::get('bimbingan-tugas-akhir/{bimbinganTugasAkhir}', [BimbinganTugasAkhirController::class, 'show'])->name('bimbingan-tugas-akhir.show');
     Route::put('bimbingan-tugas-akhir/{bimbinganTugasAkhir}', [BimbinganTugasAkhirController::class, 'update'])->name('bimbingan-tugas-akhir.update');
+    Route::post('bimbingan-tugas-akhir/{bimbinganTugasAkhir}/tahap/setujui', [BimbinganTugasAkhirController::class, 'setujuiTahap'])->name('bimbingan-tugas-akhir.tahap.setujui');
+    Route::post('bimbingan-tugas-akhir/{bimbinganTugasAkhir}/revisi', [BimbinganTugasAkhirController::class, 'tambahRevisi'])->name('bimbingan-tugas-akhir.revisi');
+    Route::patch('bimbingan-tugas-akhir/{bimbinganTugasAkhir}/ganti-judul', [BimbinganTugasAkhirController::class, 'gantiJudul'])->name('bimbingan-tugas-akhir.ganti-judul');
+    Route::post('bimbingan-tugas-akhir/{bimbinganTugasAkhir}/bab', [BimbinganTugasAkhirController::class, 'storeBab'])->name('bimbingan-tugas-akhir.bab.store');
+    Route::patch('bimbingan-tugas-akhir/{bimbinganTugasAkhir}/bab/{bab}/toggle', [BimbinganTugasAkhirController::class, 'toggleBab'])->name('bimbingan-tugas-akhir.bab.toggle');
+    Route::delete('bimbingan-tugas-akhir/{bimbinganTugasAkhir}/bab/{bab}', [BimbinganTugasAkhirController::class, 'destroyBab'])->name('bimbingan-tugas-akhir.bab.destroy');
 });

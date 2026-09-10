@@ -145,7 +145,7 @@ export default function JadwalPerkuliahan({ krss, mahasiswa }: Props) {
                 </div>
 
                 {/* Table (desktop/tablet) */}
-                <div className="hidden rounded-lg border sm:block">
+                <Card className="hidden overflow-hidden py-0 sm:block">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
@@ -235,7 +235,7 @@ export default function JadwalPerkuliahan({ krss, mahasiswa }: Props) {
                             </TableBody>
                         </Table>
                     </div>
-                </div>
+                </Card>
             </div>
         </>
     );

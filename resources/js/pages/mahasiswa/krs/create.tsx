@@ -174,7 +174,7 @@ export default function KrsCreate({
                     </Card>
 
                     {/* Kelas list */}
-                    <div className="rounded-lg border">
+                    <Card className="overflow-hidden py-0">
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
@@ -289,7 +289,7 @@ export default function KrsCreate({
                                 </TableBody>
                             </Table>
                         </div>
-                    </div>
+                    </Card>
                 </form>
             </div>
         </>

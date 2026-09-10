@@ -104,8 +104,9 @@
 }
 
 :root {
-    /* The working surface is a muted green-grey, not white: cards, tables and
-       the sidebar are white and need a ground to sit on. */
+    /* Muted green-grey working surface: cards and tables are white and need a
+       ground to sit on. Back from the Midone blue-grey (#f3f6fa) now that the
+       sidebar is green again — a cool ground under a green panel reads off. */
     --background: #f3f5f3;
     --foreground: #15201a;
 
@@ -140,18 +141,22 @@
     --chart-4: #86efac;
     --chart-5: #bbf7d0;
 
-    --radius: 0.5rem;
+    --radius: 0.375rem;
 
-    /* White sidebar (2026-09-02): the brand block at the top carries the
-       institutional colour instead of the whole panel. */
-    --sidebar: #ffffff;
-    --sidebar-foreground: #3f4a43;
-    --sidebar-primary: var(--color-green-700);
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #eaf6ee;
-    --sidebar-accent-foreground: var(--color-green-700);
-    --sidebar-border: #e8ebe8;
-    --sidebar-ring: var(--color-green-700);
+    /* Institutional green sidebar (2026-09-05, later same day): the Midone blue
+       is dropped for the campus green — green-800 is also `--primary`, so the
+       panel now carries the brand colour rather than a borrowed one. Active
+       items sit on a white pill with dark text + green icon; inactive text/icons
+       use translucent white so they stay legible on the green field (white on
+       green-800 is ~7:1). */
+    --sidebar: var(--color-green-800);
+    --sidebar-foreground: rgba(255, 255, 255, 0.88);
+    --sidebar-primary: #ffffff;
+    --sidebar-primary-foreground: var(--color-green-800);
+    --sidebar-accent: #ffffff;
+    --sidebar-accent-foreground: #1f2937;
+    --sidebar-border: rgba(255, 255, 255, 0.12);
+    --sidebar-ring: #ffffff;
 }
 
 @layer base {
