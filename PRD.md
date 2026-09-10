@@ -35,6 +35,54 @@ Kolom `users.role` mendukung: `admin`, `admin_prodi`, `dosen`, `mahasiswa`, `pim
 
 Autorisasi diterapkan lewat middleware `role:{peran}` per group route (lihat `routes/admin.php`, `routes/admin-prodi.php`, `routes/dosen.php`, `routes/mahasiswa.php`).
 
+### 2.1 Matriks Fitur & Hak Akses per Peran
+
+Rincian fitur per peran, termasuk sub-kapasitas Dosen (PA, Pembimbing TA) dan peran Keuangan yang saat ini belum punya nilai `role` terpisah di kode (lihat §2 di atas — perlu diklarifikasi apakah Keuangan berjalan sebagai sub-hak-akses `admin` atau butuh role baru).
+
+| Role                        | Fitur / Hak Akses     | Yang Bisa Dilakukan                                                                                                        |
+| --------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Mahasiswa**               | Profil                | Melihat biodata dan data akademik, memperbarui data pribadi tertentu, melihat/unduh dokumen, cetak profil                  |
+|                             | KRS                   | Memilih mata kuliah, memasukkan ke keranjang KRS, melihat batas SKS, mengajukan KRS, melihat status persetujuan, cetak PDF |
+|                             | KHS                   | Melihat nilai per semester, IPS, IPK, predikat, unduh KHS PDF                                                              |
+|                             | Transkrip Nilai       | Melihat seluruh riwayat nilai dan SKS, IPK kumulatif, unduh transkrip PDF                                                  |
+|                             | Jadwal Perkuliahan    | Melihat jadwal mata kuliah yang diambil                                                                                    |
+|                             | Tagihan UKT           | Melihat tagihan, status pembayaran, riwayat pembayaran, cara pembayaran, invoice dan bukti pembayaran                      |
+| **Dosen**                   | Profil Dosen          | Melihat profil dan data profesional, memperbarui foto/data pribadi tertentu                                                |
+|                             | Perkuliahan           | Melihat mata kuliah yang diampu, kelas, jadwal, dan mahasiswa                                                              |
+|                             | Daftar Mahasiswa      | Melihat mahasiswa per kelas, mencari mahasiswa, melihat detail, melihat kehadiran, export Excel                            |
+|                             | Presensi              | Input Hadir/Izin/Sakit/Alpha, memberi keterangan, simpan presensi, lihat rekap, export Excel                               |
+|                             | Materi Perkuliahan    | Mengisi materi per pertemuan, deskripsi, catatan, upload PDF/PPT/Word/video/link                                           |
+|                             | RPS                   | Download template, upload RPS, melihat status RPS/revisi/persetujuan                                                       |
+|                             | Nilai                 | Menentukan komponen dan bobot, input nilai, import/export Excel, menyimpan nilai dan melihat rata-rata kelas               |
+| **Dosen PA**                | Mahasiswa Asuh        | Melihat mahasiswa asuh, profil akademik, IPK, SKS dan perkembangan mahasiswa                                               |
+|                             | Bimbingan Akademik    | Membuat catatan pembinaan, melihat riwayat bimbingan, rekapitulasi dan export Excel                                        |
+|                             | Persetujuan KRS       | Memeriksa/mendukung proses persetujuan KRS mahasiswa asuh                                                                  |
+| **Dosen Pembimbing TA**     | Bimbingan Tugas Akhir | Melihat mahasiswa bimbingan dan status sebagai Pembimbing I/II                                                             |
+|                             | Detail Bimbingan      | Melihat judul TA, status Aktif/Revisi, detail dan riwayat bimbingan                                                        |
+|                             | Laporan               | Filter mahasiswa bimbingan dan export Excel                                                                                |
+| **Kaprodi / Program Studi** | Monitoring Akademik   | Memantau kegiatan akademik program studi                                                                                   |
+|                             | RPS                   | Memeriksa RPS dosen, termasuk status revisi/persetujuan                                                                    |
+|                             | Akademik Prodi        | Secara konsep memantau perkuliahan dan kegiatan akademik program studi                                                     |
+| **Admin / BAAK**            | Data Akademik         | Kelola tahun akademik, semester, periode KRS, periode nilai, aturan akademik dan pengumuman                                |
+|                             | Data Mahasiswa        | Tambah/edit mahasiswa, detail mahasiswa, mengubah status Aktif/Cuti/Nonaktif/Lulus                                         |
+|                             | Data Dosen & Tendik   | Tambah/edit/import data dosen dan tendik, dokumen, jabatan, program studi dan status                                       |
+|                             | Mata Kuliah           | CRUD mata kuliah, SKS, semester, jenis wajib/pilihan, import Excel                                                         |
+|                             | KRS & Penjadwalan     | Memeriksa, menyetujui/menolak KRS, membuat kelas, menentukan dosen, jadwal dan ruang                                       |
+|                             | Perkuliahan           | Monitoring proses perkuliahan, mahasiswa, presensi, materi dan nilai                                                       |
+|                             | Nilai                 | Monitoring/input nilai, import Excel, verifikasi nilai, bobot, distribusi nilai, cetak KHS/transkrip                       |
+|                             | Yudisium              | Kelola calon peserta, verifikasi syarat, menetapkan yudisium, berita acara dan SK                                          |
+|                             | Laporan               | Laporan akademik, mahasiswa, keuangan dan sumber daya; export PDF/Excel                                                    |
+|                             | Pengaturan Sistem     | Identitas kampus, akademik aktif, KRS, nilai, UKT, pembayaran, notifikasi dan dokumen                                      |
+|                             | Hak Akses & Keamanan  | Kelola role, pembatasan menu, password, sesi login, backup/restore dan log aktivitas                                       |
+| **Keuangan**                | Tagihan               | Membuat/import tagihan, menentukan nominal dan komponen, jatuh tempo, melihat status tagihan                               |
+|                             | Pembayaran            | Input pembayaran, upload/periksa bukti transfer, konfirmasi atau tolak pembayaran                                          |
+|                             | Rekap Keuangan        | Melihat pembayaran, tunggakan, sisa tagihan dan transaksi menunggu konfirmasi                                              |
+|                             | Dokumen/Laporan       | Cetak kuitansi, laporan pembayaran dan export Excel                                                                        |
+| **Pimpinan**                | Monitoring Akademik   | Melihat mahasiswa aktif, kelas/perkuliahan, KRS, presensi dan perkembangan akademik                                        |
+|                             | Monitoring Keuangan   | Melihat tagihan UKT, pembayaran, tunggakan dan persentase pembayaran                                                       |
+|                             | Laporan Ringkas       | Melihat laporan akademik, mahasiswa, nilai/yudisium dan keuangan                                                           |
+|                             | Detail Monitoring     | Membuka detail informasi untuk pengecekan, **tanpa mengubah data operasional**                                             |
+
 ---
 
 ## 3. Modul & Fitur
@@ -195,6 +243,10 @@ Urutan disarankan berdasarkan dampak terhadap alur inti sistem. Status ✅ = sel
 12. ⬜ **Alur pengajuan KRS mandiri oleh mahasiswa belum ada** — `siakad.json` mendeskripsikan alur "Pilih mata kuliah → Keranjang KRS → Ajukan KRS → Disetujui Dosen PA/BAAK", tapi implementasi saat ini KRS 100% dibuat oleh Admin (`Admin/KrsController::store`). Mahasiswa hanya bisa **melihat** KRS miliknya (`Mahasiswa/KrsController@index`), tidak mengajukan. Ini juga sebabnya "batas SKS minimal" (§3.4) tidak bisa diimplementasikan — tidak ada momen "submit" untuk divalidasi.
 13. ⬜ **Backup & Restore** — ditunda bersama Log Aktivitas (#7), butuh keputusan arsitektur/dependency yang sama.
 14. ⬜ **Setting KRS/Nilai belum disambungkan ke logic yang sesungguhnya** — `krs.sks_maks`/`krs.sks_min` di Pengaturan Sistem (§3.9) belum menggantikan `Krs::MAX_SKS` (masih hardcode 24 di `app/Models/Krs.php`); `nilai.bobot_*` belum dipakai `NilaiController` karena `Nilai` model sendiri tidak punya breakdown komponen (Tugas/UTS/UAS/Partisipasi/Kehadiran) — hanya kolom `nilai` tunggal. Menyambungkan ini butuh perubahan skema `nilai` (kolom per komponen) dan keputusan bagaimana `Krs::MAX_SKS` membaca dari `Setting` tanpa query berulang di setiap request (butuh cache, sudah tersedia infrastrukturnya di `Setting::allSettings()`).
+15. ⬜ **Role Keuangan tidak ada sebagai role terpisah** — matriks hak akses di §2.1 memisahkan "Keuangan" (Tagihan, Pembayaran, Rekap, Dokumen/Laporan) dari "Admin/BAAK", tapi `App\Enums\UserRole` cuma punya 5 case (`admin`, `admin_prodi`, `dosen`, `mahasiswa`, `pimpinan`) — semua fitur itu berjalan, tapi hanya bisa diakses lewat role `admin`. Perlu diputuskan: tambah role `keuangan` baru (dengan login & middleware sendiri), atau tetap sebagai bagian dari `admin`.
+16. ⬜ **Kaprodi (`admin_prodi`) tidak bisa review RPS** — matriks §2.1 mencantumkan "RPS: Memeriksa RPS dosen, termasuk status revisi/persetujuan" sebagai hak akses Kaprodi, tapi `routes/admin.php:167-169` (`rps.index`/`rps.approve`/`rps.request-revision`) ada di grup middleware `role:admin` saja — `admin_prodi` tidak termasuk. Kaprodi login tidak melihat menu RPS sama sekali.
+17. ⬜ **Kaprodi tidak punya halaman Monitoring Akademik** — `AdminProdi/DashboardController` cuma menampilkan 3 angka ringkas (mahasiswa, dosen, kelas), bukan monitoring KRS/presensi/perkembangan akademik seperti yang sudah ada untuk Pimpinan (`Pimpinan/MonitoringAkademikController`, §3.10). Matriks §2.1 mengharapkan Kaprodi punya kemampuan setara untuk program studinya sendiri.
+18. ⬜ **Dosen Pembimbing TA tidak bisa export Excel laporan bimbingan** — matriks §2.1 mencantumkan "Laporan: Filter mahasiswa bimbingan dan export Excel" untuk Dosen Pembimbing TA. `Dosen/BimbinganTugasAkhirController` (§3.5) sudah lengkap untuk kelola judul/tahap/revisi/bab, tapi tidak ada route atau method export sama sekali — tidak seperti `Dosen/PerkuliahanController::exportMahasiswa` yang sudah ada polanya.
 
 ### 6.1 Bug infrastruktur pre-existing yang ditemukan & diperbaiki saat mengerjakan #1
 
@@ -216,3 +268,10 @@ Ditemukan saat menjalankan test suite untuk memverifikasi perbaikan di atas — 
 - **Login NIM/NIDN backend sudah lengkap tapi tidak pernah tercapai dari UI** — `FortifyServiceProvider::authenticateUsing` sudah mendukung resolusi `login_field` = `nim`/`nidn`/`email` sejak sebelumnya, tapi halaman login (`resources/js/pages/auth/login.tsx`) hanya mengirim field generik `login_value` tanpa `login_field`, sehingga selalu jatuh ke pencarian `email` — login via NIM/NIDN **tidak pernah berfungsi** dari form manapun. Diperbaiki dengan auto-deteksi server-side (`detectLoginField`), bukan mengubah UI.
 - **`App\Models\Setting::all()` — fatal error, ditemukan sebelum sempat di-commit**: method ini override `Illuminate\Database\Eloquent\Model::all()` dengan signature return type yang tidak kompatibel (`Collection` vs `static[]|Collection` bawaan Eloquent), menyebabkan `Symfony\Component\ErrorHandler\Error\FatalError` setiap kali class `Setting` di-load — bukan exception yang bisa di-catch, PHP mati total di level compile/class-declaration. Gejalanya membingungkan: `vendor/bin/pest` untuk file test terkait berhenti tanpa output apa pun (bukan pesan error) karena fatal terjadi sebelum test runner sempat mem-flush apa pun ke printer JSON kustom. Diperbaiki dengan rename ke `Setting::allSettings()`. **Pelajaran:** jangan pernah menamai method static di model Eloquent sama dengan method bawaan (`all`, `find`, `create`, `query`, dst) tanpa mengecek signature aslinya.
 - **IDOR di `Dosen/PerkuliahanController::index`** — parameter `kelas_id` dari query string dipakai langsung untuk query presensi/materi/KRS tanpa memverifikasi kelas itu milik dosen yang login; dosen mana pun bisa melihat data kelas dosen lain dengan mengubah `?kelas_id=` di URL. Ditemukan saat menambahkan fitur RPS (yang butuh melakukan write berdasarkan `kelas_id` yang sama). Diperbaiki dengan validasi `$kelas->contains('id', ...)` sebelum dipakai.
+
+### 6.4 Audit akun & fitur vs matriks hak akses §2.1 (2026-09-11)
+
+Verifikasi langsung ke `App\Enums\UserRole`, middleware route, dan controller untuk mencocokkan matriks di §2.1 dengan implementasi aktual — bukan cuma membaca status di §3 (yang melacak fitur, bukan pemetaan role). Temuan sudah masuk sebagai item #15–#18 di atas; ringkasannya:
+
+- **Role**: 5 role di kode (`admin`, `admin_prodi`, `dosen`, `mahasiswa`, `pimpinan`) sudah menutupi 7 dari 8 "role" di matriks — Dosen PA dan Dosen Pembimbing TA memang sengaja bukan role terpisah (kapasitas dari `dosen`, ditentukan lewat `pa_dosen_id`/`pembimbing_1_id`/`pembimbing_2_id`, bukan lewat login berbeda), ini desain yang benar. Yang belum ada: role **Keuangan** (#15).
+- **Fitur**: sebagian besar sudah ada dan sudah dilacak di §3. Tiga gap konkret yang baru ketahuan lewat pengecekan role↔route (bukan cuma cek "fiturnya ada"): Kaprodi tidak punya akses RPS (#16) maupun halaman Monitoring Akademik (#17), dan Dosen Pembimbing TA tidak punya export laporan (#18).
