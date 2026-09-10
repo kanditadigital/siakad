@@ -52,15 +52,15 @@ test('mahasiswa cannot withdraw an already approved KRS entry', function () {
     $this->assertDatabaseHas('krs', ['id' => $krs->id]);
 });
 
-test('mahasiswa cannot withdraw a rejected KRS entry', function () {
+test('mahasiswa can withdraw a rejected KRS entry so they can resubmit', function () {
     [$user, $mahasiswa] = mahasiswaUser();
     $krs = Krs::factory()->create(['mahasiswa_id' => $mahasiswa->id, 'status' => 'ditolak']);
 
     $this->actingAs($user)
         ->delete(route('mahasiswa.krs.destroy', $krs))
-        ->assertStatus(422);
+        ->assertRedirect();
 
-    $this->assertDatabaseHas('krs', ['id' => $krs->id]);
+    $this->assertDatabaseMissing('krs', ['id' => $krs->id]);
 });
 
 test('mahasiswa cannot withdraw another mahasiswa KRS entry', function () {

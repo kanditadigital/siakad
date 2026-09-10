@@ -8,6 +8,7 @@ use App\Models\Dosen;
 use App\Models\Krs;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -119,8 +120,10 @@ class KrsPaController extends Controller
             'catatan' => ['required', 'string', 'max:1000'],
         ]);
 
-        $krs->update(['status' => 'ditolak', 'catatan' => $validated['catatan']]);
-        $this->catatBimbingan($dosen, $krs, $validated['catatan']);
+        DB::transaction(function () use ($dosen, $krs, $validated): void {
+            $krs->update(['status' => 'ditolak', 'catatan' => $validated['catatan']]);
+            $this->catatBimbingan($dosen, $krs, $validated['catatan']);
+        });
 
         return back()->with('success', 'KRS berhasil ditolak');
     }
@@ -140,8 +143,10 @@ class KrsPaController extends Controller
             'catatan' => ['required', 'string', 'max:1000'],
         ]);
 
-        $krs->update(['status' => 'revisi', 'catatan' => $validated['catatan']]);
-        $this->catatBimbingan($dosen, $krs, $validated['catatan']);
+        DB::transaction(function () use ($dosen, $krs, $validated): void {
+            $krs->update(['status' => 'revisi', 'catatan' => $validated['catatan']]);
+            $this->catatBimbingan($dosen, $krs, $validated['catatan']);
+        });
 
         return back()->with('success', 'Mahasiswa diminta merevisi KRS');
     }

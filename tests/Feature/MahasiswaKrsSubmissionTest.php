@@ -168,6 +168,45 @@ test('mahasiswa cannot submit a kelas already taken this period', function () {
     $response->assertSessionHasErrors('kelas_ids');
 });
 
+test('mahasiswa can resubmit a kelas after withdrawing its rejected entry', function () {
+    [$user, $mahasiswa] = actingMahasiswa();
+    Setting::setMany(['krs.sks_min' => 1, 'krs.sks_maks' => 24]);
+    $ays = AcademicYearSemester::factory()->create(['status' => 'aktif']);
+
+    $mk = MataKuliah::factory()->create(['program_studi_id' => $mahasiswa->program_studi_id, 'sks' => 3]);
+    $kelas = Kelas::factory()->create(['mata_kuliah_id' => $mk->id, 'status' => 'Aktif']);
+    $rejected = Krs::factory()->create([
+        'mahasiswa_id' => $mahasiswa->id,
+        'kelas_id' => $kelas->id,
+        'academic_year_semester_id' => $ays->id,
+        'status' => 'ditolak',
+    ]);
+
+    // Rejected entries still occupy the kelas slot until withdrawn.
+    $this->actingAs($user)->get(route('mahasiswa.krs.create'))
+        ->assertInertia(fn ($page) => $page->has('kelases', 0));
+
+    $this->actingAs($user)->delete(route('mahasiswa.krs.destroy', $rejected))
+        ->assertRedirect();
+
+    $this->actingAs($user)->get(route('mahasiswa.krs.create'))
+        ->assertInertia(fn ($page) => $page
+            ->has('kelases', 1)
+            ->where('kelases.0.id', $kelas->id)
+        );
+
+    $response = $this->actingAs($user)->post(route('mahasiswa.krs.store'), [
+        'kelas_ids' => [$kelas->id],
+    ]);
+
+    $response->assertRedirect(route('mahasiswa.krs'));
+    $this->assertDatabaseHas('krs', [
+        'mahasiswa_id' => $mahasiswa->id,
+        'kelas_id' => $kelas->id,
+        'status' => 'pending',
+    ]);
+});
+
 test('Krs::maxSks and minSks read from Setting with sensible fallbacks', function () {
     expect(Krs::maxSks())->toBe(24);
     expect(Krs::minSks())->toBe(12);

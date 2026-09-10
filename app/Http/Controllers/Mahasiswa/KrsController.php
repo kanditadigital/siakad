@@ -211,15 +211,17 @@ class KrsController extends Controller
 
     /**
      * Withdraw a KRS entry so the mahasiswa can resubmit — the only path
-     * forward after a dosen PA or admin prodi marks it `revisi`, since there
-     * is no in-place edit for a submitted KRS entry.
+     * forward after a dosen PA or admin prodi marks it `revisi` or `ditolak`,
+     * since there is no in-place edit for a submitted KRS entry and the
+     * (mahasiswa, kelas, periode) unique constraint blocks resubmission
+     * while the old row still exists.
      */
     public function destroy(Request $request, Krs $krs): RedirectResponse
     {
         $mahasiswa = $request->user()->mahasiswa;
 
         abort_unless($krs->mahasiswa_id === $mahasiswa->id, 403);
-        abort_unless(in_array($krs->status, ['pending', 'revisi'], true), 422, 'KRS yang sudah diproses tidak dapat dibatalkan.');
+        abort_unless(in_array($krs->status, ['pending', 'revisi', 'ditolak'], true), 422, 'KRS yang sudah diproses tidak dapat dibatalkan.');
 
         $krs->delete();
 
