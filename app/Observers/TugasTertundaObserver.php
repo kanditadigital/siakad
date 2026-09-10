@@ -2,39 +2,25 @@
 
 namespace App\Observers;
 
-use App\Events\TugasTertundaDiperbarui;
-use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\Krs;
 use App\Models\TagihanUkt;
-use Illuminate\Support\Facades\Cache;
+use App\Support\TugasTertunda;
 
 /**
- * Keeps the `chrome.tugas` cache and the realtime header bell in sync with
- * Krs and TagihanUkt rows. Attached to both models in AppServiceProvider.
- *
- * @see HandleInertiaRequests::tugasTertunda()
+ * Keeps the `chrome.tugas` cache fresh whenever a Krs or TagihanUkt row
+ * changes, so the header bell's next poll (see `ChromeController::tugas`)
+ * picks up the change immediately instead of waiting out the cache TTL.
+ * Attached to both models in AppServiceProvider.
  */
 class TugasTertundaObserver
 {
     public function saved(Krs|TagihanUkt $model): void
     {
-        $this->sinkronkan();
+        TugasTertunda::segarkan();
     }
 
     public function deleted(Krs|TagihanUkt $model): void
     {
-        $this->sinkronkan();
-    }
-
-    private function sinkronkan(): void
-    {
-        $tugas = [
-            'krs_pending' => Krs::where('status', 'pending')->count(),
-            'tagihan_belum_lunas' => TagihanUkt::whereIn('status', ['belum', 'terlambat'])->count(),
-        ];
-
-        Cache::put('chrome.tugas', $tugas, now()->addMinute());
-
-        TugasTertundaDiperbarui::dispatch($tugas);
+        TugasTertunda::segarkan();
     }
 }

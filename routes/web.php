@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChromeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PencarianController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,10 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'role:admin,admin_prodi'])->group(function () {
     Route::get('pencarian', [PencarianController::class, 'index'])->name('pencarian');
+});
+
+Route::middleware(['auth', 'verified', 'role:admin,admin_prodi,pimpinan'])->group(function () {
+    Route::get('chrome/tugas', [ChromeController::class, 'tugas'])->name('chrome.tugas');
 });
 
 require __DIR__.'/settings.php';

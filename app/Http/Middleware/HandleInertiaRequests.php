@@ -4,9 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Concerns\InteractsWithUploads;
 use App\Models\AcademicYearSemester;
-use App\Models\Krs;
 use App\Models\Setting;
-use App\Models\TagihanUkt;
+use App\Support\TugasTertunda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
@@ -63,7 +62,7 @@ class HandleInertiaRequests extends Middleware
             'chrome' => [
                 'periode' => $this->periodeAktif(),
                 'tugas' => $user && in_array($user->role?->value, self::PERAN_STAF, true)
-                    ? $this->tugasTertunda()
+                    ? TugasTertunda::hitung()
                     : null,
             ],
         ];
@@ -92,22 +91,6 @@ class HandleInertiaRequests extends Middleware
                 'pekan' => $pekan,
             ];
         });
-    }
-
-    /**
-     * Counts behind the sidebar badge and the header bell.
-     *
-     * Cached briefly: these ride along on every Inertia request for staff, and a
-     * badge that is a minute stale is not worth four counts per page view.
-     *
-     * @return array{krs_pending: int, tagihan_belum_lunas: int}
-     */
-    private function tugasTertunda(): array
-    {
-        return Cache::remember('chrome.tugas', now()->addMinute(), fn (): array => [
-            'krs_pending' => Krs::where('status', 'pending')->count(),
-            'tagihan_belum_lunas' => TagihanUkt::whereIn('status', ['belum', 'terlambat'])->count(),
-        ]);
     }
 
     /**

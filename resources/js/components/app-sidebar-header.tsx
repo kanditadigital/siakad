@@ -1,7 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useEcho } from '@laravel/echo-react';
 import { Bell } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { HeaderUserMenu } from '@/components/header-user-menu';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,11 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { tugas as tugasRoute } from '@/routes/chrome';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
+
+/** How often the header bell polls for fresh pending-work counts. */
+const TUGAS_POLL_INTERVAL_MS = 30_000;
 
 type Tugas = { krs_pending: number; tagihan_belum_lunas: number };
 
@@ -68,20 +71,42 @@ export function AppSidebarHeader({
  * Pending institution-wide work. A bell with nothing behind it is decoration —
  * this one opens the actual queues waiting for an admin.
  *
- * Seeded from the `chrome.tugas` prop (fresh as of the last page load) and
- * kept live afterwards over the `tugas` private channel — broadcast by
- * TugasTertundaObserver whenever a Krs or TagihanUkt row changes — so the
- * count updates without a reload while the user sits on any page.
- *
- * The leading dot on the event name opts out of Echo's default namespacing
- * (which would otherwise look for `App\Events\tugas\diperbarui`) and matches
- * the custom name set by `TugasTertundaDiperbarui::broadcastAs()`.
+ * Seeded from the `chrome.tugas` prop (fresh as of the last page load), then
+ * kept reasonably fresh afterwards by polling `ChromeController::tugas` every
+ * `TUGAS_POLL_INTERVAL_MS` while the user sits on any page — a plain AJAX
+ * poll rather than a WebSocket push, since this badge doesn't need
+ * sub-second freshness and polling avoids running a separate Reverb server.
  */
 function LoncengTugas({ tugas: awal }: { tugas: Tugas }) {
     const [realtime, setRealtime] = useState<Tugas | null>(null);
     const tugas = realtime ?? awal;
 
-    useEcho<Tugas>('tugas', '.tugas.diperbarui', setRealtime);
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const poll = () => {
+            fetch(tugasRoute().url, {
+                headers: { Accept: 'application/json' },
+                signal: controller.signal,
+            })
+                .then((response) => (response.ok ? response.json() : null))
+                .then((data: Tugas | null) => {
+                    if (data) {
+                        setRealtime(data);
+                    }
+                })
+                .catch(() => {
+                    // Transient network hiccups just keep the last known count.
+                });
+        };
+
+        const interval = setInterval(poll, TUGAS_POLL_INTERVAL_MS);
+
+        return () => {
+            controller.abort();
+            clearInterval(interval);
+        };
+    }, []);
 
     const daftar = [
         {
