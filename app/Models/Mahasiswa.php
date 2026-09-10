@@ -342,9 +342,13 @@ class Mahasiswa extends Model
     }
 
     /**
+     * Every Nilai entry the mahasiswa has, regardless of grade status —
+     * the single source other IPK/SKS/transkrip calculations build on, so
+     * they can never drift out of sync with each other.
+     *
      * @return Collection<int, Nilai>
      */
-    private function nilaiTerhitung(): Collection
+    public function nilaiTerhitung(): Collection
     {
         return $this->nilaiTerhitungCache ??= Nilai::with(['krs.kelas.mataKuliah', 'krs.academicYearSemester'])
             ->whereHas('krs', fn ($query) => $query->where('mahasiswa_id', $this->id))
