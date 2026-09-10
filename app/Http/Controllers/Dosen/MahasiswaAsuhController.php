@@ -45,9 +45,8 @@ class MahasiswaAsuhController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        // A PA supervises a handful of mahasiswa (5 per siakad.json's spec),
-        // so a few extra queries per row here stays cheap — no need for a
-        // single aggregate query.
+        Mahasiswa::primeNilaiTerhitungUntukBanyak($mahasiswas->getCollection());
+
         $mahasiswas->getCollection()->each(function (Mahasiswa $mahasiswa): void {
             $mahasiswa->setAttribute('angkatan', $mahasiswa->angkatan());
             $mahasiswa->setAttribute('ipk', $mahasiswa->hitungIpk());

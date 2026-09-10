@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminProdi;
 
+use App\Concerns\AuthorizesProgramStudi;
 use App\Http\Controllers\Controller;
 use App\Models\MataKuliah;
 use Illuminate\Http\RedirectResponse;
@@ -12,6 +13,8 @@ use Inertia\Response;
 
 class MataKuliahController extends Controller
 {
+    use AuthorizesProgramStudi;
+
     /**
      * Display a listing of mata kuliah for this program studi.
      */
@@ -96,7 +99,7 @@ class MataKuliahController extends Controller
      */
     public function show(Request $request, MataKuliah $mataKuliah): Response
     {
-        abort_unless($mataKuliah->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($mataKuliah->program_studi_id, $request);
 
         $mataKuliah->load('programStudi');
 
@@ -110,7 +113,7 @@ class MataKuliahController extends Controller
      */
     public function edit(Request $request, MataKuliah $mataKuliah): Response
     {
-        abort_unless($mataKuliah->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($mataKuliah->program_studi_id, $request);
 
         $mataKuliah->load('programStudi');
 
@@ -129,7 +132,7 @@ class MataKuliahController extends Controller
      */
     public function update(Request $request, MataKuliah $mataKuliah): RedirectResponse
     {
-        abort_unless($mataKuliah->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($mataKuliah->program_studi_id, $request);
 
         $validated = $request->validate([
             'kode_mk' => ['required', 'string', 'max:255', Rule::unique('mata_kuliah', 'kode_mk')->ignore($mataKuliah->id)],
@@ -156,7 +159,7 @@ class MataKuliahController extends Controller
      */
     public function destroy(Request $request, MataKuliah $mataKuliah): RedirectResponse
     {
-        abort_unless($mataKuliah->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($mataKuliah->program_studi_id, $request);
 
         $mataKuliah->delete();
 

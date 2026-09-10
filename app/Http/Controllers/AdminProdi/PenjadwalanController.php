@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminProdi;
 
+use App\Concerns\AuthorizesProgramStudi;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYearSemester;
 use App\Models\Dosen;
@@ -16,6 +17,8 @@ use Inertia\Response;
 
 class PenjadwalanController extends Controller
 {
+    use AuthorizesProgramStudi;
+
     /**
      * Display a listing of penjadwalan for this program studi.
      */
@@ -121,7 +124,7 @@ class PenjadwalanController extends Controller
     {
         $kelas->load(['mataKuliah', 'dosen', 'ruang']);
 
-        abort_unless($kelas->mataKuliah?->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($kelas->mataKuliah?->program_studi_id, $request);
 
         return Inertia::render('admin-prodi/penjadwalan/show', [
             'kelas' => $kelas,
@@ -137,7 +140,7 @@ class PenjadwalanController extends Controller
 
         $programStudiId = $request->user()->program_studi_id;
 
-        abort_unless($kelas->mataKuliah?->program_studi_id === $programStudiId, 403);
+        $this->authorizeSameProgramStudi($kelas->mataKuliah?->program_studi_id, $request);
 
         return Inertia::render('admin-prodi/penjadwalan/edit', [
             'kelas' => $kelas,
@@ -157,7 +160,7 @@ class PenjadwalanController extends Controller
     {
         $programStudiId = $request->user()->program_studi_id;
 
-        abort_unless($kelas->mataKuliah?->program_studi_id === $programStudiId, 403);
+        $this->authorizeSameProgramStudi($kelas->mataKuliah?->program_studi_id, $request);
 
         $validated = $request->validate([
             'kode_kelas' => ['required', 'string', 'max:255', 'unique:kelas,kode_kelas,'.$kelas->id],
@@ -195,7 +198,7 @@ class PenjadwalanController extends Controller
      */
     public function destroy(Request $request, Kelas $kelas): RedirectResponse
     {
-        abort_unless($kelas->mataKuliah?->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($kelas->mataKuliah?->program_studi_id, $request);
 
         $kelas->delete();
 

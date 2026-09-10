@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminProdi;
 
+use App\Concerns\AuthorizesProgramStudi;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class MahasiswaController extends Controller
 {
+    use AuthorizesProgramStudi;
+
     /**
      * Display a listing of mahasiswa for this program studi.
      */
@@ -83,7 +86,7 @@ class MahasiswaController extends Controller
      */
     public function show(Request $request, Mahasiswa $mahasiswa): Response
     {
-        abort_unless($mahasiswa->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($mahasiswa->program_studi_id, $request);
 
         $mahasiswa->load('programStudi', 'user', 'paDosen');
 
@@ -102,7 +105,7 @@ class MahasiswaController extends Controller
     {
         $programStudiId = $request->user()->program_studi_id;
 
-        abort_unless($mahasiswa->program_studi_id === $programStudiId, 403);
+        $this->authorizeSameProgramStudi($mahasiswa->program_studi_id, $request);
 
         $validated = $request->validate([
             'pa_dosen_id' => [

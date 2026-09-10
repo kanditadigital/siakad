@@ -8,6 +8,7 @@ use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 test('PA cannot view a mahasiswa who is not their own mahasiswa asuh', function () {
     $user = User::factory()->create(['role' => 'dosen']);
@@ -116,4 +117,31 @@ test('the mahasiswa asuh show page exposes academic progress and problem courses
         ->has('ringkasanPresensi')
         ->has('riwayatBimbingan')
     );
+});
+
+test('nilaiTerhitung is memoized so repeated academic stat calls do not re-query', function () {
+    $mahasiswa = Mahasiswa::factory()->create();
+    $ays = AcademicYearSemester::factory()->create();
+    $mk = MataKuliah::factory()->create(['sks' => 3]);
+    $krs = Krs::factory()->create([
+        'mahasiswa_id' => $mahasiswa->id,
+        'kelas_id' => Kelas::factory()->create(['mata_kuliah_id' => $mk->id])->id,
+        'academic_year_semester_id' => $ays->id,
+        'status' => 'disetujui',
+    ]);
+    Nilai::factory()->create(['krs_id' => $krs->id, 'grade' => 'A', 'nilai' => 4.0]);
+
+    DB::enableQueryLog();
+    $mahasiswa->hitungIpk();
+    $queriesAfterFirstCall = count(DB::getQueryLog());
+
+    $mahasiswa->hitungIpk();
+    $mahasiswa->totalSksLulus();
+    $mahasiswa->perkembanganAkademik();
+    $mahasiswa->mataKuliahBermasalah();
+    $queriesAfterFourMoreCalls = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    expect($queriesAfterFirstCall)->toBeGreaterThan(0);
+    expect($queriesAfterFourMoreCalls)->toBe($queriesAfterFirstCall);
 });

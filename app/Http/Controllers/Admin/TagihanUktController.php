@@ -60,7 +60,7 @@ class TagihanUktController extends Controller
      */
     public function create(): Response
     {
-        $mahasiswas = Mahasiswa::orderBy('nama')->get();
+        $mahasiswas = Mahasiswa::with('programStudi')->orderBy('nama')->get();
         $academicYearSemesters = AcademicYearSemester::orderByDesc('nama_tahun_akademik')
             ->orderBy('semester')
             ->get();
@@ -113,7 +113,7 @@ class TagihanUktController extends Controller
     public function edit(TagihanUkt $tagihanUkt): Response
     {
         $tagihanUkt->load(['mahasiswa', 'academicYearSemester', 'uktScheme']);
-        $mahasiswas = Mahasiswa::orderBy('nama')->get();
+        $mahasiswas = Mahasiswa::with('programStudi')->orderBy('nama')->get();
         $academicYearSemesters = AcademicYearSemester::orderByDesc('nama_tahun_akademik')
             ->orderBy('semester')
             ->get();

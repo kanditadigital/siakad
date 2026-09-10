@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminProdi;
 
+use App\Concerns\AuthorizesProgramStudi;
 use App\Concerns\InteractsWithUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
@@ -15,6 +16,7 @@ use Inertia\Response;
 
 class DosenController extends Controller
 {
+    use AuthorizesProgramStudi;
     use InteractsWithUploads;
 
     /**
@@ -109,7 +111,7 @@ class DosenController extends Controller
      */
     public function show(Request $request, Dosen $dosen): Response
     {
-        abort_unless($dosen->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($dosen->program_studi_id, $request);
 
         $dosen->load('programStudi', 'user');
 
@@ -123,7 +125,7 @@ class DosenController extends Controller
      */
     public function edit(Request $request, Dosen $dosen): Response
     {
-        abort_unless($dosen->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($dosen->program_studi_id, $request);
 
         $dosen->load('programStudi', 'user');
 
@@ -137,7 +139,7 @@ class DosenController extends Controller
      */
     public function update(Request $request, Dosen $dosen): RedirectResponse
     {
-        abort_unless($dosen->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($dosen->program_studi_id, $request);
 
         $validated = $request->validate([
             'nidn' => [
@@ -194,7 +196,7 @@ class DosenController extends Controller
      */
     public function destroy(Request $request, Dosen $dosen): RedirectResponse
     {
-        abort_unless($dosen->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($dosen->program_studi_id, $request);
 
         DB::transaction(function () use ($dosen): void {
             if ($dosen->user?->photo) {

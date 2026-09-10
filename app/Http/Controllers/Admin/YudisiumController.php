@@ -51,7 +51,7 @@ class YudisiumController extends Controller
      */
     public function create(): Response
     {
-        $mahasiswas = Mahasiswa::orderBy('nama')->get();
+        $mahasiswas = Mahasiswa::with('programStudi')->orderBy('nama')->get();
 
         return Inertia::render('admin/yudisium/create', [
             'mahasiswas' => $mahasiswas,
@@ -98,7 +98,7 @@ class YudisiumController extends Controller
     public function edit(Yudisium $yudisium): Response
     {
         $yudisium->load('mahasiswa');
-        $mahasiswas = Mahasiswa::orderBy('nama')->get();
+        $mahasiswas = Mahasiswa::with('programStudi')->orderBy('nama')->get();
 
         return Inertia::render('admin/yudisium/edit', [
             'yudisium' => $yudisium,

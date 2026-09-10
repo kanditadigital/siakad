@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminProdi;
 
+use App\Concerns\AuthorizesProgramStudi;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYearSemester;
 use App\Models\Krs;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class KrsController extends Controller
 {
+    use AuthorizesProgramStudi;
+
     /**
      * Display KRS for this program studi, grouped by mahasiswa.
      */
@@ -65,7 +68,7 @@ class KrsController extends Controller
     {
         $krs->load(['mahasiswa.programStudi', 'kelas.mataKuliah', 'kelas.dosen', 'kelas.ruang', 'academicYearSemester']);
 
-        abort_unless($krs->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($krs->mahasiswa?->program_studi_id, $request);
 
         return Inertia::render('admin-prodi/krs/show', [
             'krs' => $krs,
@@ -77,7 +80,7 @@ class KrsController extends Controller
      */
     public function approve(Request $request, Krs $krs): RedirectResponse
     {
-        abort_unless($krs->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($krs->mahasiswa?->program_studi_id, $request);
         abort_unless($krs->status === 'pending', 422, 'KRS ini sudah diproses.');
 
         $krs->load('kelas.mataKuliah');
@@ -100,7 +103,7 @@ class KrsController extends Controller
      */
     public function reject(Request $request, Krs $krs): RedirectResponse
     {
-        abort_unless($krs->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($krs->mahasiswa?->program_studi_id, $request);
         abort_unless($krs->status === 'pending', 422, 'KRS ini sudah diproses.');
 
         $krs->update(['status' => 'ditolak']);

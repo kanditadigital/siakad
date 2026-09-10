@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminProdi;
 
+use App\Concerns\AuthorizesProgramStudi;
 use App\Http\Controllers\Controller;
 use App\Models\BimbinganTugasAkhir;
 use App\Models\Dosen;
@@ -16,6 +17,8 @@ use Inertia\Response;
 
 class PengajuanJudulTaController extends Controller
 {
+    use AuthorizesProgramStudi;
+
     /**
      * Display judul tugas akhir submissions for this program studi, grouped by mahasiswa.
      */
@@ -71,7 +74,7 @@ class PengajuanJudulTaController extends Controller
      */
     public function approve(Request $request, PengajuanJudulTa $pengajuanJudulTa): RedirectResponse
     {
-        $this->authorizeProdi($request, $pengajuanJudulTa);
+        $this->authorizeSameProgramStudi($pengajuanJudulTa->mahasiswa?->program_studi_id, $request);
         abort_unless($pengajuanJudulTa->status === 'pending', 422, 'Pengajuan ini sudah diproses.');
 
         $programStudiId = $request->user()->program_studi_id;
@@ -113,7 +116,7 @@ class PengajuanJudulTaController extends Controller
      */
     public function reject(Request $request, PengajuanJudulTa $pengajuanJudulTa): RedirectResponse
     {
-        $this->authorizeProdi($request, $pengajuanJudulTa);
+        $this->authorizeSameProgramStudi($pengajuanJudulTa->mahasiswa?->program_studi_id, $request);
         abort_unless($pengajuanJudulTa->status === 'pending', 422, 'Pengajuan ini sudah diproses.');
 
         $pengajuanJudulTa->update([
@@ -122,16 +125,5 @@ class PengajuanJudulTaController extends Controller
         ]);
 
         return back()->with('success', 'Judul tugas akhir berhasil ditolak');
-    }
-
-    /**
-     * Only an admin prodi from the mahasiswa's own program studi may act on this pengajuan.
-     */
-    private function authorizeProdi(Request $request, PengajuanJudulTa $pengajuanJudulTa): void
-    {
-        abort_unless(
-            $pengajuanJudulTa->mahasiswa?->program_studi_id === $request->user()->program_studi_id,
-            403,
-        );
     }
 }
