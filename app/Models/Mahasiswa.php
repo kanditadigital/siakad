@@ -64,6 +64,16 @@ class Mahasiswa extends Model
     ];
 
     /**
+     * Memoized result of `nilaiTerhitung()`, primed in bulk via
+     * `primeNilaiTerhitungUntukBanyak()` for list views, or lazily filled
+     * on first access otherwise — so a single request never repeats the
+     * same Nilai query across `hitungIpk()`, `totalSksLulus()`, etc.
+     *
+     * @var Collection<int, Nilai>|null
+     */
+    private ?Collection $nilaiTerhitungCache = null;
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -336,9 +346,28 @@ class Mahasiswa extends Model
      */
     private function nilaiTerhitung(): Collection
     {
-        return Nilai::with(['krs.kelas.mataKuliah', 'krs.academicYearSemester'])
+        return $this->nilaiTerhitungCache ??= Nilai::with(['krs.kelas.mataKuliah', 'krs.academicYearSemester'])
             ->whereHas('krs', fn ($query) => $query->where('mahasiswa_id', $this->id))
             ->get();
+    }
+
+    /**
+     * Bulk-primes `nilaiTerhitung()` for a whole list of mahasiswa in one
+     * query, so `hitungIpk()`/`totalSksLulus()`/etc. called per row (e.g. in
+     * a paginated index) don't each re-query Nilai individually.
+     *
+     * @param  Collection<int, Mahasiswa>  $mahasiswas
+     */
+    public static function primeNilaiTerhitungUntukBanyak(Collection $mahasiswas): void
+    {
+        $nilaisByMahasiswaId = Nilai::with(['krs.kelas.mataKuliah', 'krs.academicYearSemester'])
+            ->whereHas('krs', fn ($query) => $query->whereIn('mahasiswa_id', $mahasiswas->pluck('id')))
+            ->get()
+            ->groupBy(fn (Nilai $n) => $n->krs->mahasiswa_id);
+
+        $mahasiswas->each(function (Mahasiswa $mahasiswa) use ($nilaisByMahasiswaId): void {
+            $mahasiswa->nilaiTerhitungCache = $nilaisByMahasiswaId->get($mahasiswa->id, collect());
+        });
     }
 
     /**
