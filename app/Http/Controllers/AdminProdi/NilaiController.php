@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AdminProdi;
 
+use App\Concerns\AuthorizesProgramStudi;
 use App\Http\Controllers\Controller;
 use App\Models\Nilai;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Inertia\Response;
 
 class NilaiController extends Controller
 {
+    use AuthorizesProgramStudi;
+
     /**
      * Display a listing of nilai for this program studi.
      */
@@ -53,7 +56,7 @@ class NilaiController extends Controller
     {
         $nilai->load(['krs.mahasiswa.programStudi', 'krs.kelas.mataKuliah', 'krs.kelas.dosen', 'krs.academicYearSemester']);
 
-        abort_unless($nilai->krs?->mahasiswa?->program_studi_id === $request->user()->program_studi_id, 403);
+        $this->authorizeSameProgramStudi($nilai->krs?->mahasiswa?->program_studi_id, $request);
 
         return Inertia::render('admin-prodi/nilai/show', [
             'nilai' => $nilai,
