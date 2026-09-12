@@ -2,6 +2,7 @@
 paths:
   - 'resources/js/components/**'
   - resources/js/components/nav-main.tsx
+  - resources/js/components/force-change-password-modal.tsx
 ---
 
 # Components
@@ -95,3 +96,6 @@ CORRECTS the "-z-10, use margin instead" note's margin part — `my-6` on the ac
 
 ## NotchAktif removed (2026-09-05) — active row is now a plain squared pill
 Owner decided to drop the concave-notch treatment entirely after several rounds of tuning (radius, z-index, margin) never quite looked right. `NotchAktif` and its two call sites (SimpleItem, CollapsibleItem trigger) are gone; the wrapping `<div className="relative">` around CollapsibleTrigger in CollapsibleItem was removed too since nothing inside needs absolute positioning anymore. The active row is now just the plain white pill (`AKTIF`) squared off flush to the sidebar's true edge (`UTAMA`'s `rounded-r-none` + width bleed) — no corner curve. All prior NotchAktif-related notes in this file are historical only; do not reintroduce the notch without a new decision.
+
+## Forced password change: modal on dashboard, full page everywhere else
+`route('dashboard')` is exempted from the `ForcePasswordChange` redirect (alongside `password.force-change.*` and `logout`) so it renders normally. `ForceChangePasswordModal` (mounted in `resources/js/layouts/app/app-sidebar-layout.tsx`, reads `auth.user.must_change_password` + the globally-shared `passwordRules` prop from `HandleInertiaRequests`) shows a non-dismissible `AlertDialog` there instead — same form, same `password.force-change.update` route. Any other route still hard-redirects to the full `/password/force-change` page. Don't remove the `dashboard` exemption from the middleware without also removing/adjusting the modal, and vice versa — they're two sides of the same UX split. See [[first-login forced password change rule]] in `.ai/rules/middleware.md`.

@@ -24,6 +24,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property bool $must_change_password
  * @property UserRole $role
  * @property string|null $nim
  * @property string|null $nidn
@@ -40,7 +41,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
  * @property-read string|null $photo_url
  */
 #[Appends(['photo_url'])]
-#[Fillable(['name', 'email', 'password', 'role', 'nim', 'nidn', 'program_studi_id', 'photo'])]
+#[Fillable(['name', 'email', 'password', 'role', 'nim', 'nidn', 'program_studi_id', 'photo', 'must_change_password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -57,6 +58,7 @@ class User extends Authenticatable implements PasskeyUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'must_change_password' => 'boolean',
             'role' => UserRole::class,
         ];
     }

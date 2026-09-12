@@ -160,7 +160,8 @@ class MahasiswaController extends Controller
             $user = User::create([
                 'name' => $validated['nama'],
                 'email' => fake()->unique()->safeEmail(),
-                'password' => bcrypt('password'),
+                'password' => bcrypt($nim),
+                'must_change_password' => true,
                 'role' => 'mahasiswa',
                 'nim' => $nim,
                 'photo' => $photoPath,

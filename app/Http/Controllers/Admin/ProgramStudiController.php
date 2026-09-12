@@ -64,7 +64,7 @@ class ProgramStudiController extends Controller
             'fakultas' => ['required', 'string', 'max:255'],
             'lama_studi' => ['required', 'integer', 'min:1', 'max:10'],
             'jenis_prodi' => ['required', 'string', 'max:255'],
-            'nim_prefix' => ['required', 'string', 'max:10', 'unique:program_studi,nim_prefix'],
+            'nim_prefix' => ['required', 'digits:3', 'unique:program_studi,nim_prefix'],
             'nim_digit_count' => ['required', 'integer', 'min:2', 'max:6'],
             'nim_year_digits' => ['required', 'integer', 'in:2,3'],
         ]);
@@ -106,7 +106,7 @@ class ProgramStudiController extends Controller
             'fakultas' => ['required', 'string', 'max:255'],
             'lama_studi' => ['required', 'integer', 'min:1', 'max:10'],
             'jenis_prodi' => ['required', 'string', 'max:255'],
-            'nim_prefix' => ['required', 'string', 'max:10', 'unique:program_studi,nim_prefix,'.$programStudi->id],
+            'nim_prefix' => ['required', 'digits:3', 'unique:program_studi,nim_prefix,'.$programStudi->id],
             'nim_digit_count' => ['required', 'integer', 'min:2', 'max:6'],
             'nim_year_digits' => ['required', 'integer', 'in:2,3'],
         ]);

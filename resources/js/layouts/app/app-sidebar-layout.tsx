@@ -2,6 +2,7 @@ import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
+import ForceChangePasswordModal from '@/components/force-change-password-modal';
 import type { AppLayoutProps } from '@/types';
 
 export default function AppSidebarLayout({
@@ -15,6 +16,7 @@ export default function AppSidebarLayout({
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 <div className="px-4 py-6 sm:px-6">{children}</div>
             </AppContent>
+            <ForceChangePasswordModal />
         </AppShell>
     );
 }

@@ -45,10 +45,16 @@ class ProgramStudi extends Model
     }
 
     /**
+     * Kode tetap yang disisipkan di antara tahun masuk dan nomor urut pada NIM.
+     * Tidak merepresentasikan apa pun yang bervariasi per prodi atau mahasiswa.
+     */
+    private const KODE_TETAP = '01';
+
+    /**
      * Generate NIM baru berdasarkan konfigurasi program studi.
      *
-     * Format: {prefix}{tahun}{counter}
-     * Contoh: TIF026001 (prefix=TIF, tahun=2026, counter=001)
+     * Format: {kode wajib prodi}{tahun}{kode tetap "01"}{nomor urut}
+     * Contoh: 1492501001 (kode wajib=149, tahun=2025, tetap=01, nomor urut=001)
      */
     public function generateNim(): string
     {
@@ -60,7 +66,7 @@ class ProgramStudi extends Model
         $year = (int) date('Y');
         $yearSuffix = substr((string) $year, -$this->nim_year_digits);
 
-        return $this->nim_prefix.$yearSuffix.$paddedCounter;
+        return $this->nim_prefix.$yearSuffix.self::KODE_TETAP.$paddedCounter;
     }
 
     public function getRouteKeyName(): string

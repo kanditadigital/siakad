@@ -97,7 +97,8 @@ class DosenController extends Controller
             $user = User::create([
                 'name' => $validated['nama'],
                 'email' => $validated['email'],
-                'password' => bcrypt('password'),
+                'password' => bcrypt($validated['nidn']),
+                'must_change_password' => true,
                 'role' => 'dosen',
                 'nidn' => $validated['nidn'],
                 'photo' => $photoPath,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\ForcePasswordChangeController;
 use App\Http\Controllers\ChromeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PencarianController;
@@ -9,6 +10,12 @@ Route::redirect('/', '/login')->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('password/force-change', [ForcePasswordChangeController::class, 'edit'])
+        ->name('password.force-change.edit');
+    Route::put('password/force-change', [ForcePasswordChangeController::class, 'update'])
+        ->middleware('throttle:6,1')
+        ->name('password.force-change.update');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin,admin_prodi'])->group(function () {

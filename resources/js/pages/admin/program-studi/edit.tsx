@@ -57,15 +57,15 @@ export default function ProgramStudiEdit({ programStudi }: Props) {
     });
 
     const previewNim = useMemo(() => {
-        const prefix = programStudi.nim_prefix;
+        const prefix = data.nim_prefix || programStudi.nim_prefix;
         const year = new Date().getFullYear();
         const yearDigits = parseInt(data.nim_year_digits) || 2;
         const yearSuffix = String(year).slice(-yearDigits);
         const counter = programStudi.nim_counter + 1;
         const counterDigits = parseInt(data.nim_digit_count) || 3;
 
-        return `${prefix}${yearSuffix}${String(counter).padStart(counterDigits, '0')}`;
-    }, [programStudi, data.nim_year_digits, data.nim_digit_count]);
+        return `${prefix}${yearSuffix}01${String(counter).padStart(counterDigits, '0')}`;
+    }, [programStudi, data.nim_prefix, data.nim_year_digits, data.nim_digit_count]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -252,7 +252,7 @@ export default function ProgramStudiEdit({ programStudi }: Props) {
                             <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                                 <div className="space-y-2">
                                     <Label htmlFor="nim_prefix">
-                                        Prefix NIM
+                                        Kode Wajib Prodi
                                         <Required />
                                     </Label>
                                     <Input
@@ -261,12 +261,16 @@ export default function ProgramStudiEdit({ programStudi }: Props) {
                                         onChange={(e) =>
                                             setData(
                                                 'nim_prefix',
-                                                e.target.value.toUpperCase(),
+                                                e.target.value
+                                                    .replace(/\D/g, '')
+                                                    .slice(0, 3),
                                             )
                                         }
-                                        placeholder="TIF"
+                                        placeholder="149"
+                                        inputMode="numeric"
+                                        maxLength={3}
                                         aria-invalid={!!errors.nim_prefix}
-                                        className="font-mono uppercase"
+                                        className="font-mono"
                                     />
                                     {errors.nim_prefix && (
                                         <p className="text-sm text-destructive">

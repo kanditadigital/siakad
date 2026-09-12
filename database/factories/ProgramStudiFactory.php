@@ -23,7 +23,7 @@ class ProgramStudiFactory extends Factory
             'fakultas' => fake()->words(2, true),
             'lama_studi' => 4,
             'jenis_prodi' => 'Sarjana',
-            'nim_prefix' => fake()->unique()->lexify('???'),
+            'nim_prefix' => fake()->unique()->numerify('###'),
             'nim_counter' => 0,
             'nim_digit_count' => 3,
             'nim_year_digits' => 2,

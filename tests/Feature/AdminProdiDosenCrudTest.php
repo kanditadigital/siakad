@@ -3,6 +3,7 @@
 use App\Models\Dosen;
 use App\Models\ProgramStudi;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 function validAdminProdiDosenPayload(array $overrides = []): array
 {
@@ -53,6 +54,10 @@ test('admin_prodi can create a dosen scoped to their own program studi', functio
         'email' => 'dosen.prodi.baru@example.com',
         'role' => 'dosen',
     ]);
+
+    $user = User::where('email', 'dosen.prodi.baru@example.com')->first();
+    expect(Hash::check('1112223334', $user->password))->toBeTrue();
+    expect($user->must_change_password)->toBeTrue();
 });
 
 test('admin_prodi create form cannot override program_studi_id via request payload', function () {

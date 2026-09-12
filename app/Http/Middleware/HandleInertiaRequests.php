@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Support\TugasTertunda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -57,6 +58,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
             ],
+            'passwordRules' => Password::defaults()->toPasswordRulesString(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'kampus' => $this->kampus(),
             'chrome' => [

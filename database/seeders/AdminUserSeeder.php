@@ -91,7 +91,7 @@ class AdminUserSeeder extends Seeder
                 'fakultas' => 'Fakultas Teknik',
                 'lama_studi' => 4,
                 'jenis_prodi' => 'S1',
-                'nim_prefix' => 'TIF',
+                'nim_prefix' => '149',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -105,7 +105,7 @@ class AdminUserSeeder extends Seeder
                 'fakultas' => 'Fakultas Seni dan Desain',
                 'lama_studi' => 4,
                 'jenis_prodi' => 'S1',
-                'nim_prefix' => 'DKV',
+                'nim_prefix' => '150',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
