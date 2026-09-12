@@ -81,7 +81,7 @@ function Required() {
 }
 
 export default function DosenEdit({ dosen, programStudis }: Props) {
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, transform } = useForm({
         nidn: dosen.nidn,
         nuptk: dosen.nuptk,
         nama: dosen.nama,
@@ -129,7 +129,11 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/admin/dosen/${dosen.uuid}`);
+        // PHP/nginx can silently drop the body of a PUT request sent as
+        // multipart/form-data (e.g. when a new photo is attached), so this
+        // spoofs the method via POST instead.
+        transform((data) => ({ ...data, _method: 'put' }));
+        post(`/admin/dosen/${dosen.uuid}`);
     };
 
     return (

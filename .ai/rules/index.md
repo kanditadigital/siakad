@@ -11,3 +11,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Dosen/** | .ai/rules/dosen.md |
 | app/Http/Middleware/ForcePasswordChange.php | .ai/rules/middleware.md |
 | app/Models/Mahasiswa.php, app/Models/ProgramStudi.php | .ai/rules/models.md |
+| resources/js/pages/** | .ai/rules/pages.md |

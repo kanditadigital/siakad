@@ -48,7 +48,7 @@ type Props = {
 };
 
 export default function PengaturanIndex({ settings }: Props) {
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, transform } = useForm({
         identitas: { ...settings.identitas, logo: null as File | null },
         krs: settings.krs,
         nilai: settings.nilai,
@@ -82,7 +82,11 @@ fileInputRef.current.value = '';
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put('/admin/pengaturan', { forceFormData: true });
+        // PHP/nginx can silently drop the body of a PUT request sent as
+        // multipart/form-data, so this spoofs the method via POST instead
+        // (the standard Laravel/Inertia workaround for file uploads on update routes).
+        transform((data) => ({ ...data, _method: 'put' }));
+        post('/admin/pengaturan', { forceFormData: true });
     };
 
     return (

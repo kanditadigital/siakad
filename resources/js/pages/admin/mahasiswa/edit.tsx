@@ -73,7 +73,7 @@ function Required() {
 }
 
 export default function MahasiswaEdit({ mahasiswa, programStudis }: Props) {
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, transform } = useForm({
         nama: mahasiswa.nama,
         program_studi_id: mahasiswa.program_studi_id.toString(),
         no_ktp: mahasiswa.no_ktp || '',
@@ -122,7 +122,11 @@ export default function MahasiswaEdit({ mahasiswa, programStudis }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/admin/mahasiswa/${mahasiswa.uuid}`);
+        // PHP/nginx can silently drop the body of a PUT request sent as
+        // multipart/form-data (e.g. when a new photo is attached), so this
+        // spoofs the method via POST instead.
+        transform((data) => ({ ...data, _method: 'put' }));
+        post(`/admin/mahasiswa/${mahasiswa.uuid}`);
     };
 
     return (

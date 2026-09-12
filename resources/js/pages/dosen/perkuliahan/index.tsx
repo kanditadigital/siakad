@@ -399,7 +399,11 @@ export default function PerkuliahanIndex({
             return;
         }
 
-        editMateriForm.put(`/dosen/perkuliahan/materi/${editingMateri.id}`, {
+        // PHP/nginx can silently drop the body of a PUT request sent as
+        // multipart/form-data (e.g. when a new file is attached), so this
+        // spoofs the method via POST instead.
+        editMateriForm.transform((data) => ({ ...data, _method: 'put' }));
+        editMateriForm.post(`/dosen/perkuliahan/materi/${editingMateri.id}`, {
             forceFormData: true,
             onSuccess: () => {
                 setEditingMateri(null);
