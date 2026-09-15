@@ -45,16 +45,26 @@ class ProgramStudi extends Model
     }
 
     /**
-     * Kode tetap yang disisipkan di antara tahun masuk dan nomor urut pada NIM.
-     * Tidak merepresentasikan apa pun yang bervariasi per prodi atau mahasiswa.
+     * Tanggal & bulan berdirinya perguruan tinggi (14 September), tetap sama
+     * untuk semua prodi dan disisipkan di awal setiap NIM yang digenerate.
      */
-    private const KODE_TETAP = '01';
+    private const TANGGAL_BERDIRI_PT = '14';
+
+    private const BULAN_BERDIRI_PT = '9';
+
+    /**
+     * Segmen tetap {tanggal}{bulan} berdiri PT (3 digit: "149") yang mengawali setiap NIM.
+     */
+    public static function kodeBerdiriPt(): string
+    {
+        return self::TANGGAL_BERDIRI_PT.self::BULAN_BERDIRI_PT;
+    }
 
     /**
      * Generate NIM baru berdasarkan konfigurasi program studi.
      *
-     * Format: {kode wajib prodi}{tahun}{kode tetap "01"}{nomor urut}
-     * Contoh: 1492501001 (kode wajib=149, tahun=2025, tetap=01, nomor urut=001)
+     * Format: {tanggal+bulan berdiri PT}{tahun masuk}{kode prodi}{nomor urut}
+     * Contoh: 1492601001 (149=tanggal+bulan berdiri PT, tahun masuk=26, kode prodi=01, nomor urut=001)
      */
     public function generateNim(): string
     {
@@ -66,7 +76,7 @@ class ProgramStudi extends Model
         $year = (int) date('Y');
         $yearSuffix = substr((string) $year, -$this->nim_year_digits);
 
-        return $this->nim_prefix.$yearSuffix.self::KODE_TETAP.$paddedCounter;
+        return self::kodeBerdiriPt().$yearSuffix.$this->nim_prefix.$paddedCounter;
     }
 
     public function getRouteKeyName(): string

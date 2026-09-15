@@ -28,6 +28,8 @@ type Settings = {
         website: string;
         logo: string | null;
         logo_url: string | null;
+        favicon: string | null;
+        favicon_url: string | null;
     };
     krs: {
         sks_maks: number;
@@ -49,7 +51,11 @@ type Props = {
 
 export default function PengaturanIndex({ settings }: Props) {
     const { data, setData, post, processing, errors, transform } = useForm({
-        identitas: { ...settings.identitas, logo: null as File | null },
+        identitas: {
+            ...settings.identitas,
+            logo: null as File | null,
+            favicon: null as File | null,
+        },
         krs: settings.krs,
         nilai: settings.nilai,
         notifikasi: settings.notifikasi,
@@ -59,6 +65,11 @@ export default function PengaturanIndex({ settings }: Props) {
         settings.identitas.logo_url ?? null,
     );
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const [faviconPreview, setFaviconPreview] = useState<string | null>(
+        settings.identitas.favicon_url ?? null,
+    );
+    const faviconInputRef = useRef<HTMLInputElement>(null);
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -78,6 +89,27 @@ export default function PengaturanIndex({ settings }: Props) {
         if (fileInputRef.current) {
 fileInputRef.current.value = '';
 }
+    };
+
+    const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+
+        if (file) {
+            setData('identitas', { ...data.identitas, favicon: file });
+            const reader = new FileReader();
+            reader.onloadend = () =>
+                setFaviconPreview(reader.result as string);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeFavicon = () => {
+        setData('identitas', { ...data.identitas, favicon: null });
+        setFaviconPreview(null);
+
+        if (faviconInputRef.current) {
+            faviconInputRef.current.value = '';
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -167,6 +199,59 @@ fileInputRef.current.value = '';
                                         {errors['identitas.logo']}
                                     </p>
                                 )}
+
+                                <div className="flex items-center gap-4">
+                                    {faviconPreview ? (
+                                        <img
+                                            src={faviconPreview}
+                                            alt="Favicon"
+                                            className="h-16 w-16 rounded-md border object-contain"
+                                        />
+                                    ) : (
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-md border bg-muted text-xs text-muted-foreground">
+                                            Favicon
+                                        </div>
+                                    )}
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() =>
+                                                faviconInputRef.current?.click()
+                                            }
+                                        >
+                                            <Upload className="mr-2 h-3.5 w-3.5" />
+                                            Unggah Favicon
+                                        </Button>
+                                        {faviconPreview && (
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={removeFavicon}
+                                            >
+                                                <X className="h-3.5 w-3.5" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                    <input
+                                        ref={faviconInputRef}
+                                        type="file"
+                                        accept="image/x-icon,image/png,image/jpeg,image/svg+xml,.ico"
+                                        className="hidden"
+                                        onChange={handleFaviconChange}
+                                    />
+                                </div>
+                                {errors['identitas.favicon'] && (
+                                    <p className="text-sm text-destructive">
+                                        {errors['identitas.favicon']}
+                                    </p>
+                                )}
+                                <p className="text-xs text-muted-foreground">
+                                    Format ICO, PNG, JPG, atau SVG, maksimal
+                                    512KB. Tampil sebagai ikon tab browser.
+                                </p>
 
                                 <div className="grid gap-4 sm:grid-cols-2">
                                     <div className="space-y-2">

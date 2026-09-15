@@ -91,7 +91,7 @@ class AdminUserSeeder extends Seeder
                 'fakultas' => 'Fakultas Teknik',
                 'lama_studi' => 4,
                 'jenis_prodi' => 'S1',
-                'nim_prefix' => '149',
+                'nim_prefix' => '01',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -105,7 +105,7 @@ class AdminUserSeeder extends Seeder
                 'fakultas' => 'Fakultas Seni dan Desain',
                 'lama_studi' => 4,
                 'jenis_prodi' => 'S1',
-                'nim_prefix' => '150',
+                'nim_prefix' => '02',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -173,7 +173,8 @@ class AdminUserSeeder extends Seeder
                 'email' => 'budi.santoso@sitiddarurrahmah.ac.id',
                 'no_telepon' => '081234567890',
                 'jenis_kelamin' => 'L',
-                'pangkat_golongan' => 'Guru Besar',
+                'jabatan_fungsional' => 'Guru Besar',
+                'golongan' => null,
                 'pendidikan_terakhir' => 'S3',
                 'alamat' => 'Jl. Pendidikan No. 1, Subulussalam',
                 'status' => 'aktif',

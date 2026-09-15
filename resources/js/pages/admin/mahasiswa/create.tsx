@@ -20,6 +20,9 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 
+/** Tanggal & bulan berdiri PT, tetap sama untuk semua prodi (lihat ProgramStudi::kodeBerdiriPt()). */
+const KODE_BERDIRI_PT = '149';
+
 type ProgramStudi = {
     id: number;
     nama_prodi: string;
@@ -110,7 +113,7 @@ export default function MahasiswaCreate({ programStudis }: Props) {
         const yearSuffix = String(year).slice(-selectedProdi.nim_year_digits);
         const nextNumber = selectedProdi.nim_counter + 1;
 
-        return `${selectedProdi.nim_prefix}${yearSuffix}${String(nextNumber).padStart(selectedProdi.nim_digit_count, '0')}`;
+        return `${KODE_BERDIRI_PT}${yearSuffix}${selectedProdi.nim_prefix}${String(nextNumber).padStart(selectedProdi.nim_digit_count, '0')}`;
     }, [selectedProdi]);
 
     const handleSubmit = (e: React.FormEvent) => {

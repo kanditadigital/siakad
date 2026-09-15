@@ -20,6 +20,20 @@ class DosenController extends Controller
     use InteractsWithUploads;
 
     /**
+     * Academic functional rank — applies regardless of civil-servant status.
+     *
+     * @var list<string>
+     */
+    private const JABATAN_FUNGSIONAL = ['Tenaga Pengajar', 'Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Guru Besar'];
+
+    /**
+     * PNS civil-servant rank/grade — only applicable to dosen who are PNS.
+     *
+     * @var list<string>
+     */
+    private const GOLONGAN = ['Penata Muda III/a', 'Penata Muda Tk.I III/b', 'Penata III/c', 'Pembina IV/a', 'Pembina Tk.I IV/b', 'Pembina Utama IV/c'];
+
+    /**
      * Display a listing of dosen for this program studi.
      */
     public function index(Request $request): Response
@@ -73,7 +87,8 @@ class DosenController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:dosen,email', 'unique:users,email'],
             'no_telepon' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'pangkat_golongan' => ['required', 'string', 'max:255'],
+            'jabatan_fungsional' => ['nullable', 'string', 'in:'.implode(',', self::JABATAN_FUNGSIONAL)],
+            'golongan' => ['nullable', 'string', 'in:'.implode(',', self::GOLONGAN)],
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],
@@ -157,7 +172,8 @@ class DosenController extends Controller
             ],
             'no_telepon' => ['required', 'string', 'max:255'],
             'jenis_kelamin' => ['required', 'string', 'in:Laki-laki,Perempuan'],
-            'pangkat_golongan' => ['required', 'string', 'max:255'],
+            'jabatan_fungsional' => ['nullable', 'string', 'in:'.implode(',', self::JABATAN_FUNGSIONAL)],
+            'golongan' => ['nullable', 'string', 'in:'.implode(',', self::GOLONGAN)],
             'pendidikan_terakhir' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', 'in:aktif,cuti,pensiun'],

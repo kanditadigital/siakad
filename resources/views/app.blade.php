@@ -30,8 +30,12 @@
             }
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        @if (data_get($page, 'props.kampus.favicon_url'))
+            <link rel="icon" href="{{ data_get($page, 'props.kampus.favicon_url') }}">
+        @else
+            <link rel="icon" href="/favicon.ico" sizes="any">
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        @endif
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         @fonts

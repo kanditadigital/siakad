@@ -47,7 +47,8 @@ type Dosen = {
     email: string;
     no_telepon: string;
     jenis_kelamin: string;
-    pangkat_golongan: string;
+    jabatan_fungsional: string | null;
+    golongan: string | null;
     pendidikan_terakhir: string;
     alamat: string;
     status: string;

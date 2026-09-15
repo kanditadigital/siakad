@@ -13,6 +13,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+/** Tanggal & bulan berdiri PT, tetap sama untuk semua prodi (lihat ProgramStudi::kodeBerdiriPt()). */
+const KODE_BERDIRI_PT = '149';
+
 type ProgramStudi = {
     id: number;
     uuid: string;
@@ -215,7 +218,7 @@ export default function ProgramStudiShow({ programStudi }: Props) {
                                     </div>
                                     <div>
                                         <p className="text-xs text-gray-500">
-                                            Prefix NIM
+                                            Kode Prodi (untuk NIM)
                                         </p>
                                         <p className="font-mono text-lg font-medium text-gray-900">
                                             {programStudi.nim_prefix}
@@ -276,10 +279,11 @@ export default function ProgramStudiShow({ programStudi }: Props) {
                                         NIM Selanjutnya
                                     </p>
                                     <p className="font-mono text-lg font-medium text-green-800">
-                                        {programStudi.nim_prefix}
+                                        {KODE_BERDIRI_PT}
                                         {String(new Date().getFullYear()).slice(
                                             -programStudi.nim_year_digits,
                                         )}
+                                        {programStudi.nim_prefix}
                                         {String(
                                             programStudi.nim_counter + 1,
                                         ).padStart(

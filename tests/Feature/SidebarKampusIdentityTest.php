@@ -44,6 +44,31 @@ test('an uploaded logo reaches the sidebar as an expiring signed url', function 
         );
 });
 
+test('an uploaded favicon reaches the page as an expiring signed url', function () {
+    Storage::fake(config('filesystems.uploads'));
+    Setting::set('identitas.favicon', 'favicon/kampus.png');
+
+    $user = User::factory()->create(['role' => 'mahasiswa']);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('kampus.favicon_url', fn (?string $url) => str_contains((string) $url, 'expiration='))
+        );
+});
+
+test('the favicon url is null when no favicon has been uploaded', function () {
+    Storage::fake(config('filesystems.uploads'));
+
+    $user = User::factory()->create(['role' => 'admin']);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('kampus.favicon_url', null));
+});
+
 test('the logo url is null when no logo has been uploaded', function () {
     Storage::fake(config('filesystems.uploads'));
 

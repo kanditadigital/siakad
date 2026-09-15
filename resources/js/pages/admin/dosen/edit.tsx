@@ -42,7 +42,8 @@ type Dosen = {
     program_studi_id: number;
     no_telepon: string;
     jenis_kelamin: string;
-    pangkat_golongan: string;
+    jabatan_fungsional: string | null;
+    golongan: string | null;
     pendidikan_terakhir: string;
     alamat: string;
     status: string;
@@ -59,7 +60,15 @@ const JENIS_KELAMIN_OPTIONS = [
     { value: 'Perempuan', label: 'Perempuan' },
 ];
 
-const PANGKAT_OPTIONS = [
+const JABATAN_FUNGSIONAL_OPTIONS = [
+    'Tenaga Pengajar',
+    'Asisten Ahli',
+    'Lektor',
+    'Lektor Kepala',
+    'Guru Besar',
+];
+
+const GOLONGAN_OPTIONS = [
     'Penata Muda III/a',
     'Penata Muda Tk.I III/b',
     'Penata III/c',
@@ -89,7 +98,8 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
         program_studi_id: dosen.program_studi_id.toString(),
         no_telepon: dosen.no_telepon,
         jenis_kelamin: dosen.jenis_kelamin,
-        pangkat_golongan: dosen.pangkat_golongan,
+        jabatan_fungsional: dosen.jabatan_fungsional || '',
+        golongan: dosen.golongan || '',
         pendidikan_terakhir: dosen.pendidikan_terakhir,
         alamat: dosen.alamat,
         status: dosen.status,
@@ -469,40 +479,96 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                                 <div className="space-y-2">
-                                    <Label htmlFor="pangkat_golongan">
-                                        Pangkat / Golongan
-                                        <Required />
+                                    <Label htmlFor="jabatan_fungsional">
+                                        Jabatan Fungsional{' '}
+                                        <span className="font-normal text-muted-foreground">
+                                            (opsional)
+                                        </span>
                                     </Label>
                                     <Select
-                                        value={data.pangkat_golongan}
+                                        value={
+                                            data.jabatan_fungsional || 'none'
+                                        }
                                         onValueChange={(value) =>
-                                            setData('pangkat_golongan', value)
+                                            setData(
+                                                'jabatan_fungsional',
+                                                value === 'none' ? '' : value,
+                                            )
                                         }
                                     >
                                         <SelectTrigger
-                                            id="pangkat_golongan"
+                                            id="jabatan_fungsional"
                                             aria-invalid={
-                                                !!errors.pangkat_golongan
+                                                !!errors.jabatan_fungsional
                                             }
                                         >
-                                            <SelectValue placeholder="Pilih Pangkat" />
+                                            <SelectValue placeholder="Belum ada" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {PANGKAT_OPTIONS.map((pangkat) => (
-                                                <SelectItem
-                                                    key={pangkat}
-                                                    value={pangkat}
-                                                >
-                                                    {pangkat}
-                                                </SelectItem>
-                                            ))}
+                                            <SelectItem value="none">
+                                                Belum ada
+                                            </SelectItem>
+                                            {JABATAN_FUNGSIONAL_OPTIONS.map(
+                                                (jabatan) => (
+                                                    <SelectItem
+                                                        key={jabatan}
+                                                        value={jabatan}
+                                                    >
+                                                        {jabatan}
+                                                    </SelectItem>
+                                                ),
+                                            )}
                                         </SelectContent>
                                     </Select>
-                                    {errors.pangkat_golongan && (
+                                    {errors.jabatan_fungsional && (
                                         <p className="text-sm text-destructive">
-                                            {errors.pangkat_golongan}
+                                            {errors.jabatan_fungsional}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="golongan">
+                                        Golongan (PNS){' '}
+                                        <span className="font-normal text-muted-foreground">
+                                            (opsional)
+                                        </span>
+                                    </Label>
+                                    <Select
+                                        value={data.golongan || 'none'}
+                                        onValueChange={(value) =>
+                                            setData(
+                                                'golongan',
+                                                value === 'none' ? '' : value,
+                                            )
+                                        }
+                                    >
+                                        <SelectTrigger
+                                            id="golongan"
+                                            aria-invalid={!!errors.golongan}
+                                        >
+                                            <SelectValue placeholder="Tidak berlaku" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">
+                                                Tidak berlaku
+                                            </SelectItem>
+                                            {GOLONGAN_OPTIONS.map(
+                                                (golongan) => (
+                                                    <SelectItem
+                                                        key={golongan}
+                                                        value={golongan}
+                                                    >
+                                                        {golongan}
+                                                    </SelectItem>
+                                                ),
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.golongan && (
+                                        <p className="text-sm text-destructive">
+                                            {errors.golongan}
                                         </p>
                                     )}
                                 </div>

@@ -172,7 +172,7 @@ class Mahasiswa extends Model
         }
 
         $prodi = $this->programStudi;
-        $yearSuffix = substr($this->nim, strlen($prodi->nim_prefix), $prodi->nim_year_digits);
+        $yearSuffix = substr($this->nim, strlen(ProgramStudi::kodeBerdiriPt()), $prodi->nim_year_digits);
 
         if ($yearSuffix === '' || ! ctype_digit($yearSuffix)) {
             return null;

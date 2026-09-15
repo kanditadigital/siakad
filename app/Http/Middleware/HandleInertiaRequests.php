@@ -102,13 +102,14 @@ class HandleInertiaRequests extends Middleware
      * request. The logo lives in the private uploads bucket, hence a signed URL
      * rather than a path.
      *
-     * @return array{nama: string, logo_url: string|null}
+     * @return array{nama: string, logo_url: string|null, favicon_url: string|null}
      */
     private function kampus(): array
     {
         return [
             'nama' => (string) Setting::get('identitas.nama_kampus', config('app.name')),
             'logo_url' => static::uploadUrl(Setting::get('identitas.logo')),
+            'favicon_url' => static::uploadUrl(Setting::get('identitas.favicon')),
         ];
     }
 }

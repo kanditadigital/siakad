@@ -141,7 +141,7 @@ test('dosen cannot change institutional fields the form does not expose', functi
         'program_studi_id' => $prodi->id,
         'nidn' => '0011223344',
         'nuptk' => '1234567890123456',
-        'pangkat_golongan' => 'Penata Muda III/a',
+        'golongan' => 'Penata Muda III/a',
         'status' => 'aktif',
     ]);
 
@@ -149,7 +149,7 @@ test('dosen cannot change institutional fields the form does not expose', functi
         'nidn' => '9999999999',
         'nuptk' => '9999999999999999',
         'program_studi_id' => $otherProdi->id,
-        'pangkat_golongan' => 'Pembina Utama IV/c',
+        'golongan' => 'Pembina Utama IV/c',
         'status' => 'pensiun',
     ]));
 
@@ -157,7 +157,7 @@ test('dosen cannot change institutional fields the form does not expose', functi
         ->nidn->toBe('0011223344')
         ->nuptk->toBe('1234567890123456')
         ->program_studi_id->toBe($prodi->id)
-        ->pangkat_golongan->toBe('Penata Muda III/a')
+        ->golongan->toBe('Penata Muda III/a')
         ->status->toBe('aktif');
 });
 

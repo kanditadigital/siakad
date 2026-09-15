@@ -75,7 +75,8 @@ type Dosen = {
     email: string;
     no_telepon: string | null;
     jenis_kelamin: string;
-    pangkat_golongan: string | null;
+    jabatan_fungsional: string | null;
+    golongan: string | null;
     pendidikan_terakhir: string | null;
     alamat: string | null;
     status: string;
@@ -229,10 +230,25 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                         </div>
                                         <div>
                                             <p className="text-xs text-muted-foreground">
-                                                Pangkat / Golongan
+                                                Jabatan Fungsional
                                             </p>
                                             <p className="font-medium">
-                                                {dosen.pangkat_golongan || '-'}
+                                                {dosen.jabatan_fungsional ||
+                                                    '-'}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                            <Award className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-muted-foreground">
+                                                Golongan (PNS)
+                                            </p>
+                                            <p className="font-medium">
+                                                {dosen.golongan || '-'}
                                             </p>
                                         </div>
                                     </div>
@@ -392,10 +408,19 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-muted-foreground">
-                                                        Pangkat / Golongan
+                                                        Jabatan Fungsional
                                                     </p>
                                                     <p className="font-medium">
-                                                        {dosen.pangkat_golongan ||
+                                                        {dosen.jabatan_fungsional ||
+                                                            '-'}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Golongan (PNS)
+                                                    </p>
+                                                    <p className="font-medium">
+                                                        {dosen.golongan ||
                                                             '-'}
                                                     </p>
                                                 </div>

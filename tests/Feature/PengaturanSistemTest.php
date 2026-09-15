@@ -92,3 +92,25 @@ test('uploading a new logo replaces and deletes the old one', function () {
     expect($newLogo)->not->toBe('logo/old.png');
     Storage::disk(config('filesystems.uploads'))->assertExists($newLogo);
 });
+
+test('uploading a new favicon replaces and deletes the old one', function () {
+    Storage::fake(config('filesystems.uploads'));
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    Setting::set('identitas.favicon', 'favicon/old.png');
+    Storage::disk(config('filesystems.uploads'))->put('favicon/old.png', 'fake');
+
+    $response = $this->actingAs($admin)->put(route('admin.pengaturan.update'), array_merge(
+        validSettingsPayload(),
+        ['identitas' => array_merge(validSettingsPayload()['identitas'], [
+            'favicon' => UploadedFile::fake()->image('favicon.png'),
+        ])],
+    ));
+
+    $response->assertRedirect(route('admin.pengaturan.index'));
+
+    Storage::disk(config('filesystems.uploads'))->assertMissing('favicon/old.png');
+    $newFavicon = Setting::get('identitas.favicon');
+    expect($newFavicon)->not->toBe('favicon/old.png');
+    Storage::disk(config('filesystems.uploads'))->assertExists($newFavicon);
+});

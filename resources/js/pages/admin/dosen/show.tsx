@@ -37,7 +37,8 @@ type Dosen = {
     email: string;
     no_telepon: string;
     jenis_kelamin: string;
-    pangkat_golongan: string;
+    jabatan_fungsional: string | null;
+    golongan: string | null;
     pendidikan_terakhir: string;
     alamat: string;
     status: string;
@@ -231,10 +232,24 @@ export default function DosenShow({ dosen }: Props) {
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-500">
-                                        Pangkat / Golongan
+                                        Jabatan Fungsional
                                     </p>
                                     <p className="font-medium text-gray-900">
-                                        {dosen.pangkat_golongan || '-'}
+                                        {dosen.jabatan_fungsional || '-'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50">
+                                    <Award className="h-5 w-5 text-green-700" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">
+                                        Golongan (PNS)
+                                    </p>
+                                    <p className="font-medium text-gray-900">
+                                        {dosen.golongan || '-'}
                                     </p>
                                 </div>
                             </div>

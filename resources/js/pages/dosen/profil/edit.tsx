@@ -36,7 +36,8 @@ type Dosen = {
     email: string;
     jenis_kelamin: string;
     pendidikan_terakhir: string;
-    pangkat_golongan: string;
+    jabatan_fungsional: string | null;
+    golongan: string | null;
     no_telepon: string | null;
     alamat: string | null;
     status: string;
@@ -141,9 +142,19 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Pangkat / Golongan</Label>
+                                    <Label>Jabatan Fungsional</Label>
                                     <Input
-                                        value={dosen.pangkat_golongan}
+                                        value={
+                                            dosen.jabatan_fungsional || '-'
+                                        }
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Golongan (PNS)</Label>
+                                    <Input
+                                        value={dosen.golongan || '-'}
                                         disabled
                                     />
                                 </div>

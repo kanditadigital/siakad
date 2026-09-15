@@ -24,6 +24,7 @@ class PengaturanController extends Controller
         'identitas.alamat' => 'Sepadan, Kec. Rundeng, Kota Subulussalam, Aceh',
         'identitas.website' => 'stit-daras.ac.id',
         'identitas.logo' => null,
+        'identitas.favicon' => null,
         'krs.sks_maks' => 24,
         'krs.sks_min' => 12,
         'krs.dibuka' => true,
@@ -53,6 +54,7 @@ class PengaturanController extends Controller
             'identitas.alamat' => ['required', 'string', 'max:500'],
             'identitas.website' => ['required', 'string', 'max:255'],
             'identitas.logo' => ['nullable', 'file', 'image:jpeg,jpg,png', 'max:1024'],
+            'identitas.favicon' => ['nullable', 'file', 'mimes:ico,png,jpg,jpeg,svg', 'max:512'],
 
             'krs' => ['required', 'array'],
             'krs.sks_maks' => ['required', 'integer', 'min:1', 'max:60'],
@@ -80,6 +82,16 @@ class PengaturanController extends Controller
             $validated['identitas']['logo'] = static::storeUpload($request->file('identitas.logo'), 'logo');
         } else {
             unset($validated['identitas']['logo']);
+        }
+
+        if ($request->hasFile('identitas.favicon')) {
+            $currentFavicon = Setting::get('identitas.favicon');
+            if ($currentFavicon) {
+                static::deleteUpload($currentFavicon);
+            }
+            $validated['identitas']['favicon'] = static::storeUpload($request->file('identitas.favicon'), 'favicon');
+        } else {
+            unset($validated['identitas']['favicon']);
         }
 
         $flat = [];
@@ -128,9 +140,10 @@ class PengaturanController extends Controller
             $grouped[$group][$field] = $value;
         }
 
-        // The logo lives in the private uploads bucket, so the page needs a
-        // pre-signed URL rather than the stored path.
+        // The logo/favicon live in the private uploads bucket, so the page needs
+        // a pre-signed URL rather than the stored path.
         $grouped['identitas']['logo_url'] = static::uploadUrl($grouped['identitas']['logo'] ?? null);
+        $grouped['identitas']['favicon_url'] = static::uploadUrl($grouped['identitas']['favicon'] ?? null);
 
         return $grouped;
     }

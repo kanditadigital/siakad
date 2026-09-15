@@ -36,6 +36,9 @@ type ProgramStudi = {
 
 const JENIS_PRODI = ['D3', 'S1', 'S2', 'S3'];
 
+/** Tanggal & bulan berdiri PT, tetap sama untuk semua prodi (lihat ProgramStudi::kodeBerdiriPt()). */
+const KODE_BERDIRI_PT = '149';
+
 type Props = {
     programStudi: ProgramStudi;
 };
@@ -64,7 +67,7 @@ export default function ProgramStudiEdit({ programStudi }: Props) {
         const counter = programStudi.nim_counter + 1;
         const counterDigits = parseInt(data.nim_digit_count) || 3;
 
-        return `${prefix}${yearSuffix}01${String(counter).padStart(counterDigits, '0')}`;
+        return `${KODE_BERDIRI_PT}${yearSuffix}${prefix}${String(counter).padStart(counterDigits, '0')}`;
     }, [programStudi, data.nim_prefix, data.nim_year_digits, data.nim_digit_count]);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -243,16 +246,17 @@ export default function ProgramStudiEdit({ programStudi }: Props) {
                         <CardHeader>
                             <CardTitle>Konfigurasi NIM</CardTitle>
                             <CardDescription>
-                                Format nomor induk mahasiswa yang akan
-                                digenerate otomatis saat mendaftarkan mahasiswa
-                                baru
+                                Format: {KODE_BERDIRI_PT} (tanggal & bulan
+                                berdiri PT, tetap) + tahun masuk + kode prodi +
+                                nomor urut. NIM digenerate otomatis saat
+                                mendaftarkan mahasiswa baru.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                                 <div className="space-y-2">
                                     <Label htmlFor="nim_prefix">
-                                        Kode Wajib Prodi
+                                        Kode Prodi (untuk NIM)
                                         <Required />
                                     </Label>
                                     <Input
@@ -263,12 +267,12 @@ export default function ProgramStudiEdit({ programStudi }: Props) {
                                                 'nim_prefix',
                                                 e.target.value
                                                     .replace(/\D/g, '')
-                                                    .slice(0, 3),
+                                                    .slice(0, 2),
                                             )
                                         }
-                                        placeholder="149"
+                                        placeholder="01"
                                         inputMode="numeric"
-                                        maxLength={3}
+                                        maxLength={2}
                                         aria-invalid={!!errors.nim_prefix}
                                         className="font-mono"
                                     />
