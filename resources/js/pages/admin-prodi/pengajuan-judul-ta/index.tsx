@@ -65,7 +65,7 @@ type PaginatedData = {
 type DosenOption = {
     id: number;
     nama: string;
-    nidn: string | null;
+    niy: string | null;
 };
 
 type Props = {

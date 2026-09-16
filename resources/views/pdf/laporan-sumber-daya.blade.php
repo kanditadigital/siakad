@@ -69,7 +69,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>NIDN</th>
+                <th>NIY</th>
                 <th>Nama</th>
                 <th>Program Studi</th>
                 <th>Status</th>
@@ -79,7 +79,7 @@
             @forelse($dosens as $index => $dosen)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $dosen->nidn }}</td>
+                    <td>{{ $dosen->niy }}</td>
                     <td>{{ $dosen->nama }}</td>
                     <td>{{ $dosen->programStudi->nama_prodi ?? '-' }}</td>
                     <td>{{ ucfirst($dosen->status) }}</td>

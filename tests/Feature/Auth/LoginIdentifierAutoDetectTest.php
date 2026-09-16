@@ -21,9 +21,9 @@ test('mahasiswa can log in with only their nim, without an explicit login_field'
     $this->assertAuthenticatedAs($user);
 });
 
-test('dosen can log in with only their nidn, without an explicit login_field', function () {
+test('dosen can log in with only their niy, without an explicit login_field', function () {
     $user = User::factory()->create(['role' => 'dosen', 'password' => bcrypt('password123')]);
-    Dosen::factory()->create(['user_id' => $user->id, 'nidn' => '0012345678']);
+    Dosen::factory()->create(['user_id' => $user->id, 'niy' => '0012345678']);
 
     $response = $this->post('/login', [
         'login_value' => '0012345678',

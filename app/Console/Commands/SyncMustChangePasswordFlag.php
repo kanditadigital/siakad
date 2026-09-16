@@ -17,7 +17,7 @@ class SyncMustChangePasswordFlag extends Command
     /**
      * @var string
      */
-    protected $description = 'Flag existing dosen/mahasiswa accounts whose password still equals their NIDN/NIM, so they get the first-login forced change too';
+    protected $description = 'Flag existing dosen/mahasiswa accounts whose password still equals their NIY/NIM, so they get the first-login forced change too';
 
     public function handle(): int
     {
@@ -25,7 +25,7 @@ class SyncMustChangePasswordFlag extends Command
 
         $flagged = 0;
 
-        $flagged += $this->syncRole('dosen', 'nidn', $dryRun);
+        $flagged += $this->syncRole('dosen', 'niy', $dryRun);
         $flagged += $this->syncRole('mahasiswa', 'nim', $dryRun);
 
         $this->newLine();

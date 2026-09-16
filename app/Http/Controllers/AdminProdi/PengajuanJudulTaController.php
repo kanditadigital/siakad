@@ -60,7 +60,7 @@ class PengajuanJudulTaController extends Controller
             'mahasiswas' => $mahasiswas,
             'dosenOptions' => Dosen::where('program_studi_id', $programStudiId)
                 ->orderBy('nama')
-                ->get(['id', 'nama', 'nidn']),
+                ->get(['id', 'nama', 'niy']),
             'filters' => $request->only(['search', 'status']),
         ]);
     }

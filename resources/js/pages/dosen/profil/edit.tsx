@@ -30,7 +30,7 @@ type ProgramStudi = {
 
 type Dosen = {
     id: number;
-    nidn: string;
+    niy: string;
     nuptk: string;
     nama: string;
     email: string;
@@ -101,16 +101,16 @@ export default function DosenProfilEdit({ dosen }: { dosen: Dosen }) {
                             </CardTitle>
                             <CardDescription>
                                 Dikelola oleh admin — hubungi admin untuk
-                                perubahan NIDN, NUPTK, email, program studi,
+                                perubahan NIY, NUPTK, email, program studi,
                                 status, atau pangkat/golongan.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                                 <div className="space-y-2">
-                                    <Label>NIDN</Label>
+                                    <Label>NIY</Label>
                                     <Input
-                                        value={dosen.nidn}
+                                        value={dosen.niy}
                                         disabled
                                         className="font-mono"
                                     />

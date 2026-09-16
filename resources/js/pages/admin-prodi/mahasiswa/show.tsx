@@ -39,7 +39,7 @@ type UserPhoto = {
 type DosenOption = {
     id: number;
     nama: string;
-    nidn: string;
+    niy: string;
 };
 
 type Mahasiswa = {
@@ -318,7 +318,7 @@ export default function MahasiswaShow({
                                                     key={d.id}
                                                     value={d.id.toString()}
                                                 >
-                                                    {d.nama} ({d.nidn})
+                                                    {d.nama} ({d.niy})
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>

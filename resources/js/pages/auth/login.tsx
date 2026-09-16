@@ -284,7 +284,7 @@ export default function Login({ canResetPassword, status }: Props) {
                             >
                                 <FloatingLabelField
                                     id="login_value"
-                                    label="Email, NIM, atau NIDN"
+                                    label="Email, NIM, atau NIY"
                                     icon={User}
                                     type="text"
                                     value={data.login_value}

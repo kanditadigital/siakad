@@ -21,7 +21,7 @@ type PageProps = {
 
 /**
  * Blocking modal shown on the dashboard for an account whose password is
- * still its first-login default (NIDN for dosen, NIM for mahasiswa) — the
+ * still its first-login default (NIY for dosen, NIM for mahasiswa) — the
  * `ForcePasswordChange` middleware redirects every other route to the
  * dedicated full-page form, this covers the one route it exempts.
  */

@@ -42,7 +42,7 @@ class DosenProfileController extends Controller
     /**
      * Update the dosen profile.
      *
-     * Only personal/contact fields are self-editable. NIDN, NUPTK, program
+     * Only personal/contact fields are self-editable. NIY, NUPTK, program
      * studi, status kepegawaian, and pangkat/golongan are institutional
      * records — changing those stays an admin/admin-prodi action (see
      * Admin\DosenController::update) so a dosen can't, say, reassign their

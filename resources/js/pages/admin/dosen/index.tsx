@@ -41,7 +41,7 @@ type ProgramStudi = {
 type Dosen = {
     id: number;
     uuid: string;
-    nidn: string;
+    niy: string;
     nuptk: string;
     nama: string;
     email: string;
@@ -170,7 +170,7 @@ export default function DosenIndex({ dosens, programStudis, filters }: Props) {
                     <div className="relative max-w-sm min-w-[200px] flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
-                            placeholder="Cari NIDN, NUPTK, nama, atau email..."
+                            placeholder="Cari NIY, NUPTK, nama, atau email..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={(e) =>
@@ -242,7 +242,7 @@ export default function DosenIndex({ dosens, programStudis, filters }: Props) {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>NIDN</TableHead>
+                                    <TableHead>NIY</TableHead>
                                     <TableHead>NUPTK</TableHead>
                                     <TableHead>Nama</TableHead>
                                     <TableHead>Program Studi</TableHead>
@@ -296,7 +296,7 @@ export default function DosenIndex({ dosens, programStudis, filters }: Props) {
                                     dosens.data.map((dosen) => (
                                         <TableRow key={dosen.id}>
                                             <TableCell className="font-mono font-medium">
-                                                {dosen.nidn}
+                                                {dosen.niy}
                                             </TableCell>
                                             <TableCell className="font-mono font-medium">
                                                 {dosen.nuptk}

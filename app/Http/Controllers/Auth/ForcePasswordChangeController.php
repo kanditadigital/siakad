@@ -13,7 +13,7 @@ class ForcePasswordChangeController extends Controller
 {
     /**
      * Show the mandatory password-change form for a first-login account
-     * (default password still equal to the NIM/NIDN it was created with).
+     * (default password still equal to the NIM/NIY it was created with).
      */
     public function edit(): Response
     {

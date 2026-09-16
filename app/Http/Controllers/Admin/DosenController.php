@@ -42,7 +42,7 @@ class DosenController extends Controller
         if ($request->has('search') && $request->search !== '') {
             $search = $request->search;
             $query->where(function ($q) use ($search): void {
-                $q->where('nidn', 'like', "%{$search}%")
+                $q->where('niy', 'like', "%{$search}%")
                     ->orWhere('nuptk', 'like', "%{$search}%")
                     ->orWhere('nama', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
@@ -88,7 +88,7 @@ class DosenController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nidn' => ['required', 'string', 'max:255', 'unique:dosen,nidn', 'unique:users,nidn'],
+            'niy' => ['required', 'string', 'max:255', 'unique:dosen,niy', 'unique:users,niy'],
             'nuptk' => ['required', 'string', 'max:255', 'unique:dosen,nuptk'],
             'nama' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:dosen,email', 'unique:users,email'],
@@ -112,10 +112,10 @@ class DosenController extends Controller
             $user = User::create([
                 'name' => $validated['nama'],
                 'email' => $validated['email'],
-                'password' => bcrypt($validated['nidn']),
+                'password' => bcrypt($validated['niy']),
                 'must_change_password' => true,
                 'role' => 'dosen',
-                'nidn' => $validated['nidn'],
+                'niy' => $validated['niy'],
                 'photo' => $photoPath,
             ]);
 
@@ -160,10 +160,10 @@ class DosenController extends Controller
     public function update(Request $request, Dosen $dosen): RedirectResponse
     {
         $validated = $request->validate([
-            'nidn' => [
+            'niy' => [
                 'required', 'string', 'max:255',
-                Rule::unique('dosen', 'nidn')->ignore($dosen->id),
-                Rule::unique('users', 'nidn')->ignore($dosen->user_id),
+                Rule::unique('dosen', 'niy')->ignore($dosen->id),
+                Rule::unique('users', 'niy')->ignore($dosen->user_id),
             ],
             'nuptk' => ['required', 'string', 'max:255', 'unique:dosen,nuptk,'.$dosen->id],
             'nama' => ['required', 'string', 'max:255'],
@@ -198,7 +198,7 @@ class DosenController extends Controller
                 $userUpdate = [
                     'name' => $validated['nama'],
                     'email' => $validated['email'],
-                    'nidn' => $validated['nidn'],
+                    'niy' => $validated['niy'],
                 ];
                 if ($photoPath) {
                     $userUpdate['photo'] = $photoPath;

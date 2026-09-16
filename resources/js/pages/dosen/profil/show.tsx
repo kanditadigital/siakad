@@ -70,7 +70,7 @@ type RiwayatPendidikan = {
 
 type Dosen = {
     id: number;
-    nidn: string;
+    niy: string;
     nama: string;
     email: string;
     no_telepon: string | null;
@@ -189,9 +189,9 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                     </span>
                                 </div>
                                 <div className="text-center text-white">
-                                    <p className="text-sm opacity-80">NIDN</p>
+                                    <p className="text-sm opacity-80">NIY</p>
                                     <p className="font-mono text-lg font-semibold">
-                                        {dosen.nidn}
+                                        {dosen.niy}
                                     </p>
                                 </div>
                             </div>
@@ -373,10 +373,10 @@ export default function DosenProfilShow({ dosen }: { dosen: Dosen }) {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-muted-foreground">
-                                                        NIDN
+                                                        NIY
                                                     </p>
                                                     <p className="font-mono font-medium">
-                                                        {dosen.nidn}
+                                                        {dosen.niy}
                                                     </p>
                                                 </div>
                                                 <div>

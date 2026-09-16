@@ -61,13 +61,13 @@ class PencarianController extends Controller
 
         $dosen = Dosen::with('programStudi')
             ->when($prodiId, fn ($query) => $query->where('program_studi_id', $prodiId))
-            ->where(fn ($query) => $query->where('nama', 'like', $suka)->orWhere('nidn', 'like', $suka))
+            ->where(fn ($query) => $query->where('nama', 'like', $suka)->orWhere('niy', 'like', $suka))
             ->orderBy('nama')
             ->take(self::BATAS)
             ->get()
             ->map(fn (Dosen $d): array => [
                 'judul' => $d->nama,
-                'keterangan' => ($d->nidn ?? 'Tanpa NIDN').' · '.($d->programStudi?->nama_prodi ?? 'Tanpa prodi'),
+                'keterangan' => ($d->niy ?? 'Tanpa NIY').' · '.($d->programStudi?->nama_prodi ?? 'Tanpa prodi'),
                 'href' => "{$prefix}/dosen/{$d->uuid}",
             ])
             ->all();

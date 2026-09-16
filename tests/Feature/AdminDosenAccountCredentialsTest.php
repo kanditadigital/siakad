@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 function validAdminDosenPayload(array $overrides = []): array
 {
     return array_replace([
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'nuptk' => '9998887776',
         'nama' => 'Dosen Baru',
         'email' => 'dosen.baru@example.com',
@@ -20,7 +20,7 @@ function validAdminDosenPayload(array $overrides = []): array
     ], $overrides);
 }
 
-test('admin creating a dosen sets the account password to the nidn', function () {
+test('admin creating a dosen sets the account password to the niy', function () {
     $programStudi = ProgramStudi::factory()->create();
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -33,7 +33,7 @@ test('admin creating a dosen sets the account password to the nidn', function ()
     $user = User::where('email', 'dosen.baru@example.com')->first();
 
     expect($user)->not->toBeNull();
-    expect($user->nidn)->toBe('1112223334');
+    expect($user->niy)->toBe('1112223334');
     expect(Hash::check('1112223334', $user->password))->toBeTrue();
     expect($user->must_change_password)->toBeTrue();
 });

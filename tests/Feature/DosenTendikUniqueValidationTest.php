@@ -8,7 +8,7 @@ use App\Models\User;
 function validDosenPayload(array $overrides = []): array
 {
     return array_replace([
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'nuptk' => '9998887776',
         'nama' => 'Dosen Baru',
         'email' => 'dosen.baru@example.com',
@@ -38,17 +38,17 @@ function validTendikPayload(array $overrides = []): array
     ], $overrides);
 }
 
-test('creating a dosen with an nidn already used by another user is rejected, not a 500', function () {
+test('creating a dosen with an niy already used by another user is rejected, not a 500', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    User::factory()->create(['role' => 'pimpinan', 'nidn' => '1234567899']);
+    User::factory()->create(['role' => 'pimpinan', 'niy' => '1234567899']);
 
     $response = $this->actingAs($admin)->post(
         route('admin.dosen.store'),
-        validDosenPayload(['nidn' => '1234567899']),
+        validDosenPayload(['niy' => '1234567899']),
     );
 
-    $response->assertSessionHasErrors('nidn');
-    $this->assertDatabaseMissing('dosen', ['nidn' => '1234567899']);
+    $response->assertSessionHasErrors('niy');
+    $this->assertDatabaseMissing('dosen', ['niy' => '1234567899']);
 });
 
 test('creating a dosen with an email already used by another user is rejected, not a 500', function () {
@@ -64,16 +64,16 @@ test('creating a dosen with an email already used by another user is rejected, n
     $this->assertDatabaseMissing('dosen', ['email' => 'taken@example.com']);
 });
 
-test('updating a dosen keeps its own user nidn/email out of the uniqueness check', function () {
+test('updating a dosen keeps its own user niy/email out of the uniqueness check', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $programStudi = ProgramStudi::factory()->create();
     $dosen = Dosen::factory()->for($programStudi)->create();
-    $dosen->user->update(['nidn' => $dosen->nidn, 'email' => $dosen->email]);
+    $dosen->user->update(['niy' => $dosen->niy, 'email' => $dosen->email]);
 
     $response = $this->actingAs($admin)->put(
         route('admin.dosen.update', $dosen),
         validDosenPayload([
-            'nidn' => $dosen->nidn,
+            'niy' => $dosen->niy,
             'email' => $dosen->email,
             'nuptk' => $dosen->nuptk,
             'program_studi_id' => $programStudi->id,

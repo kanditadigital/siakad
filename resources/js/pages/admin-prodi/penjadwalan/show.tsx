@@ -27,7 +27,7 @@ type MataKuliah = {
 type Dosen = {
     id: number;
     nama: string;
-    nidn: string;
+    niy: string;
 };
 
 type Ruang = {
@@ -270,7 +270,7 @@ export default function PenjadwalanShow({ kelas }: { kelas: Kelas }) {
                                     </p>
                                     {kelas.dosen && (
                                         <p className="text-xs text-gray-500">
-                                            NIDN: {kelas.dosen.nidn}
+                                            NIY: {kelas.dosen.niy}
                                         </p>
                                     )}
                                 </div>

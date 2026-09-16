@@ -31,7 +31,7 @@ class AllUsersSeeder extends Seeder
                 'email' => 'budi.santoso@sitiddarurrahmah.ac.id',
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Dosen,
-                'nidn' => '1234567890',
+                'niy' => '1234567890',
                 'nim' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
@@ -42,7 +42,7 @@ class AllUsersSeeder extends Seeder
                 'email' => 'siti.rahmawati@sitiddarurrahmah.ac.id',
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Dosen,
-                'nidn' => '1234567891',
+                'niy' => '1234567891',
                 'nim' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
@@ -53,7 +53,7 @@ class AllUsersSeeder extends Seeder
                 'email' => 'ahmad.hidayat@sitiddarurrahmah.ac.id',
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Dosen,
-                'nidn' => '1234567892',
+                'niy' => '1234567892',
                 'nim' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
@@ -73,7 +73,7 @@ class AllUsersSeeder extends Seeder
 
                 // Check if dosen profile already exists
                 $dosenExists = DB::table('dosen')
-                    ->where('nidn', $dosen['nidn'])
+                    ->where('niy', $dosen['niy'])
                     ->exists();
 
                 if (! $dosenExists) {
@@ -81,7 +81,7 @@ class AllUsersSeeder extends Seeder
                     DB::table('dosen')->insert([
                         'user_id' => $userId,
                         'program_studi_id' => $ftiId,
-                        'nidn' => $dosen['nidn'],
+                        'niy' => $dosen['niy'],
                         'nama' => $dosen['name'],
                         'email' => $dosen['email'],
                         'no_telepon' => '081234567890',
@@ -111,7 +111,7 @@ class AllUsersSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Mahasiswa,
                 'nim' => 'MHS-2024-001',
-                'nidn' => null,
+                'niy' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -122,7 +122,7 @@ class AllUsersSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Mahasiswa,
                 'nim' => 'MHS-2024-002',
-                'nidn' => null,
+                'niy' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -133,7 +133,7 @@ class AllUsersSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Mahasiswa,
                 'nim' => 'MHS-2024-003',
-                'nidn' => null,
+                'niy' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -181,7 +181,7 @@ class AllUsersSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Pimpinan,
                 'nim' => null,
-                'nidn' => '1234567899',
+                'niy' => '1234567899',
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -192,7 +192,7 @@ class AllUsersSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => UserRole::Pimpinan,
                 'nim' => null,
-                'nidn' => '1234567898',
+                'niy' => '1234567898',
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -222,7 +222,7 @@ class AllUsersSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => UserRole::AdminProdi,
                 'nim' => null,
-                'nidn' => null,
+                'niy' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -234,7 +234,7 @@ class AllUsersSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'role' => UserRole::AdminProdi,
                 'nim' => null,
-                'nidn' => null,
+                'niy' => null,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),

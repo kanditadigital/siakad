@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 function validAdminProdiDosenPayload(array $overrides = []): array
 {
     return array_replace([
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'nuptk' => '9998887776',
         'nama' => 'Dosen Prodi Baru',
         'email' => 'dosen.prodi.baru@example.com',
@@ -47,7 +47,7 @@ test('admin_prodi can create a dosen scoped to their own program studi', functio
 
     $response->assertRedirect(route('admin-prodi.dosen.index'));
     $this->assertDatabaseHas('dosen', [
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'program_studi_id' => $programStudi->id,
     ]);
     $this->assertDatabaseHas('users', [
@@ -70,11 +70,11 @@ test('admin_prodi create form cannot override program_studi_id via request paylo
     ]));
 
     $this->assertDatabaseHas('dosen', [
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'program_studi_id' => $programStudi->id,
     ]);
     $this->assertDatabaseMissing('dosen', [
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'program_studi_id' => $otherProgramStudi->id,
     ]);
 });

@@ -373,7 +373,7 @@ class BimbinganTugasAkhirController extends Controller
             ->where('program_studi_id', $dosen->program_studi_id)
             ->whereKeyNot($dosen->id)
             ->orderBy('nama')
-            ->get(['id', 'nama', 'nidn'])
+            ->get(['id', 'nama', 'niy'])
             ->all();
     }
 

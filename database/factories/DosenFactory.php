@@ -22,7 +22,7 @@ class DosenFactory extends Factory
         return [
             'user_id' => User::factory(),
             'program_studi_id' => ProgramStudi::factory(),
-            'nidn' => fake()->unique()->numerify('##########'),
+            'niy' => fake()->unique()->numerify('##########'),
             'nuptk' => fake()->unique()->numerify('##############'),
             'nama' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),

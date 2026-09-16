@@ -13,7 +13,7 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 
 test('krs pdf shows kode mk, nama mk, sks, ruangan, waktu, and dosen pa signature block', function () {
-    $paDosen = Dosen::factory()->create(['nama' => 'Dr. Ahmad Fauzi', 'nidn' => '1122334455']);
+    $paDosen = Dosen::factory()->create(['nama' => 'Dr. Ahmad Fauzi', 'niy' => '1122334455']);
     $mahasiswa = Mahasiswa::factory()->create(['pa_dosen_id' => $paDosen->id]);
     $mahasiswa->load('paDosen');
     $mk = MataKuliah::factory()->create(['kode_mk' => 'MK-999', 'nama_mk' => 'Kalkulus Lanjut', 'sks' => 4]);
@@ -38,7 +38,7 @@ test('krs pdf shows kode mk, nama mk, sks, ruangan, waktu, and dosen pa signatur
     expect($html)->toContain('Senin, 07:00 - 08:30');
     expect($html)->toContain($kelas->ruang->kode_ruang);
     expect($html)->toContain('Dr. Ahmad Fauzi');
-    expect($html)->toContain('NIDN: 1122334455');
+    expect($html)->toContain('NIY: 1122334455');
     expect($html)->toContain('Subulussalam, '.now()->translatedFormat('d F Y'));
     expect($html)->toContain('Total SKS');
     expect($html)->not->toContain('<th>Semester</th>');
@@ -85,7 +85,7 @@ test('krs pdf renders without a qr code when none is provided', function () {
 
 test('krs pdf shows mahasiswa detail block with prodi, jenjang, tahun akademik, semester, and dosen pa', function () {
     $programStudi = ProgramStudi::factory()->create(['nama_prodi' => 'Pendidikan Agama Islam', 'jenis_prodi' => 'S1']);
-    $paDosen = Dosen::factory()->create(['nama' => 'Dr. Ahmad Fauzi', 'nidn' => '1122334455']);
+    $paDosen = Dosen::factory()->create(['nama' => 'Dr. Ahmad Fauzi', 'niy' => '1122334455']);
     $mahasiswa = Mahasiswa::factory()->create(['program_studi_id' => $programStudi->id, 'pa_dosen_id' => $paDosen->id]);
     $mahasiswa->load('programStudi', 'paDosen');
     $ays = AcademicYearSemester::factory()->create(['nama_tahun_akademik' => '2025/2026', 'semester' => 'Ganjil']);
@@ -172,7 +172,7 @@ test('krs pdf shows a dash for dosen pa signature when mahasiswa has none assign
     ])->render();
 
     expect($html)->toContain('Dosen Pembimbing Akademik');
-    expect($html)->toContain('NIDN: -');
+    expect($html)->toContain('NIY: -');
 });
 
 test('khs pdf shows kode mk, nama mk, and sks correctly', function () {

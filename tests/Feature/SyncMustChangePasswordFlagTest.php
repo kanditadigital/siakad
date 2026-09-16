@@ -2,10 +2,10 @@
 
 use App\Models\User;
 
-test('flags a dosen whose password still equals their nidn', function () {
+test('flags a dosen whose password still equals their niy', function () {
     $dosen = User::factory()->create([
         'role' => 'dosen',
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'password' => bcrypt('1112223334'),
         'must_change_password' => false,
     ]);
@@ -31,7 +31,7 @@ test('flags a mahasiswa whose password still equals their nim', function () {
 test('leaves a dosen alone whose password was already changed', function () {
     $dosen = User::factory()->create([
         'role' => 'dosen',
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'password' => bcrypt('password-yang-sudah-diganti'),
         'must_change_password' => false,
     ]);
@@ -44,7 +44,7 @@ test('leaves a dosen alone whose password was already changed', function () {
 test('dry-run reports matches without writing anything', function () {
     $dosen = User::factory()->create([
         'role' => 'dosen',
-        'nidn' => '1112223334',
+        'niy' => '1112223334',
         'password' => bcrypt('1112223334'),
         'must_change_password' => false,
     ]);

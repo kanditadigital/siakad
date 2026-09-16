@@ -252,7 +252,7 @@
                 <p class="signature-location">Subulussalam, {{ now()->translatedFormat('d F Y') }}</p>
                 <p style="margin-bottom:70px;">Dosen Pembimbing Akademik</p>
                 <p class="signature-name">{{ $mahasiswa->paDosen->nama ?? '-' }}</p>
-                <p>NIDN: {{ $mahasiswa->paDosen->nidn ?? '-' }}</p>
+                <p>NIY: {{ $mahasiswa->paDosen->niy ?? '-' }}</p>
             </td>
         </tr>
     </table>

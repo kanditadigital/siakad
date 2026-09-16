@@ -15,5 +15,5 @@ Models expose these as appended accessors: `User::photo_url`, `Rps::file_url`, `
 
 In tests use `Storage::fake(config('filesystems.uploads'))`.
 
-## Dosen account password defaults to NIDN, not a fixed string
-Both `Admin\DosenController::store` and `AdminProdi\DosenController::store` create the `User` account with `password = bcrypt($validated['nidn'])`, not a hardcoded literal. Login field is already NIDN (via Fortify's `detectLoginField`), so a freshly created dosen logs in with NIDN as both username and password. `Mahasiswa` account creation (`Admin\MahasiswaController::store`) still hardcodes `bcrypt('password')` — intentionally left alone, not yet aligned to this convention.
+## Dosen account password defaults to NIY, not a fixed string
+Both `Admin\DosenController::store` and `AdminProdi\DosenController::store` create the `User` account with `password = bcrypt($validated['niy'])`, not a hardcoded literal. Login field is already NIY (via Fortify's `detectLoginField`), so a freshly created dosen logs in with NIY as both username and password. `Mahasiswa` account creation (`Admin\MahasiswaController::store`) still hardcodes `bcrypt('password')` — intentionally left alone, not yet aligned to this convention.

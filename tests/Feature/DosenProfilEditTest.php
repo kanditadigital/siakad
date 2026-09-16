@@ -139,14 +139,14 @@ test('dosen cannot change institutional fields the form does not expose', functi
     $dosen = Dosen::factory()->create([
         'user_id' => $user->id,
         'program_studi_id' => $prodi->id,
-        'nidn' => '0011223344',
+        'niy' => '0011223344',
         'nuptk' => '1234567890123456',
         'golongan' => 'Penata Muda III/a',
         'status' => 'aktif',
     ]);
 
     $this->actingAs($user)->put(route('dosen.profil.update'), validDosenProfilPayload([
-        'nidn' => '9999999999',
+        'niy' => '9999999999',
         'nuptk' => '9999999999999999',
         'program_studi_id' => $otherProdi->id,
         'golongan' => 'Pembina Utama IV/c',
@@ -154,7 +154,7 @@ test('dosen cannot change institutional fields the form does not expose', functi
     ]));
 
     expect($dosen->fresh())
-        ->nidn->toBe('0011223344')
+        ->niy->toBe('0011223344')
         ->nuptk->toBe('1234567890123456')
         ->program_studi_id->toBe($prodi->id)
         ->golongan->toBe('Penata Muda III/a')

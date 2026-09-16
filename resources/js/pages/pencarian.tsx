@@ -54,7 +54,7 @@ export default function Pencarian({ q, hasil, total }: Props) {
                             </p>
                             <p className="text-xs text-muted-foreground">
                                 Coba kata kunci lain, atau cari dengan NIM,
-                                NIDN, atau kode mata kuliah.
+                                NIY, atau kode mata kuliah.
                             </p>
                         </CardContent>
                     </Card>

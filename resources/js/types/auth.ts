@@ -10,7 +10,7 @@ export type User = {
     email_verified_at: string | null;
     role: UserRole;
     nim?: string;
-    nidn?: string;
+    niy?: string;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;

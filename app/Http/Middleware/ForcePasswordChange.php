@@ -10,7 +10,7 @@ class ForcePasswordChange
 {
     /**
      * Redirect any authenticated request to the mandatory password-change
-     * page while the account still has its default (NIM/NIDN) password.
+     * page while the account still has its default (NIM/NIY) password.
      *
      * `dashboard` is exempt too: it renders normally, and the dashboard's
      * layout shows the same change-password form as a blocking modal instead

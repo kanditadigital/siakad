@@ -36,7 +36,7 @@ import AppLayout from '@/layouts/app-layout';
 type Dosen = {
     id: number;
     uuid: string;
-    nidn: string;
+    niy: string;
     nuptk: string;
     nama: string;
     status: string;
@@ -128,7 +128,7 @@ export default function DosenIndex({ dosens, filters }: Props) {
                     <div className="relative max-w-sm min-w-[200px] flex-1">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
-                            placeholder="Cari NIDN, NUPTK, atau nama..."
+                            placeholder="Cari NIY, NUPTK, atau nama..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={(e) =>
@@ -178,7 +178,7 @@ export default function DosenIndex({ dosens, filters }: Props) {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>NIDN</TableHead>
+                                    <TableHead>NIY</TableHead>
                                     <TableHead>NUPTK</TableHead>
                                     <TableHead>Nama</TableHead>
                                     <TableHead>Status</TableHead>
@@ -224,7 +224,7 @@ export default function DosenIndex({ dosens, filters }: Props) {
                                     dosens.data.map((dosen) => (
                                         <TableRow key={dosen.id}>
                                             <TableCell className="font-mono font-medium">
-                                                {dosen.nidn}
+                                                {dosen.niy}
                                             </TableCell>
                                             <TableCell className="font-mono font-medium">
                                                 {dosen.nuptk}

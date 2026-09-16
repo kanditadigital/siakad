@@ -29,7 +29,7 @@ Kolom `users.role` mendukung: `admin`, `admin_prodi`, `dosen`, `mahasiswa`, `pim
 |---|---|---|
 | **Admin** (BAAK) | Email + password | Kelola seluruh data master, akademik, keuangan, laporan, pengguna, dan pengaturan sistem lintas program studi. |
 | **Admin Prodi (Kaprodi)** | Email + password | Sama seperti Admin tapi dibatasi ke satu program studi (`program_studi_id`) — mahasiswa, dosen, penjadwalan, KRS, nilai. |
-| **Dosen** | NIDN atau Email + password | Perkuliahan yang diampu, presensi, materi, input nilai, mahasiswa asuh (PA), bimbingan tugas akhir. |
+| **Dosen** | NIY atau Email + password | Perkuliahan yang diampu, presensi, materi, input nilai, mahasiswa asuh (PA), bimbingan tugas akhir. |
 | **Mahasiswa** | NIM + password | Profil, KRS, KHS, transkrip, jadwal, tagihan UKT & pembayaran. |
 | **Pimpinan** | Email + password | Monitoring akademik & keuangan, laporan ringkas — read-only, tidak mengelola data. |
 
@@ -93,8 +93,8 @@ Legenda status: ✅ Sudah ada di kode · 🟡 Ada kerangka tapi belum lengkap/fu
 | Fitur | Status | Catatan |
 |---|---|---|
 | Halaman login dengan identitas kampus, logo, tema hijau-kuning | ✅ | `resources/js/pages/auth` |
-| Login dosen via NIDN atau Email | ✅ | Selesai 2026-09-01. Backend (`FortifyServiceProvider::authenticateUsing`) sudah lengkap sejak sebelumnya, tapi **frontend hanya mengirim `login_value` tanpa `login_field`** sehingga fitur ini tidak pernah tercapai dari UI — selalu jatuh ke pencarian email. Ditambahkan auto-deteksi server-side (`detectLoginField`): `@` → email, else cek NIM, else cek NIDN, else email |
-| Login mahasiswa via NIM | ✅ | Sama seperti di atas — satu perbaikan mencakup NIM dan NIDN sekaligus. Diuji di `tests/Feature/Auth/LoginIdentifierAutoDetectTest.php` (4 test, memakai bentuk request asli dari form — tanpa `login_field`) |
+| Login dosen via NIY atau Email | ✅ | Selesai 2026-09-01. Backend (`FortifyServiceProvider::authenticateUsing`) sudah lengkap sejak sebelumnya, tapi **frontend hanya mengirim `login_value` tanpa `login_field`** sehingga fitur ini tidak pernah tercapai dari UI — selalu jatuh ke pencarian email. Ditambahkan auto-deteksi server-side (`detectLoginField`): `@` → email, else cek NIM, else cek NIY, else email |
+| Login mahasiswa via NIM | ✅ | Sama seperti di atas — satu perbaikan mencakup NIM dan NIY sekaligus. Diuji di `tests/Feature/Auth/LoginIdentifierAutoDetectTest.php` (4 test, memakai bentuk request asli dari form — tanpa `login_field`) |
 | Reset password, verifikasi email, 2FA | ✅ | Ditangani modul Fortify (`app/Actions/Fortify`) |
 | Manajemen keamanan akun (ganti password, sesi aktif) | ✅ | `Settings/SecurityController` |
 
@@ -230,7 +230,7 @@ Entity inti yang sudah ada: `User`, `ProgramStudi`, `Mahasiswa`, `Dosen`, `Tendi
 Urutan disarankan berdasarkan dampak terhadap alur inti sistem. Status ✅ = selesai & diuji, ⬜ = belum dikerjakan.
 
 1. ✅ **Sambungkan `Pembayaran::verify` → update status `TagihanUkt`** — selesai 2026-08-31. `PembayaranController::verify` sekarang mengakumulasi `jumlah_bayar` pada `TagihanUkt` dan menghitung ulang status (`lunas` jika total bayar ≥ tagihan, `terlambat` jika lewat jatuh tempo, selain itu `belum`), dibungkus `DB::transaction()` dengan `lockForUpdate()` pada `Pembayaran` dan `TagihanUkt` (mencegah race condition & double-counting saat dua admin memverifikasi bersamaan). `verify`/`reject` sekarang menolak (`422`) pembayaran yang statusnya bukan `pending` (idempotent, sesuai RULES.md §7.1). Migration baru `add_unique_to_pembayaran_uuid` menambahkan constraint unik yang sebelumnya hilang di kolom route-key `uuid`. Diuji lewat `tests/Feature/PembayaranVerificationTest.php` (5 test: lunas penuh, pembayaran parsial, reject tidak mengubah saldo, tidak bisa diverifikasi dua kali, non-admin ditolak 403).
-2. ✅ **Login via NIDN/NIM** — selesai 2026-09-01, lihat §3.1.
+2. ✅ **Login via NIY/NIM** — selesai 2026-09-01, lihat §3.1.
 3. ✅ **Modul Pimpinan** (monitoring + laporan ringkas) — selesai 2026-09-01, lihat §3.10.
 4. ✅ **Pengaturan Sistem yang benar-benar persisten** (tabel `settings`) — selesai 2026-09-01, lihat §3.9. Nilai KRS/Nilai settings belum dikonsumsi oleh logic terkait, lihat item baru #13.
 5. ✅ **Bimbingan Tugas Akhir** untuk Dosen — selesai 2026-09-01, lihat §3.5.
@@ -265,7 +265,7 @@ Ditemukan saat menjalankan test suite untuk memverifikasi perbaikan di atas — 
 
 ### 6.3 Bug ditemukan & diperbaiki saat mengerjakan fitur ⬜ (2026-09-01)
 
-- **Login NIM/NIDN backend sudah lengkap tapi tidak pernah tercapai dari UI** — `FortifyServiceProvider::authenticateUsing` sudah mendukung resolusi `login_field` = `nim`/`nidn`/`email` sejak sebelumnya, tapi halaman login (`resources/js/pages/auth/login.tsx`) hanya mengirim field generik `login_value` tanpa `login_field`, sehingga selalu jatuh ke pencarian `email` — login via NIM/NIDN **tidak pernah berfungsi** dari form manapun. Diperbaiki dengan auto-deteksi server-side (`detectLoginField`), bukan mengubah UI.
+- **Login NIM/NIY backend sudah lengkap tapi tidak pernah tercapai dari UI** — `FortifyServiceProvider::authenticateUsing` sudah mendukung resolusi `login_field` = `nim`/`niy`/`email` sejak sebelumnya, tapi halaman login (`resources/js/pages/auth/login.tsx`) hanya mengirim field generik `login_value` tanpa `login_field`, sehingga selalu jatuh ke pencarian `email` — login via NIM/NIY **tidak pernah berfungsi** dari form manapun. Diperbaiki dengan auto-deteksi server-side (`detectLoginField`), bukan mengubah UI.
 - **`App\Models\Setting::all()` — fatal error, ditemukan sebelum sempat di-commit**: method ini override `Illuminate\Database\Eloquent\Model::all()` dengan signature return type yang tidak kompatibel (`Collection` vs `static[]|Collection` bawaan Eloquent), menyebabkan `Symfony\Component\ErrorHandler\Error\FatalError` setiap kali class `Setting` di-load — bukan exception yang bisa di-catch, PHP mati total di level compile/class-declaration. Gejalanya membingungkan: `vendor/bin/pest` untuk file test terkait berhenti tanpa output apa pun (bukan pesan error) karena fatal terjadi sebelum test runner sempat mem-flush apa pun ke printer JSON kustom. Diperbaiki dengan rename ke `Setting::allSettings()`. **Pelajaran:** jangan pernah menamai method static di model Eloquent sama dengan method bawaan (`all`, `find`, `create`, `query`, dst) tanpa mengecek signature aslinya.
 - **IDOR di `Dosen/PerkuliahanController::index`** — parameter `kelas_id` dari query string dipakai langsung untuk query presensi/materi/KRS tanpa memverifikasi kelas itu milik dosen yang login; dosen mana pun bisa melihat data kelas dosen lain dengan mengubah `?kelas_id=` di URL. Ditemukan saat menambahkan fitur RPS (yang butuh melakukan write berdasarkan `kelas_id` yang sama). Diperbaiki dengan validasi `$kelas->contains('id', ...)` sebelum dipakai.
 

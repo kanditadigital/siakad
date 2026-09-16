@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 #[Fillable([
     'user_id',
     'program_studi_id',
-    'nidn',
+    'niy',
     'nuptk',
     'nama',
     'email',
@@ -105,7 +105,7 @@ class Dosen extends Model
         });
 
         static::saved(function (Dosen $dosen): void {
-            $dosen->user?->forceFill(['nidn' => $dosen->nidn])->saveQuietly();
+            $dosen->user?->forceFill(['niy' => $dosen->niy])->saveQuietly();
         });
     }
 }

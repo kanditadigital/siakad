@@ -133,8 +133,8 @@
             },
             {
               "type": "input_field",
-              "label": "Username / NIM / NIDN",
-              "placeholder": "Masukkan username atau NIM/NIDN",
+              "label": "Username / NIM / NIY",
+              "placeholder": "Masukkan username atau NIM/NIY",
               "icon": "user outline (left)",
               "border_color": "#D1D5DB",
               "border_radius_px": 8,

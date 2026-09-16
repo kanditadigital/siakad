@@ -58,7 +58,7 @@ class FortifyServiceProvider extends ServiceProvider
             }
 
             // Explicit login_field (if the frontend ever sends one) wins; otherwise
-            // auto-detect from the shape of the value: email → NIM → NIDN, in that order.
+            // auto-detect from the shape of the value: email → NIM → NIY, in that order.
             $loginField = $request->input('login_field') ?? $this->detectLoginField($loginValue);
 
             $user = match ($loginField) {
@@ -68,10 +68,10 @@ class FortifyServiceProvider extends ServiceProvider
                             ->orWhereHas('mahasiswa', fn ($mahasiswa) => $mahasiswa->where('nim', $loginValue));
                     })
                     ->first(),
-                'nidn' => User::query()
+                'niy' => User::query()
                     ->where(function ($query) use ($loginValue): void {
-                        $query->where('nidn', $loginValue)
-                            ->orWhereHas('dosen', fn ($dosen) => $dosen->where('nidn', $loginValue));
+                        $query->where('niy', $loginValue)
+                            ->orWhereHas('dosen', fn ($dosen) => $dosen->where('niy', $loginValue));
                     })
                     ->first(),
                 default => User::query()->where('email', $loginValue)->first(),
@@ -86,7 +86,7 @@ class FortifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Auto-detect whether a login value is an email, NIM, or NIDN based on its shape
+     * Auto-detect whether a login value is an email, NIM, or NIY based on its shape
      * and whether it matches an existing record — so the login form can stay a single
      * generic field without the frontend needing to know which type it is.
      */
@@ -104,12 +104,12 @@ class FortifyServiceProvider extends ServiceProvider
             return 'nim';
         }
 
-        $matchesNidn = User::query()->where('nidn', $loginValue)
-            ->orWhereHas('dosen', fn ($dosen) => $dosen->where('nidn', $loginValue))
+        $matchesNiy = User::query()->where('niy', $loginValue)
+            ->orWhereHas('dosen', fn ($dosen) => $dosen->where('niy', $loginValue))
             ->exists();
 
-        if ($matchesNidn) {
-            return 'nidn';
+        if ($matchesNiy) {
+            return 'niy';
         }
 
         return 'email';

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type Dosen = {
     nama: string;
-    nidn: string;
+    niy: string;
 };
 
 type Kelas = {
@@ -75,7 +75,7 @@ export default function DosenDashboard({
                         Dashboard Dosen
                     </h1>
                     <p className="text-gray-600">
-                        Selamat datang, {dosen.nama} ({dosen.nidn})
+                        Selamat datang, {dosen.nama} ({dosen.niy})
                     </p>
                 </div>
 

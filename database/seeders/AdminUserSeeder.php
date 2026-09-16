@@ -27,7 +27,7 @@ class AdminUserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => bcrypt('password123'),
             'nim' => 'ADM-2026-001',
-            'nidn' => null,
+            'niy' => null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -163,12 +163,12 @@ class AdminUserSeeder extends Seeder
 
         // Create default dosen
         $adminUserId = DB::table('users')->where('email', 'admin@sitiddarurrahmah.ac.id')->value('id');
-        $dosenExists = DB::table('dosen')->where('nidn', '1234567890')->exists();
+        $dosenExists = DB::table('dosen')->where('niy', '1234567890')->exists();
         if (! $dosenExists) {
             DB::table('dosen')->insert([
                 'user_id' => $adminUserId,
                 'program_studi_id' => $ftiId,
-                'nidn' => '1234567890',
+                'niy' => '1234567890',
                 'nama' => 'Dr. Budi Santoso, M.Kom.',
                 'email' => 'budi.santoso@sitiddarurrahmah.ac.id',
                 'no_telepon' => '081234567890',

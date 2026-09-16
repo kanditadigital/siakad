@@ -27,7 +27,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
  * @property bool $must_change_password
  * @property UserRole $role
  * @property string|null $nim
- * @property string|null $nidn
+ * @property string|null $niy
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -41,7 +41,7 @@ use Laravel\Fortify\PasskeyAuthenticatable;
  * @property-read string|null $photo_url
  */
 #[Appends(['photo_url'])]
-#[Fillable(['name', 'email', 'password', 'role', 'nim', 'nidn', 'program_studi_id', 'photo', 'must_change_password'])]
+#[Fillable(['name', 'email', 'password', 'role', 'nim', 'niy', 'program_studi_id', 'photo', 'must_change_password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -99,7 +99,7 @@ class User extends Authenticatable implements PasskeyUser
     {
         return match ($this->role) {
             UserRole::Mahasiswa => $this->nim ?? $this->email,
-            UserRole::Dosen => $this->nidn ?? $this->email,
+            UserRole::Dosen => $this->niy ?? $this->email,
             UserRole::AdminProdi => $this->email,
             default => $this->email,
         };
@@ -112,8 +112,8 @@ class User extends Authenticatable implements PasskeyUser
                 $user->mahasiswa->forceFill(['nim' => $user->nim])->saveQuietly();
             }
 
-            if ($user->wasChanged('nidn') && $user->dosen !== null) {
-                $user->dosen->forceFill(['nidn' => $user->nidn])->saveQuietly();
+            if ($user->wasChanged('niy') && $user->dosen !== null) {
+                $user->dosen->forceFill(['niy' => $user->niy])->saveQuietly();
             }
         });
     }

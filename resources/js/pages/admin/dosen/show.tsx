@@ -31,7 +31,7 @@ type User = {
 type Dosen = {
     id: number;
     uuid: string;
-    nidn: string;
+    niy: string;
     nuptk: string;
     nama: string;
     email: string;
@@ -121,9 +121,9 @@ export default function DosenShow({ dosen }: Props) {
                                     )}
                                 </div>
                                 <div className="text-center text-white">
-                                    <p className="text-sm opacity-80">NIDN</p>
+                                    <p className="text-sm opacity-80">NIY</p>
                                     <p className="font-mono text-lg font-semibold">
-                                        {dosen.nidn}
+                                        {dosen.niy}
                                     </p>
                                 </div>
                             </div>
@@ -190,10 +190,10 @@ export default function DosenShow({ dosen }: Props) {
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-500">
-                                        NIDN
+                                        NIY
                                     </p>
                                     <p className="font-mono font-medium text-gray-900">
-                                        {dosen.nidn}
+                                        {dosen.niy}
                                     </p>
                                 </div>
                             </div>

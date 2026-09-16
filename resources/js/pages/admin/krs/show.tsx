@@ -34,7 +34,7 @@ type MataKuliah = {
 type Dosen = {
     id: number;
     nama: string;
-    nidn: string;
+    niy: string;
 };
 
 type Kelas = {

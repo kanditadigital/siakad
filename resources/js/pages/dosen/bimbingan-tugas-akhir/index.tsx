@@ -99,7 +99,7 @@ type MahasiswaOptions = {
 type DosenOption = {
     id: number;
     nama: string;
-    nidn: string | null;
+    niy: string | null;
 };
 
 const STATUS_VARIANTS: Record<

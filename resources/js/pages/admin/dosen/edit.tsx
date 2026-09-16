@@ -35,7 +35,7 @@ type User = {
 type Dosen = {
     id: number;
     uuid: string;
-    nidn: string;
+    niy: string;
     nuptk: string;
     nama: string;
     email: string;
@@ -91,7 +91,7 @@ function Required() {
 
 export default function DosenEdit({ dosen, programStudis }: Props) {
     const { data, setData, post, processing, errors, transform } = useForm({
-        nidn: dosen.nidn,
+        niy: dosen.niy,
         nuptk: dosen.nuptk,
         nama: dosen.nama,
         email: dosen.email,
@@ -248,22 +248,22 @@ export default function DosenEdit({ dosen, programStudis }: Props) {
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="nidn">
-                                        NIDN
+                                    <Label htmlFor="niy">
+                                        NIY
                                         <Required />
                                     </Label>
                                     <Input
-                                        id="nidn"
-                                        value={data.nidn}
+                                        id="niy"
+                                        value={data.niy}
                                         onChange={(e) =>
-                                            setData('nidn', e.target.value)
+                                            setData('niy', e.target.value)
                                         }
                                         placeholder="0012345678"
-                                        aria-invalid={!!errors.nidn}
+                                        aria-invalid={!!errors.niy}
                                     />
-                                    {errors.nidn && (
+                                    {errors.niy && (
                                         <p className="text-sm text-destructive">
-                                            {errors.nidn}
+                                            {errors.niy}
                                         </p>
                                     )}
                                 </div>

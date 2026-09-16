@@ -152,7 +152,7 @@
           "judul": "Home (Laman Utama)",
           "deskripsi": "Halaman awal menampilkan identitas kampus, logo, nama SIAKAD, dan form login.",
           "metode_login": {
-            "dosen": "NIDN atau Email",
+            "dosen": "NIY atau Email",
             "mahasiswa": "NIM"
           },
           "tema_warna": ["hijau", "kuning"]
@@ -164,7 +164,7 @@
           "sub_halaman": [
             {
               "nama": "Profil",
-              "deskripsi": "Menampilkan identitas dan data profesional dosen: foto, nama, status, NIDN, program studi, fakultas, kontak.",
+              "deskripsi": "Menampilkan identitas dan data profesional dosen: foto, nama, status, NIY, program studi, fakultas, kontak.",
               "tab": ["Biodata", "Riwayat Pendidikan", "Pengalaman", "Jabatan", "Mata Kuliah Diampu"]
             },
             {

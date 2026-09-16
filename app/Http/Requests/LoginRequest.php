@@ -14,7 +14,7 @@ class LoginRequest extends FortifyLoginRequest
     public function rules(): array
     {
         return [
-            'login_field' => ['nullable', 'in:email,nim,nidn'],
+            'login_field' => ['nullable', 'in:email,nim,niy'],
             'login_value' => ['required_without:email', 'nullable', 'string'],
             'email' => ['required_without:login_value', 'nullable', 'string'],
             'password' => ['required', 'string'],

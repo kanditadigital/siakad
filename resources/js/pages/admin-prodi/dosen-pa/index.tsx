@@ -25,7 +25,7 @@ import AppLayout from '@/layouts/app-layout';
 type DosenOption = {
     id: number;
     nama: string;
-    nidn: string;
+    niy: string;
 };
 
 type MahasiswaOption = {
@@ -98,7 +98,7 @@ function DosenPaCell({
             <SelectContent>
                 {dosens.map((d) => (
                     <SelectItem key={d.id} value={d.id.toString()}>
-                        {d.nama} ({d.nidn})
+                        {d.nama} ({d.niy})
                     </SelectItem>
                 ))}
             </SelectContent>

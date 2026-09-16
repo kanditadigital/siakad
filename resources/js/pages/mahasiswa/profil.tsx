@@ -12,7 +12,7 @@ type ProgramStudi = {
 type DosenPa = {
     id: number;
     nama: string;
-    nidn: string;
+    niy: string;
 };
 
 type Mahasiswa = {
@@ -196,7 +196,7 @@ export default function ProfilMahasiswa({ mahasiswa }: Props) {
                                             </p>
                                             <p className="font-medium text-gray-900">
                                                 {mahasiswa.pa_dosen
-                                                    ? `${mahasiswa.pa_dosen.nama} (${mahasiswa.pa_dosen.nidn})`
+                                                    ? `${mahasiswa.pa_dosen.nama} (${mahasiswa.pa_dosen.niy})`
                                                     : 'Belum ditentukan'}
                                             </p>
                                         </div>
